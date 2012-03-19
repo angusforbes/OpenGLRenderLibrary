@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SchemeUserState</key>
+	<dict>
+		<key>OpenGLRenderLibraryIOS.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<true/>
+			<key>orderHint</key>
+			<integer>0</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>920B8D1414CB337E005FEC61</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>923DA09014F9F75B000B21EB</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>9244A8A214CB327700892846</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>928224EF150E80300022A126</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>92CC982D14CB32CF00883F9A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>CB784C29147C225E00C55B47</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+	</dict>
+</dict>
+</plist>
