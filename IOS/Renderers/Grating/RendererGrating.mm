@@ -15,18 +15,27 @@
 
 RendererGrating::RendererGrating() { //: Renderer() {
   printf("3. in RendererGrating constructor\n");
-  
 }
 
 void RendererGrating::Initialize() {
+  
+  freq1 = 10.0;
+  phase1 = 0.0;
+  theta1 = 90.0;
+  color1 = vec4(1.0,0.0,0.0,0.5);
+  backgroundColor1 = vec4(0.0,1.0,0.0,0.0);
+  
+  freq2 = 13.0;
+  phase2 = 0.0;
+  theta2 = 0.0;
+  color2 = vec4(0.0,0.0,1.0,0.5);
+  backgroundColor2 = vec4(1.0,0.0,0.0,0.0);
   
   cx = 0.5;
   cy = 0.5;
   topVal = 0.0;
   botVal = 0.0;
 
-   
-  
   //SetCamera(new Camera(vec3(0,0,-3), 60.0, (float)width/(float)height, 0.1, 100, ivec4(0,0,width,height)));
   SetCamera(new Camera(ivec4(0, 0, width, height)));
   
@@ -36,47 +45,25 @@ void RendererGrating::Initialize() {
   printf("6. in RendererTest::Initialize()\n");
   printf("w / h = %d %d\n", width, height);
   
-  
-  
+
   Rectangle* r1 = new Rectangle(); //vec3(-2.0, -1.0, 0.0), 4.0, 2.0);
-  r1->SetTranslate(vec3(-.5,-.5,0));
+  r1->SetTranslate(vec3(-0.5,-0.5,0));
   //  r1->SetRotateAnchor(vec3(0.5, 0.5, 0.0));
   r1->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
-  r1->SetScale(vec3(2.0, 2.0*((float)width/(float)height), 1.0));
+  //r1->SetScale(vec3(2.0, 2.0*((float)width/(float)height), 1.0));
+  //r1->SetScale(vec3(1.0, 1.0, 1.0));
+  r1->SetScale(vec3(2.0, 2.0, 1.0));
   AddGeom(r1);
   r1->Transform();
   
+  GetPrograms().insert(std::pair<string, Program*>("GratingPatch", new Program("GratingPatch")));
+  GetPrograms().insert(std::pair<string, Program*>("BlendTextures", new Program("BlendTextures")));
   
-  Program* program = new Program("GratingPatch");
-  //Program* program = new Program("SingleTexture");
-  cout << " program ID = " << program->programID << "\n";
-  GetPrograms().insert(std::pair<string, Program*>("GratingPatch", program));
-  //GetPrograms().insert(std::pair<string, Program*>("SingleTexture", program));
+  //CreateTexture("noiseTexture", Texture::CreateColorNoiseTexture(64,64));
+  CreateFBO("fboA", Texture::CreateEmptyTexture(1024/4,1024/4));
+  CreateFBO("fboB", Texture::CreateEmptyTexture(1024/4,1024/4));
+  CreateFBO("fboC", Texture::CreateEmptyTexture(1024/4,1024/4));
   
-
-  ResourceHandler* rh = ResourceHandler::GetResourceHandler();
-  //rh->PlayAudioResource("precursor.mp3");
-  //rh->PlayAudioResource("doorcreak.mp3");
-  
-
-  Texture* videoTexture = rh->CreateVideoTexture(PANORAMIC_MOVIE, true, true, true);
-GetTextures().insert(pair<string, Texture*>("VideoTexture", videoTexture));
-//  printf("1\n");
-
-//  Texture* testTexture = rh->CreateTextureFromImageFile("PanoramicTest_1.jpg");
-//Texture* testTexture = rh->CreateTextureFromImageFile("fa_1024_5.png");
-//  GetTextures().insert(pair<string, Texture*>("testTexture", testTexture));
-//  printf("2\n");  
-  Texture* noiseTexture = Texture::CreateColorNoiseTexture(64,64);
-  GetTextures().insert(pair<string, Texture*>("noiseTexture", noiseTexture));
-  
-  Texture* fboATexture = Texture::CreateEmptyTexture(768,1024);
-  GetTextures().insert(pair<string, Texture*>("fboATexture", fboATexture));
-  printf("A\n");
-     printf("3\n");
-  FBO* fboA = new FBO(fboATexture);
-  GetFbos().insert(pair<string, FBO*>("fboA", fboA));
-    printf("4\n");
   
   CreateFullScreenRect();
   
@@ -84,41 +71,44 @@ GetTextures().insert(pair<string, Texture*>("VideoTexture", videoTexture));
 
 }
 
-float phase = 0.0;
-float theta = 0.0;
-void RendererGrating::Render() { 
+void RendererGrating::BlendTextures(FBO* fbo, Texture* t1, Texture* t2){
   
-  //if (1 == 1) {return;}
+  Program* program = GetPrograms()["BlendTextures"]; 
   
- //BindDefaultFrameBuffer();
+  //fbo->Bind(); {
     
-  bool cameraMoved = false;
-  if (camera->IsTransformed()) {
-    camera->Transform();
-    cameraMoved = true;
-  }
+    program->Bind(); {
+      int i;
+      set<Geom*>::iterator it;
+      for (it=GetGeoms().begin(), i = 0; it!=GetGeoms().end(); it++, i++) {
+        Geom* g = (Geom*) *it;
+        
+        glUniformMatrix4fv(program->Uniform("Modelview"), 1, 0, g->GetModelView().Pointer());
+        glUniformMatrix4fv(program->Uniform("Projection"), 1, 0, camera->projection.Pointer());
+        
+        t1->Bind(GL_TEXTURE0); 
+        glUniform1i(program->Uniform("tex0"), 0);
+        
+        t2->Bind(GL_TEXTURE1); 
+        glUniform1i(program->Uniform("tex1"), 1);
+        
+        g->PassVertices(program, GL_TRIANGLES);
+        
+        t1->Unbind(GL_TEXTURE0); 
+        t2->Unbind(GL_TEXTURE1); 
+        
+      }
+    } program->Unbind();
+  //} fbo->Unbind();
   
-  // updateGeoms(cameraMoved);
+}
+
+
+void RendererGrating::DrawGrating(FBO* fbo, float freq, float phase, float theta, vec4 *color, vec4 *backgroundColor) {
   
   Program* program = GetPrograms()["GratingPatch"]; 
-  //printf("program id = %d\n", program->programID);
   
-  Texture* noiseTexture = GetTextures()["VideoTexture"];
-  ResourceHandler* rh = ResourceHandler::GetResourceHandler();
-  //rh->NextVideoFrame();
-  //rh->HandlePlayback(noiseTexture, true);
-  
-  //Texture* noiseTexture = GetTextures()["testTexture"];
-  //Texture* noiseTexture = GetTextures()["noiseTexture"];
-  
-  //noiseTexture->SetWrapMode(GL_MIRRORED_REPEAT);
-  //noiseTexture->SetWrapMode(GL_REPEAT);
-  noiseTexture->SetWrapMode(GL_CLAMP_TO_EDGE);
-  noiseTexture->SetFilterModes(GL_NEAREST, GL_NEAREST);
-  
-   
- FBO* fboA = GetFbos()["fboA"];
-  fboA->Bind(); {
+  fbo->Bind(); {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
@@ -135,25 +125,41 @@ void RendererGrating::Render() {
         glUniformMatrix4fv(program->Uniform("Modelview"), 1, 0, g->GetModelView().Pointer());
         glUniformMatrix4fv(program->Uniform("Projection"), 1, 0, camera->projection.Pointer());
         
-        glUniform4f(program->Uniform("Offset"), 0.5, 0.5, 0.5, 0.0);
+        glUniform4fv(program->Uniform("ContrastColor"), 1, backgroundColor->Pointer());
+        glUniform4fv(program->Uniform("BaseColor"), 1, color->Pointer());
+        glUniform1f(program->Uniform("FreqVal"), freq * (M_PI*2.0));
         glUniform1f(program->Uniform("PhaseVal"), phase);
-        glUniform1f(program->Uniform("ThetaVal"), theta);
+        glUniform1f(program->Uniform("ThetaVal"), radians(theta));
         
-        phase -= 0.0; //fmodf(phase+0.1,1.0);
-        theta += 0.1;
-        noiseTexture->Bind(GL_TEXTURE0); {
-          //glUniform1i(program->Uniform("s_tex"), 0);
-          
-          g->PassVertices(program, GL_TRIANGLES);
-          
-        } noiseTexture->Unbind(GL_TEXTURE0);
+        g->PassVertices(program, GL_TRIANGLES);
       }
     } program->Unbind();
-  } fboA->Unbind();
+  } fbo->Unbind();
   
+}
+
+void RendererGrating::Render() { 
   
-  DrawFullScreenTexture(fboA->texture);
  
+  
+  bool cameraMoved = false;
+  if (camera->IsTransformed()) {
+    camera->Transform();
+    cameraMoved = true;
+  }
+   
+  theta1 += 1.0;
+  theta2 -= 1.0;
+  
+  DrawGrating(GetFbos()["fboA"], freq1, phase1, (theta1), &color1, &backgroundColor1);
+  DrawGrating(GetFbos()["fboB"], freq2, phase2, (theta2), &color2, &backgroundColor2);
+  
+  BindDefaultFrameBuffer();
+  BlendTextures(GetFbos()["fboC"], GetFbos()["fboA"]->texture, GetFbos()["fboB"]->texture);
+  
+  
+  //DrawFullScreenTexture(GetFbos()["fboC"]->texture);
+  
 }
 
 /*

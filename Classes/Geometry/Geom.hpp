@@ -12,6 +12,7 @@ class Geom : public ModelView, public Mesh {
 public:
   
   Geom();
+  void Draw();
   //Geom(vec3 translate, float width, float height);
   
   /*

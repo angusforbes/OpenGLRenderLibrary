@@ -75,6 +75,9 @@ public:
 
   
 protected: 
+  FBO* CreateFBO(string FBOName, Texture* texture);
+  Texture* CreateTexture(string TextureName, Texture* texture);
+
   map<string, Program*> programs;
   map<string, Texture*> textures;
   map<string, FBO*> fbos;

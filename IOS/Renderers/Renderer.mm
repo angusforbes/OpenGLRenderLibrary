@@ -204,6 +204,19 @@ map<string, FBO*>& Renderer::GetFbos() {
 }
 
 
+Texture* Renderer::CreateTexture(string TextureName, Texture* texture) {
+  GetTextures().insert(pair<string, Texture*>(TextureName, texture));
+  return texture;
+}
+
+FBO* Renderer::CreateFBO(string FBOName, Texture* texture) {
+  //GetTextures().insert(pair<string, Texture*>("fboATexture", Texture::CreateEmptyTexture(768,1024)));
+  FBO* fbo = new FBO(texture);
+  GetFbos().insert(pair<string, FBO*>(FBOName, fbo));
+  
+  return fbo;
+}
+
 void Renderer::HandleTouchBegan(ivec2 mouse) {
   printf("renderer not handling TouchBegan\n");
 }

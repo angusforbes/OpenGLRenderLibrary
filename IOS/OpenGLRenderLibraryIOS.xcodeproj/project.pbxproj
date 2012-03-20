@@ -127,6 +127,8 @@
 		928225C815179EDF0022A126 /* RendererGrating.mm in Sources */ = {isa = PBXBuildFile; fileRef = 928225C715179EDF0022A126 /* RendererGrating.mm */; };
 		928225CF1517A15D0022A126 /* GratingPatch.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 928225CB15179F150022A126 /* GratingPatch.fsh */; };
 		928225D01517A15D0022A126 /* GratingPatch.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 928225CC15179F150022A126 /* GratingPatch.vsh */; };
+		929299411519067C0002C55B /* BlendTextures.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 9292993F1519067C0002C55B /* BlendTextures.fsh */; };
+		929299421519067C0002C55B /* BlendTextures.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 929299401519067C0002C55B /* BlendTextures.vsh */; };
 		92FA4FB114AD2AE100A2261D /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92FA4FB014AD2AE100A2261D /* CoreMotion.framework */; };
 		92FA4FCA14B511F600A2261D /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92FA4FC814B511F500A2261D /* AVFoundation.framework */; };
 		92FA4FCB14B511F600A2261D /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92FA4FC914B511F500A2261D /* CoreVideo.framework */; };
@@ -305,6 +307,8 @@
 		928225C715179EDF0022A126 /* RendererGrating.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RendererGrating.mm; path = Renderers/Grating/RendererGrating.mm; sourceTree = "<group>"; };
 		928225CB15179F150022A126 /* GratingPatch.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = GratingPatch.fsh; path = Renderers/Grating/Resources/GratingPatch.fsh; sourceTree = "<group>"; };
 		928225CC15179F150022A126 /* GratingPatch.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = GratingPatch.vsh; path = Renderers/Grating/Resources/GratingPatch.vsh; sourceTree = "<group>"; };
+		9292993F1519067C0002C55B /* BlendTextures.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = BlendTextures.fsh; path = Renderers/Grating/Resources/BlendTextures.fsh; sourceTree = "<group>"; };
+		929299401519067C0002C55B /* BlendTextures.vsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = BlendTextures.vsh; path = Renderers/Grating/Resources/BlendTextures.vsh; sourceTree = "<group>"; };
 		92FA4FB014AD2AE100A2261D /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		92FA4FC814B511F500A2261D /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		92FA4FC914B511F500A2261D /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
@@ -635,6 +639,8 @@
 		928225CA15179EF80022A126 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9292993F1519067C0002C55B /* BlendTextures.fsh */,
+				929299401519067C0002C55B /* BlendTextures.vsh */,
 				928225CB15179F150022A126 /* GratingPatch.fsh */,
 				928225CC15179F150022A126 /* GratingPatch.vsh */,
 			);
@@ -757,6 +763,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				929299411519067C0002C55B /* BlendTextures.fsh in Resources */,
+				929299421519067C0002C55B /* BlendTextures.vsh in Resources */,
 				928225CF1517A15D0022A126 /* GratingPatch.fsh in Resources */,
 				928225D01517A15D0022A126 /* GratingPatch.vsh in Resources */,
 				92822577150FF4180022A126 /* UnwarpPanoramicImage.fsh in Resources */,

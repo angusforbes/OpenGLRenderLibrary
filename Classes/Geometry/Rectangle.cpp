@@ -24,7 +24,7 @@ Rectangle::Rectangle(vec3 _translate, float _w, float _h) {
   useTexCoords = true;
   useColors = false;
   useNormals = false;
-
+  
   SetTranslate(_translate);
   SetScale(vec3(_w, _h, 0.0));
   //width = _w;
@@ -61,7 +61,7 @@ void Rectangle::GenerateVertices() {
   
   int v_idx = 0;
   int tc_idx = 0;
- 
+  
   rectVertices[v_idx++] = 0.0; rectVertices[v_idx++] = 0.0; rectVertices[v_idx++] = 0.0;
   rectTexCoords[tc_idx++] = 0.0; rectTexCoords[tc_idx++] = 1.0; rectTexCoords[tc_idx++] = 0.0;
   
@@ -73,9 +73,6 @@ void Rectangle::GenerateVertices() {
   
   rectVertices[v_idx++] = 1.0; rectVertices[v_idx++] = 1.0; rectVertices[v_idx++] = 0.0;
   rectTexCoords[tc_idx++] = 1.0; rectTexCoords[tc_idx++] = 0.0; rectTexCoords[tc_idx++] = 0.0;
-  
-  
-  
 }
 
 void Rectangle::GenerateLineIndices() {
@@ -91,7 +88,6 @@ void Rectangle::GenerateLineIndices() {
   *index++ = 3; 
   *index++ = 3;
   *index++ = 0; 
-  
 }
 
 void Rectangle::GenerateTriangleIndices() {
@@ -111,12 +107,9 @@ void Rectangle::Transform() {
   //if (IsTransformed()) {
   mat4 mv = Renderer::GetRenderer()->GetCamera()->GetModelView();
   
-    printf("isTransofrmed!\n");
-    mv.Print();
-    //exit(0);
-  
-  
- 
+  //printf("isTransformed!\n");
+  mv.Print();
+   
   //translate
   mv = mat4::Translate(mv, GetTranslate());
   
