@@ -2,9 +2,9 @@
 #include "Geom.hpp"
 
 
-Geom::Geom() {
+Geom::Geom() {}
 
-  void Geom::Draw() {
-    
-  }
+void Geom::Draw() {
+  
 }
+
