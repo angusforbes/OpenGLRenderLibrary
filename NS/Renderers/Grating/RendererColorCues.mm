@@ -9,6 +9,12 @@
 //#import <Carbon/Carbon.h> //needed for key event codes
 
 
+//1 = 3 colors
+//2 = 2 colors, 1 texture
+//3 = 1 color, 2 texture
+//4 = 3 textures
+int EXPERIMENT_NUMBER=1;  
+
 RendererColorCues::RendererColorCues() : Renderer() {
 }
 
@@ -22,35 +28,17 @@ void RendererColorCues::Initialize() {
   vec4 colorDG = vec4(0.0, 1.0);
   vec4 colorMG = vec4(0.5, 1.0);
   
-  vec4 color1 = vec4(141/255.0, 211/255.0, 199/255.0, 1.0);
-  vec4 color2 = vec4(255/255.0, 255/255.0, 179/255.0, 1.0);
-  vec4 color3 = vec4(190/255.0, 186/255.0, 218/255.0, 1.0);
-  vec4 color4 = vec4(251/255.0, 128/255.0, 114/255.0, 1.0);
-  vec4 color5 = vec4(56/255.0, 108/255.0, 176/255.0, 1.0);
-  vec4 color6 = vec4(253/255.0, 180/255.0, 98/255.0, 1.0);
-  vec4 color7 = vec4(179/255.0, 222/255.0, 105/255.0,1.0);
-  vec4 color8 = vec4(252/255.0, 205/255.0, 229/255.0, 1.0);
-  
-  
-  colorA = colorMG;
-  colorB = colorMG;
-  colorC = colorMG;
-  colorD = vec4(0.7, 0.5, 0.5,1.0); //color4;
-  colorE = color5;
-  backgroundColorA = colorDG;
-  backgroundColorB = colorDG;
-  backgroundColorC = colorDG;
-  backgroundColorD = colorDG;
-  backgroundColorE = colorDG;
-  
-  
   SetCamera(new Camera(ivec4(0, 0, width, height)));
-  
   
   ResourceHandler* rh = ResourceHandler::GetResourceHandler();
   Texture* circleMask = rh->CreateTextureFromImageFile("circle4.png");
   
-  
+  vec4 rcolor1 = GratingFunctions::ChooseColor();
+  vec4 rcolor2 = GratingFunctions::ChooseColor();
+  vec4 rcolor3 = GratingFunctions::ChooseColor();
+  vec4 rcolor4 = GratingFunctions::ChooseColor();
+  vec4 rcolor5 = GratingFunctions::ChooseColor();
+  vec4 rcolor6 = GratingFunctions::ChooseColor();
   
   for (int i = 0; i < 200; i++) {
     
@@ -77,12 +65,70 @@ void RendererColorCues::Initialize() {
     
     
     int which;
-    if ( i < 5 ) {
-      which = 2;
-    } else if ( i < 190 ) {
-      which = 1;
-    }else {
-      which = 0;
+    
+    switch (EXPERIMENT_NUMBER) {
+      case 1:
+        //EXPERIMENT 1 : 3 pulsing colors
+        
+        if ( i < 3 ) {
+          which = 1;
+        } else if ( i < 6 ) {
+          which = 2;
+        } else if ( i < 11 ) {
+          which = 3;
+        } else {
+          which = 0;
+        }
+        break;
+        
+      case 2:
+        
+        //EXPERIMENT 2 : 2 pulsing colors, 1 moving texture
+        
+        if ( i < 3 ) {
+          which = 1;
+        } else if ( i < 6 ) {
+          which = 4;
+        } else if ( i < 11 ) {
+          which = 3;
+        } else {
+          which = 0;
+        }
+        break;
+      case 3:
+        
+        
+        
+        //EXPERIMENT 3 : 1 pulsing color, 2 moving textures
+        if ( i < 3 ) {
+          which = 1;
+        } else if ( i < 6 ) {
+          which = 4;
+        } else if ( i < 11 ) {
+          which = 5;
+        } else {
+          which = 0;
+        }
+        break;
+        
+        
+      case 4:
+        
+        //EXPERIMENT 4 : 3 moving textures
+        if ( i < 3 ) {
+          which = 6;
+        } else if ( i < 6 ) {
+          which = 4;
+        } else if ( i < 11 ) {
+          which = 5;
+        } else {
+          which = 0;
+        }
+        break;
+        
+      default:
+        printf("ERROR, experiment number not defined\n");
+        exit(0);
     }
     
     RectGrating* r;
@@ -90,17 +136,34 @@ void RendererColorCues::Initialize() {
     
     switch(which) {
         
-      case 0: //pulsing
-        r = new RectGrating(99, circleMask, rcolor, rcolor, 0.01, 0.0, 0.0, Utils::randomFloatBetween(0.05, 0.05) );
-        break;
-      case 1: //not pulsing
+      case 0: //not pulsing
         r = new RectGrating(99, circleMask, rcolor, rcolor, 0.01, 0.5, 0.0,  0.0 );
         break;
+        
+      case 1: //pulsing A
+        r = new RectGrating(99, circleMask, rcolor1, rcolor1, 0.0, 0.0, 0.0, Utils::randomFloatBetween(0.05, 0.05) );
+        break;
+      case 2: //pulsing B
+        r = new RectGrating(99, circleMask, rcolor2, rcolor2, 0.75, 0.0, 0.0, Utils::randomFloatBetween(0.05, 0.05) );
+        break;
+      case 3: //pulsing C
+        r = new RectGrating(99, circleMask, rcolor3, rcolor3, 1.5, 0.0, 0.0, Utils::randomFloatBetween(0.05, 0.05) );
+        break;
+      case 4: //moving 1
+        r = new RectGrating(0, circleMask, rcolor4, colorDG, 5.0, 0.0, 0.0, 0.2 );
+        break;
+      case 5: //moving 2
+        r = new RectGrating(0, circleMask, rcolor5, colorDG, 6.0, 0.0, 90.0, 0.15 );
+        break;
+      case 6: //moving 3
+        r = new RectGrating(0, circleMask, rcolor6, colorDG, 4.0, 0.0, 45.0, 0.3 );
+        break;
+        
       default: //moving
         r = new RectGrating(0, circleMask, rcolor, colorDG, 5.0, 0.0, 0.0, 0.5 );
         break;
         
-            
+        
         
     }
     

@@ -45,7 +45,7 @@ void main() {
     }
     
   } else {
-    float sv2 = sin(PhaseVal) ; //between -1 and 1
+    float sv2 = sin(FreqVal + PhaseVal) ; //between -1 and 1
     sv2 = (sv2 + 1.0)/2.0; //place between 0.0 and 1.0
     sv2 = (sv2 * 0.7); //place between 0.0 and 0.7;
     sv2 = sv2 + 0.3; //place between 0.3 and 1.0;
