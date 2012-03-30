@@ -20,7 +20,7 @@
 @synthesize isGyroOn;
 
 bool IS_ANIMATED = true;
-bool USING_GYRO = NO;
+bool USING_GYRO = NO; //YES;
 
 //float prevRoll = 0.0;
 //float prevPitch = 0.0;

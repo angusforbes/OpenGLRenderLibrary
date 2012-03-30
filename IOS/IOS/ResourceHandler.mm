@@ -12,7 +12,7 @@
 //#import <OpenGLES/ES2/glext.h>
 #import <CoreFoundation/CoreFoundation.h>
 #import "AppDelegate.h"
-#import "IOSGLView.h"
+#include "IOSGLView.h"
 #endif
 
 

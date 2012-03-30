@@ -6,6 +6,9 @@
 #import "RendererTexture3D.hpp"
 #import "RendererPanoramic.hpp"
 #import "RendererFluidAutomata3D.hpp"
+#import "RendererGrating.hpp"
+#import "RendererGratingBubble.hpp"
+#import "RendererColorCues.hpp"
 
 @interface NSGLView (PrivateMethods)
 - (void) initGL;
@@ -32,7 +35,10 @@
   //m_renderer = new RendererTexture3D(); //...1
   //m_renderer = new RendererPanoramic();
   //m_renderer = new RendererTest(); //...1
-  m_renderer = new RendererFluidAutomata3D(); //...1
+  //m_renderer = new RendererFluidAutomata3D(); //...1
+  //m_renderer = new RendererGrating(); //...1
+  //m_renderer = new RendererGratingBubble(); //...1
+  m_renderer = new RendererColorCues(); //...1
   
   NSRect rect = [self bounds];
   m_renderer->width = rect.size.width;
@@ -136,6 +142,9 @@ static CVReturn MyDisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTime
   
   isDragging = NO;
   isPressing = YES;
+  
+  m_renderer->HandleTouchBegan(ivec2(currmouse.x, currmouse.y));
+
   //location.y = camera.viewHeight - location.y;
 }
  
@@ -301,7 +310,8 @@ static CVReturn MyDisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTime
 	
 	// Activate the display link
 	CVDisplayLinkStart(displayLink);
-  
+  startTick = [NSDate timeIntervalSinceReferenceDate];
+
 }
 
 - (void) reshape {	
@@ -325,13 +335,20 @@ static CVReturn MyDisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTime
 
 bool timeToDie = false;
 
+- (float) getTotalTime {
+  return (curTick - startTick);
+}
+
+
 - (void) drawView {	 
 
   //printf("5. in drawView\n");
   
-	NSTimeInterval curTick = [NSDate timeIntervalSinceReferenceDate];
-	//NSTimeInterval deltaTime = curTick - prevTick;
+	curTick = [NSDate timeIntervalSinceReferenceDate];
+	deltaTime = curTick - prevTick;
+  fps = (1.0/deltaTime);
   //printf("frame time = %f, fps = %f\n", deltaTime, (1.0/deltaTime));
+  
   
 	prevTick = curTick;
 

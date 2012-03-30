@@ -5,6 +5,7 @@ Camera::Camera(ivec4 _viewport) {
   
   IsPerspective = false;
 
+  aspect = (float)_viewport.z/(float)_viewport.w;
   //SetTranslate(vec3());
   SetViewport(_viewport);
   

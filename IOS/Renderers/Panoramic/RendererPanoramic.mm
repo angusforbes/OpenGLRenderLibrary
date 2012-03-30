@@ -73,7 +73,7 @@ void RendererPanoramic::Initialize() {
 
   ResourceHandler* rh = ResourceHandler::GetResourceHandler();
   //rh->PlayAudioResource("precursor.mp3");
-  rh->PlayAudioResource("doorcreak.mp3");
+  //rh->PlayAudioResource("doorcreak.mp3");
   
 
   Texture* videoTexture = rh->CreateVideoTexture(PANORAMIC_MOVIE, true, true, true);
@@ -121,7 +121,7 @@ void RendererPanoramic::Render() {
   
   Texture* noiseTexture = GetTextures()["VideoTexture"];
   ResourceHandler* rh = ResourceHandler::GetResourceHandler();
-  //rh->NextVideoFrame();
+  rh->NextVideoFrame();
   //rh->HandlePlayback(noiseTexture, true);
   
   //Texture* noiseTexture = GetTextures()["testTexture"];

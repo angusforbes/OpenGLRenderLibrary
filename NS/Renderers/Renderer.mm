@@ -197,10 +197,18 @@ void Renderer::drawSkybox(Cube* cube, Texture* tex) {
 
 void Renderer::BindDefaultFrameBuffer() {
   glBindFramebuffer(GL_FRAMEBUFFER, defaultFBO);
+  
+  
+  
   ivec4 vp = camera->viewport;
   glViewport(vp.x, vp.y, vp.z, vp.w);
-  glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  
+//  glEnable(GL_BLEND);
+//  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//  glDisable(GL_DEPTH_TEST);
+  
 }
 
 void Renderer::DrawFullScreenTexture(Texture* t) {
@@ -261,6 +269,20 @@ map<string, FBO*>& Renderer::GetFbos() {
   return fbos;
 }
 
+
+Texture* Renderer::CreateTexture(string TextureName, Texture* texture) {
+  GetTextures().insert(pair<string, Texture*>(TextureName, texture));
+  return texture;
+}
+
+
+FBO* Renderer::CreateFBO(string FBOName, Texture* texture) {
+  //GetTextures().insert(pair<string, Texture*>("fboATexture", Texture::CreateEmptyTexture(768,1024)));
+  FBO* fbo = new FBO(texture);
+  GetFbos().insert(pair<string, FBO*>(FBOName, fbo));
+  
+  return fbo;
+}
 
 void Renderer::HandleTouchBegan(ivec2 mouse) {
   printf("renderer not handling TouchBegan\n");

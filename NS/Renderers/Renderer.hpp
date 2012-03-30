@@ -70,8 +70,12 @@ public:
   
   void Cleanup();
 
-   bool isReady;
+  bool isReady;
+  
 protected: 
+  FBO* CreateFBO(string FBOName, Texture* texture);
+  Texture* CreateTexture(string TextureName, Texture* texture);
+
   map<string, Program*> programs;
   map<string, Texture*> textures;
   map<string, FBO*> fbos;
@@ -95,9 +99,10 @@ protected:
   void DrawFullScreenTexture(Texture* t);
   void BindDefaultFrameBuffer();
   
+  void CreateFullScreenRect();
+
   
 private:
-  void CreateFullScreenRect();
   
  static Renderer* instance;
   

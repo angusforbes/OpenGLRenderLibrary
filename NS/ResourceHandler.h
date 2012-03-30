@@ -24,6 +24,8 @@ public:
   Texture* CreateCubeMapTextureFromImageFile(const string &fname) ;
 
   void* GetView();
+  float GetElapsedTime();
+  
   void ResetGyroscope();
 //  void LoadPngImage(const string& name);
 //  void* GetImageData();

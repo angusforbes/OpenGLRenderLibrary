@@ -126,6 +126,32 @@
 		928AA09714D3326E0091C035 /* Single3DTexture.vsh in Sources */ = {isa = PBXBuildFile; fileRef = 928AA09514D3326E0091C035 /* Single3DTexture.vsh */; };
 		928AA09914D332780091C035 /* Single3DTexture.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 928AA09414D3326E0091C035 /* Single3DTexture.fsh */; };
 		928AA09A14D332780091C035 /* Single3DTexture.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 928AA09514D3326E0091C035 /* Single3DTexture.vsh */; };
+		9292995515239BA40002C55B /* RendererGrating.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9292995415239BA40002C55B /* RendererGrating.mm */; };
+		9292996215239D990002C55B /* BlendTextures.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 9292995E15239D990002C55B /* BlendTextures.fsh */; };
+		9292996315239D990002C55B /* BlendTextures.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 9292995F15239D990002C55B /* BlendTextures.vsh */; };
+		9292996415239D990002C55B /* GratingPatch.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 9292996015239D990002C55B /* GratingPatch.fsh */; };
+		9292996515239D990002C55B /* GratingPatch.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 9292996115239D990002C55B /* GratingPatch.vsh */; };
+		929299691523B3860002C55B /* trans1.png in Resources */ = {isa = PBXBuildFile; fileRef = 929299661523B3860002C55B /* trans1.png */; };
+		9292996A1523B3860002C55B /* trans2.png in Resources */ = {isa = PBXBuildFile; fileRef = 929299671523B3860002C55B /* trans2.png */; };
+		9292996B1523B3860002C55B /* trans3.png in Resources */ = {isa = PBXBuildFile; fileRef = 929299681523B3860002C55B /* trans3.png */; };
+		9292996E1523B4C30002C55B /* OutputTexture.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 9292996C1523B4C20002C55B /* OutputTexture.fsh */; };
+		9292996F1523B4C30002C55B /* OutputTexture.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 9292996D1523B4C20002C55B /* OutputTexture.vsh */; };
+		929299711523C2DC0002C55B /* trans4.png in Resources */ = {isa = PBXBuildFile; fileRef = 929299701523C2DC0002C55B /* trans4.png */; };
+		929299761523C7D80002C55B /* transrect1.png in Resources */ = {isa = PBXBuildFile; fileRef = 929299721523C7D50002C55B /* transrect1.png */; };
+		929299771523C7D80002C55B /* transrect2.png in Resources */ = {isa = PBXBuildFile; fileRef = 929299731523C7D60002C55B /* transrect2.png */; };
+		929299781523C7D80002C55B /* transrect3.png in Resources */ = {isa = PBXBuildFile; fileRef = 929299741523C7D70002C55B /* transrect3.png */; };
+		929299791523C7D80002C55B /* transrect4.png in Resources */ = {isa = PBXBuildFile; fileRef = 929299751523C7D80002C55B /* transrect4.png */; };
+		9292997C1524CA4C0002C55B /* Circle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9292997B1524CA4C0002C55B /* Circle.cpp */; };
+		9292997E1524DD270002C55B /* gauss.png in Resources */ = {isa = PBXBuildFile; fileRef = 9292997D1524DD260002C55B /* gauss.png */; };
+		929299811524DF0F0002C55B /* circle.png in Resources */ = {isa = PBXBuildFile; fileRef = 9292997F1524DF0C0002C55B /* circle.png */; };
+		929299821524DF0F0002C55B /* circle2.png in Resources */ = {isa = PBXBuildFile; fileRef = 929299801524DF0D0002C55B /* circle2.png */; };
+		929299841524E81D0002C55B /* RectGrating.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 929299831524E81C0002C55B /* RectGrating.cpp */; };
+		929299871524FCB80002C55B /* circle3.png in Resources */ = {isa = PBXBuildFile; fileRef = 929299861524FCB70002C55B /* circle3.png */; };
+		929299891524FDEB0002C55B /* circle4.png in Resources */ = {isa = PBXBuildFile; fileRef = 929299881524FDE90002C55B /* circle4.png */; };
+		9292998B15252A6D0002C55B /* transrect5.png in Resources */ = {isa = PBXBuildFile; fileRef = 9292998A15252A6C0002C55B /* transrect5.png */; };
+		9292998E152629FC0002C55B /* GratingFunctions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9292998D152629FA0002C55B /* GratingFunctions.mm */; };
+		9292999015262A2B0002C55B /* RendererGratingBubble.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9292998F15262A290002C55B /* RendererGratingBubble.mm */; };
+		92929994152634B40002C55B /* RendererColorCues.mm in Sources */ = {isa = PBXBuildFile; fileRef = 92929993152634B10002C55B /* RendererColorCues.mm */; };
 		92F39D06143AB75F0032207E /* address.c in Sources */ = {isa = PBXBuildFile; fileRef = 92F39CFB143AB75F0032207E /* address.c */; };
 		92F39D07143AB75F0032207E /* blob.c in Sources */ = {isa = PBXBuildFile; fileRef = 92F39CFC143AB75F0032207E /* blob.c */; };
 		92F39D08143AB75F0032207E /* bundle.c in Sources */ = {isa = PBXBuildFile; fileRef = 92F39CFD143AB75F0032207E /* bundle.c */; };
@@ -285,6 +311,42 @@
 		9282258E151053F40022A126 /* Cone.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Cone.hpp; path = ../Classes/Geometry/Cone.hpp; sourceTree = "<group>"; };
 		928AA09414D3326E0091C035 /* Single3DTexture.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = Single3DTexture.fsh; path = Shaders/Single3DTexture.fsh; sourceTree = "<group>"; };
 		928AA09514D3326E0091C035 /* Single3DTexture.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = Single3DTexture.vsh; path = Shaders/Single3DTexture.vsh; sourceTree = "<group>"; };
+		9292995315239BA40002C55B /* RendererGrating.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = RendererGrating.hpp; path = Grating/RendererGrating.hpp; sourceTree = "<group>"; };
+		9292995415239BA40002C55B /* RendererGrating.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RendererGrating.mm; path = Grating/RendererGrating.mm; sourceTree = "<group>"; };
+		9292995615239BB70002C55B /* BlendTextures.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = BlendTextures.fsh; path = Grating/Resources/BlendTextures.fsh; sourceTree = "<group>"; };
+		9292995715239BB70002C55B /* BlendTextures.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = BlendTextures.vsh; path = Grating/Resources/BlendTextures.vsh; sourceTree = "<group>"; };
+		9292995815239BB70002C55B /* GratingPatch.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = GratingPatch.fsh; path = Grating/Resources/GratingPatch.fsh; sourceTree = "<group>"; };
+		9292995915239BB70002C55B /* GratingPatch.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = GratingPatch.vsh; path = Grating/Resources/GratingPatch.vsh; sourceTree = "<group>"; };
+		9292995E15239D990002C55B /* BlendTextures.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = BlendTextures.fsh; path = Grating/Resources/BlendTextures.fsh; sourceTree = "<group>"; };
+		9292995F15239D990002C55B /* BlendTextures.vsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = BlendTextures.vsh; path = Grating/Resources/BlendTextures.vsh; sourceTree = "<group>"; };
+		9292996015239D990002C55B /* GratingPatch.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = GratingPatch.fsh; path = Grating/Resources/GratingPatch.fsh; sourceTree = "<group>"; };
+		9292996115239D990002C55B /* GratingPatch.vsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = GratingPatch.vsh; path = Grating/Resources/GratingPatch.vsh; sourceTree = "<group>"; };
+		929299661523B3860002C55B /* trans1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = trans1.png; path = Grating/Resources/trans1.png; sourceTree = "<group>"; };
+		929299671523B3860002C55B /* trans2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = trans2.png; path = Grating/Resources/trans2.png; sourceTree = "<group>"; };
+		929299681523B3860002C55B /* trans3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = trans3.png; path = Grating/Resources/trans3.png; sourceTree = "<group>"; };
+		9292996C1523B4C20002C55B /* OutputTexture.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = OutputTexture.fsh; path = Grating/Resources/OutputTexture.fsh; sourceTree = "<group>"; };
+		9292996D1523B4C20002C55B /* OutputTexture.vsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = OutputTexture.vsh; path = Grating/Resources/OutputTexture.vsh; sourceTree = "<group>"; };
+		929299701523C2DC0002C55B /* trans4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = trans4.png; path = Grating/Resources/trans4.png; sourceTree = "<group>"; };
+		929299721523C7D50002C55B /* transrect1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = transrect1.png; path = Grating/Resources/transrect1.png; sourceTree = "<group>"; };
+		929299731523C7D60002C55B /* transrect2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = transrect2.png; path = Grating/Resources/transrect2.png; sourceTree = "<group>"; };
+		929299741523C7D70002C55B /* transrect3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = transrect3.png; path = Grating/Resources/transrect3.png; sourceTree = "<group>"; };
+		929299751523C7D80002C55B /* transrect4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = transrect4.png; path = Grating/Resources/transrect4.png; sourceTree = "<group>"; };
+		9292997A1524CA320002C55B /* Circle.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Circle.hpp; path = ../Classes/Geometry/Circle.hpp; sourceTree = "<group>"; };
+		9292997B1524CA4C0002C55B /* Circle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Circle.cpp; path = ../Classes/Geometry/Circle.cpp; sourceTree = "<group>"; };
+		9292997D1524DD260002C55B /* gauss.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = gauss.png; path = Grating/Resources/gauss.png; sourceTree = "<group>"; };
+		9292997F1524DF0C0002C55B /* circle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = circle.png; path = Grating/Resources/circle.png; sourceTree = "<group>"; };
+		929299801524DF0D0002C55B /* circle2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = circle2.png; path = Grating/Resources/circle2.png; sourceTree = "<group>"; };
+		929299831524E81C0002C55B /* RectGrating.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RectGrating.cpp; path = Grating/RectGrating.cpp; sourceTree = "<group>"; };
+		929299851524E82E0002C55B /* RectGrating.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = RectGrating.hpp; sourceTree = "<group>"; };
+		929299861524FCB70002C55B /* circle3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = circle3.png; path = Grating/Resources/circle3.png; sourceTree = "<group>"; };
+		929299881524FDE90002C55B /* circle4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = circle4.png; path = Grating/Resources/circle4.png; sourceTree = "<group>"; };
+		9292998A15252A6C0002C55B /* transrect5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = transrect5.png; path = Grating/Resources/transrect5.png; sourceTree = "<group>"; };
+		9292998C152629E40002C55B /* GratingFunctions.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = GratingFunctions.hpp; path = Grating/GratingFunctions.hpp; sourceTree = "<group>"; };
+		9292998D152629FA0002C55B /* GratingFunctions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GratingFunctions.mm; path = Grating/GratingFunctions.mm; sourceTree = "<group>"; };
+		9292998F15262A290002C55B /* RendererGratingBubble.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RendererGratingBubble.mm; path = Grating/RendererGratingBubble.mm; sourceTree = "<group>"; };
+		9292999115262A430002C55B /* RendererGratingBubble.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = RendererGratingBubble.hpp; path = Grating/RendererGratingBubble.hpp; sourceTree = "<group>"; };
+		92929992152634990002C55B /* RendererColorCues.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = RendererColorCues.hpp; path = Grating/RendererColorCues.hpp; sourceTree = "<group>"; };
+		92929993152634B10002C55B /* RendererColorCues.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RendererColorCues.mm; path = Grating/RendererColorCues.mm; sourceTree = "<group>"; };
 		92F39CFB143AB75F0032207E /* address.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = address.c; sourceTree = "<group>"; };
 		92F39CFC143AB75F0032207E /* blob.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = blob.c; sourceTree = "<group>"; };
 		92F39CFD143AB75F0032207E /* bundle.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bundle.c; sourceTree = "<group>"; };
@@ -434,6 +496,7 @@
 		9201D65E144148F400EA6789 /* Renderers */ = {
 			isa = PBXGroup;
 			children = (
+				9292995015239B7B0002C55B /* Grating */,
 				9282258515101C5C0022A126 /* FluidAutomata3D */,
 				920B8DAC14CC8DE3005FEC61 /* RendererTest.hpp */,
 				920B8DAD14CC8DF0005FEC61 /* RendererTest.mm */,
@@ -483,6 +546,8 @@
 				923DA1BF14FAB8C6000B21EB /* ModelView.hpp */,
 				923DA1C014FAB8C6000B21EB /* Rectangle.cpp */,
 				923DA1C114FAB8C6000B21EB /* Rectangle.hpp */,
+				9292997B1524CA4C0002C55B /* Circle.cpp */,
+				9292997A1524CA320002C55B /* Circle.hpp */,
 				923DA1C214FAB8C6000B21EB /* Sphere.cpp */,
 				923DA1C314FAB8C6000B21EB /* Sphere.hpp */,
 				923DA1C414FAB8C6000B21EB /* TextureCamera.cpp */,
@@ -610,6 +675,55 @@
 		9282258615101C700022A126 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9292995615239BB70002C55B /* BlendTextures.fsh */,
+				9292995715239BB70002C55B /* BlendTextures.vsh */,
+				9292995815239BB70002C55B /* GratingPatch.fsh */,
+				9292995915239BB70002C55B /* GratingPatch.vsh */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		9292995015239B7B0002C55B /* Grating */ = {
+			isa = PBXGroup;
+			children = (
+				9292995315239BA40002C55B /* RendererGrating.hpp */,
+				9292995415239BA40002C55B /* RendererGrating.mm */,
+				9292998F15262A290002C55B /* RendererGratingBubble.mm */,
+				9292999115262A430002C55B /* RendererGratingBubble.hpp */,
+				92929992152634990002C55B /* RendererColorCues.hpp */,
+				92929993152634B10002C55B /* RendererColorCues.mm */,
+				9292995215239B840002C55B /* Resources */,
+				929299831524E81C0002C55B /* RectGrating.cpp */,
+				929299851524E82E0002C55B /* RectGrating.hpp */,
+				9292998C152629E40002C55B /* GratingFunctions.hpp */,
+				9292998D152629FA0002C55B /* GratingFunctions.mm */,
+			);
+			name = Grating;
+			sourceTree = "<group>";
+		};
+		9292995215239B840002C55B /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				929299721523C7D50002C55B /* transrect1.png */,
+				929299731523C7D60002C55B /* transrect2.png */,
+				929299741523C7D70002C55B /* transrect3.png */,
+				9292998A15252A6C0002C55B /* transrect5.png */,
+				929299751523C7D80002C55B /* transrect4.png */,
+				929299661523B3860002C55B /* trans1.png */,
+				929299671523B3860002C55B /* trans2.png */,
+				9292997F1524DF0C0002C55B /* circle.png */,
+				929299801524DF0D0002C55B /* circle2.png */,
+				929299861524FCB70002C55B /* circle3.png */,
+				929299881524FDE90002C55B /* circle4.png */,
+				929299681523B3860002C55B /* trans3.png */,
+				929299701523C2DC0002C55B /* trans4.png */,
+				9292997D1524DD260002C55B /* gauss.png */,
+				9292996C1523B4C20002C55B /* OutputTexture.fsh */,
+				9292996D1523B4C20002C55B /* OutputTexture.vsh */,
+				9292995E15239D990002C55B /* BlendTextures.fsh */,
+				9292995F15239D990002C55B /* BlendTextures.vsh */,
+				9292996015239D990002C55B /* GratingPatch.fsh */,
+				9292996115239D990002C55B /* GratingPatch.vsh */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -702,6 +816,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9292996E1523B4C30002C55B /* OutputTexture.fsh in Resources */,
+				9292996F1523B4C30002C55B /* OutputTexture.vsh in Resources */,
+				9292996215239D990002C55B /* BlendTextures.fsh in Resources */,
+				9292996315239D990002C55B /* BlendTextures.vsh in Resources */,
+				9292996415239D990002C55B /* GratingPatch.fsh in Resources */,
+				9292996515239D990002C55B /* GratingPatch.vsh in Resources */,
 				9282258B151021D10022A126 /* BasicShader.fsh in Resources */,
 				9282258C151021D10022A126 /* BasicShader.vsh in Resources */,
 				9264E67C14D9DC4100AD3D82 /* BicubicInterpolation.fsh in Resources */,
@@ -782,6 +902,20 @@
 				9264E6F414DB4F0D00AD3D82 /* FILE58.bmp in Resources */,
 				9264E6F514DB4F0D00AD3D82 /* FILE59.bmp in Resources */,
 				9264E6F614DB4F0D00AD3D82 /* FILE60.bmp in Resources */,
+				929299691523B3860002C55B /* trans1.png in Resources */,
+				9292996A1523B3860002C55B /* trans2.png in Resources */,
+				9292996B1523B3860002C55B /* trans3.png in Resources */,
+				929299711523C2DC0002C55B /* trans4.png in Resources */,
+				929299761523C7D80002C55B /* transrect1.png in Resources */,
+				929299771523C7D80002C55B /* transrect2.png in Resources */,
+				929299781523C7D80002C55B /* transrect3.png in Resources */,
+				929299791523C7D80002C55B /* transrect4.png in Resources */,
+				9292997E1524DD270002C55B /* gauss.png in Resources */,
+				929299811524DF0F0002C55B /* circle.png in Resources */,
+				929299821524DF0F0002C55B /* circle2.png in Resources */,
+				929299871524FCB80002C55B /* circle3.png in Resources */,
+				929299891524FDEB0002C55B /* circle4.png in Resources */,
+				9292998B15252A6D0002C55B /* transrect5.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -837,6 +971,12 @@
 				92822589151020EB0022A126 /* BasicShader.fsh in Sources */,
 				9282258A151020EB0022A126 /* BasicShader.vsh in Sources */,
 				9282258F151053F40022A126 /* Cone.cpp in Sources */,
+				9292995515239BA40002C55B /* RendererGrating.mm in Sources */,
+				9292997C1524CA4C0002C55B /* Circle.cpp in Sources */,
+				929299841524E81D0002C55B /* RectGrating.cpp in Sources */,
+				9292998E152629FC0002C55B /* GratingFunctions.mm in Sources */,
+				9292999015262A2B0002C55B /* RendererGratingBubble.mm in Sources */,
+				92929994152634B40002C55B /* RendererColorCues.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

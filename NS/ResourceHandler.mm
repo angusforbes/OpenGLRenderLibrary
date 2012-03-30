@@ -31,6 +31,10 @@ ResourceHandler* ResourceHandler::GetResourceHandler() {
 ResourceHandler::ResourceHandler() { 
 }
 
+float ResourceHandler::GetElapsedTime() {
+  NSGLView* v = (NSGLView*) GetView(); 
+  return [v getTotalTime];
+}
 
 void* ResourceHandler::GetView() {
   AppDelegate* ad = (AppDelegate*) [NSApp delegate];

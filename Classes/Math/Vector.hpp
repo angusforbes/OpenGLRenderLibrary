@@ -196,6 +196,12 @@ struct Vector3 {
                    z * (1 - t) + v.z * t);
   }
   
+  
+  static float Distance(const Vector3& v1, const Vector3& v2) {
+    return sqrt( pow(v1.x - v2.x, 2) + pow(v1.y - v2.y, 2) + pow(v1.z - v2.z, 2)); 
+  }
+
+  
   T LengthSquared() const
   {
     return x * x + y * y + z * z;
@@ -237,6 +243,8 @@ template <typename T>
 struct Vector4 {
   Vector4() {}
   Vector4(T x, T y, T z, T w) : x(x), y(y), z(z), w(w) {}
+  Vector4(T x) : x(x), y(x), z(x), w(x) {}
+  Vector4(T x, T w) : x(x), y(x), z(x), w(w) {}
   
   T Dot(const Vector4& v) const
   {
@@ -251,6 +259,16 @@ struct Vector4 {
   }
   
   
+  Vector4 operator*(T s) const {
+    return Vector4(x * s, y * s, z * s, w * s);
+  }
+  
+  Vector4 operator/(T s) const {
+    //return Vector3(x / s, y / s, z / s);
+    return Vector4(x, y, z, w) * (1.0/s);    
+  }
+  
+
   const T* Pointer() const
   {
     return &x;
