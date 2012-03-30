@@ -268,6 +268,12 @@ struct Vector4 {
     return Vector4(x, y, z, w) * (1.0/s);    
   }
   
+  static bool isEqual(const Vector4<T>& v1, const Vector4<T>& v2) {
+    if (v1.x == v2.x && v1.y == v2.y && v1.z == v2.z && v1.w == v2.w) {
+      return true;
+    }
+    return false;
+  }
 
   const T* Pointer() const
   {

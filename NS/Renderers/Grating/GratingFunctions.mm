@@ -3,52 +3,63 @@
 #include "Utils.hpp"
 
 vec4 GratingFunctions::ChooseColor() {
+  int which = Utils::randomIntBetween(0,19);
+  
+  return ChooseColor(which);
+}
+  
+vec4 GratingFunctions::ChooseColor(int which) {
   
   
   vec4 color;
-  int which = Utils::randomIntBetween(0,19);
   
   switch (which) {
     case 0:
-      color = vec4( 183, 148, 114 ,255); break;
+      color = vec4(183, 148, 114 ,255); break;
     case 1:
-      color = vec4(  242, 148, 80, 255); break;
+      color = vec4( 108, 181, 209,255); break;
+      
     case 2:
-      color = vec4(   240, 204, 88,255); break;
+      color = vec4( 241, 160, 201,255); break;
+      
     case 3:
-      color = vec4(  253, 100, 93,255); break;
+      color = vec4(253, 100, 93,255); break;
     case 4:
-      color = vec4(  255, 154, 121,255); break;
+      color = vec4( 181, 178, 255,255); break;
+      
     case 5:
-      color = vec4(  149, 151, 49,255); break;
+      color = vec4(149, 151, 49,255); break;
     case 6:
       color = vec4( 156, 199, 36,255); break;
     case 7:
-      color = vec4(  110, 154, 66,255); break;
+      color = vec4( 110, 154, 66,255); break;
     case 8:
       color = vec4( 56, 211, 78,255); break;
     case 9:
-      color = vec4(    84, 222, 176,255); break;
+      color = vec4( 84, 222, 176,255); break;
     case 10:
       color = vec4( 53, 192, 192,255); break;
     case 11:
-      color = vec4( 108, 181, 209,255); break;
+      color = vec4(242, 148, 80, 255); break;
+      
     case 12:
-      color = vec4(   117, 191, 255, 255); break;
+      color = vec4( 117, 191, 255, 255); break;
     case 13:
       color = vec4( 124, 121, 226,255); break;
     case 14:
-      color = vec4( 181, 178, 255,255); break;
+      color = vec4(255, 154, 121,255); break;
+      
     case 15:
-      color = vec4(  139, 94, 223,255); break;
+      color = vec4( 139, 94, 223,255); break;
     case 16:
-      color = vec4(   178, 135, 201,255); break;
+      color = vec4( 178, 135, 201,255); break;
     case 17:
-      color = vec4(  237, 104, 237,255); break;
+      color = vec4( 237, 104, 237,255); break;
     case 18:
-      color = vec4( 241, 160, 201,255); break;
+      color = vec4(240, 204, 88,255); break;
+      
     case 19:
-      color = vec4(    29, 45, 250 ,255); break;
+      color = vec4( 29, 45, 250 ,255); break;
     default:
       color = vec4( 255,255,255, 255); break;
       

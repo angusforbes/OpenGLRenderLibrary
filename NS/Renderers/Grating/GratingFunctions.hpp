@@ -11,6 +11,7 @@ class GratingFunctions {
 public:
   static void DrawGrating(FBO* fbo, Program* program, RectGrating* geom);
   static vec4 ChooseColor();
+  static vec4 ChooseColor(int which);
   
 };
 
