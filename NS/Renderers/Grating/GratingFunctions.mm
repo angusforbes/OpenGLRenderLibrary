@@ -126,6 +126,11 @@ void GratingFunctions::DrawGrating(FBO* fbo, Program* program, RectGrating* geom
     glUniform1i(program->Uniform("Step"), geom->step);
     glUniform1f(program->Uniform("Thickness"),geom->thickness);
     
+    if (geom->isSelected == true) {
+      glUniform1i(program->Uniform("Selected"), 1);
+    } else {
+      glUniform1i(program->Uniform("Selected"), 0);
+    }   
     
     if (geom->kind == 99) {
       glUniform1i(program->Uniform("Pulse"), 1);

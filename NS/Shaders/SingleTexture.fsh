@@ -10,6 +10,6 @@ void main() {
   //gl_FragColor = vec4(color.xyz, 0.7); //TEMP!!!
   
   //texture2D( s_tex, v_texCoord );
-  //gl_FragColor = vec4(1.0,0.0,0.0,1.0); //texture2D( s_tex, v_texCoord );
+ // gl_FragColor = vec4(0.0,1.0,0.0,1.0); //texture2D( s_tex, v_texCoord );
   
 }                                                 

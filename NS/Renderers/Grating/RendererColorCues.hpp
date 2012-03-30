@@ -3,6 +3,7 @@
 #include "RectGrating.hpp" 
 #include "Circle.hpp" 
 #include "TextureCamera.hpp"
+#include "Texture.hpp" 
 
 #ifndef RENDERER_COLOR_CUES_hpp
 #define RENDERER_COLOR_CUES_hpp
@@ -33,8 +34,10 @@ public:
   void HandleTouchBegan(ivec2 mouse);
 private:
   
-  RectGrating* r1s[100];
+  RectGrating* selectRect;
   
+  Rectangle* textRect;
+  Texture* instructionsTex;
 };
 
 

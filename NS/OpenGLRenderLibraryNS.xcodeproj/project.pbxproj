@@ -18,6 +18,7 @@
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		9201D6D2144148F500EA6789 /* NSGLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9201D69E144148F400EA6789 /* NSGLView.mm */; };
+		9207503D15265B8A00734F82 /* instructions.png in Resources */ = {isa = PBXBuildFile; fileRef = 9207503C15265B8A00734F82 /* instructions.png */; };
 		920B8D6714CC8227005FEC61 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 920B8D6614CC8226005FEC61 /* MainMenu.xib */; };
 		920B8D6B14CC8517005FEC61 /* Renderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 920B8D6914CC8517005FEC61 /* Renderer.mm */; };
 		920B8DAE14CC8DF0005FEC61 /* RendererTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 920B8DAD14CC8DF0005FEC61 /* RendererTest.mm */; };
@@ -183,6 +184,7 @@
 		8D1107310486CEB800E47090 /* OpenGLRenderLibraryNS-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "OpenGLRenderLibraryNS-Info.plist"; sourceTree = "<group>"; };
 		9201D69D144148F400EA6789 /* NSGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSGLView.h; path = Renderers/NSGLView.h; sourceTree = "<group>"; };
 		9201D69E144148F400EA6789 /* NSGLView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NSGLView.mm; path = Renderers/NSGLView.mm; sourceTree = "<group>"; };
+		9207503C15265B8A00734F82 /* instructions.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = instructions.png; path = Grating/Resources/instructions.png; sourceTree = "<group>"; };
 		920B8D6614CC8226005FEC61 /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainMenu.xib; path = Resources/Mac/MainMenu.xib; sourceTree = "<group>"; };
 		920B8D6814CC8517005FEC61 /* Renderer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Renderer.hpp; sourceTree = "<group>"; };
 		920B8D6914CC8517005FEC61 /* Renderer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Renderer.mm; sourceTree = "<group>"; };
@@ -704,6 +706,7 @@
 		9292995215239B840002C55B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9207503C15265B8A00734F82 /* instructions.png */,
 				929299721523C7D50002C55B /* transrect1.png */,
 				929299731523C7D60002C55B /* transrect2.png */,
 				929299741523C7D70002C55B /* transrect3.png */,
@@ -916,6 +919,7 @@
 				929299871524FCB80002C55B /* circle3.png in Resources */,
 				929299891524FDEB0002C55B /* circle4.png in Resources */,
 				9292998B15252A6D0002C55B /* transrect5.png in Resources */,
+				9207503D15265B8A00734F82 /* instructions.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

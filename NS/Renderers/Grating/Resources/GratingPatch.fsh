@@ -16,6 +16,8 @@ uniform float FreqVal;
 
 uniform sampler2D Mask;
 
+uniform int Selected;
+
 void main() {
   
   
@@ -53,5 +55,13 @@ void main() {
     //sv2 = clamp(sv2, 0.3, 0.7);
     gl_FragColor = vec4(BaseColor) * sv2 * maskColor.a;
     
+  }
+  
+  if (Selected == 1) {
+    if (v_texCoord.x > 0.4 && v_texCoord.x < 0.6 && 
+      v_texCoord.y > 0.4 && v_texCoord.y < 0.6) {
+    gl_FragColor = vec4(1.0,1.0,1.0,1.0);
+
+    }
   }
 }                                               

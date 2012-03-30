@@ -19,6 +19,9 @@ RectGrating::RectGrating(int _kind, Texture* _mask, vec4 _color, vec4 _backgroun
   step = 0;
   thickness = 0.0; 
   
+  choose = false;
+   isSelected = false;
+
 }
 
 RectGrating::RectGrating(int _kind, Texture* _mask, vec4 _color, vec4 _backgroundColor, 
@@ -39,4 +42,7 @@ RectGrating::RectGrating(int _kind, Texture* _mask, vec4 _color, vec4 _backgroun
   
   step = _step;
   thickness = _thickness; 
+  
+  choose = false;
+  isSelected = false;
 }

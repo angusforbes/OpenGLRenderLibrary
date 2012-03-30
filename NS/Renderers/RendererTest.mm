@@ -137,6 +137,7 @@ void RendererTest::Render() {
       rects[i]->Transform();
     }
   }
+  
   Program* program = GetPrograms()["SingleTexture"]; 
   Texture* noiseTexture = GetTextures()["testTexture"];
   

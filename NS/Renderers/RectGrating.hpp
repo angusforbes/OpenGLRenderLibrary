@@ -40,6 +40,9 @@ public:
   
   int step;
   float thickness;
+  
+  bool choose;
+  bool isSelected;
 };
 
 #endif
