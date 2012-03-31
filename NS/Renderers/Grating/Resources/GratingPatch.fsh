@@ -39,14 +39,19 @@ void main() {
     
     //currently encoding a border as red pixels...
     if (maskColor.r > 0.0) {
-      //gl_FragColor = vec4(maskColor.r, maskColor.r, maskColor.r, 0.5);
-      gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);  
+      gl_FragColor = vec4(maskColor.r, maskColor.r, maskColor.r, 0.5);
+      //gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);  
     } else {
       vec4 useColor = (vec4(sv1) * BaseColor) + (vec4(1.0-sv1) * ContrastColor) ;
       gl_FragColor = vec4(useColor) * maskColor.a;
     }
     
   } else {
+    //currently encoding a border as red pixels...
+    if (maskColor.r > 0.0) {
+      gl_FragColor = vec4(maskColor.r, maskColor.r, maskColor.r, 0.5);
+      //gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);  
+    } else {
     float sv2 = sin(FreqVal + PhaseVal) ; //between -1 and 1
     sv2 = (sv2 + 1.0)/2.0; //place between 0.0 and 1.0
     sv2 = (sv2 * 0.7); //place between 0.0 and 0.7;
@@ -54,6 +59,7 @@ void main() {
     
     //sv2 = clamp(sv2, 0.3, 0.7);
     gl_FragColor = vec4(BaseColor) * sv2 * maskColor.a;
+    }
     
   }
   
