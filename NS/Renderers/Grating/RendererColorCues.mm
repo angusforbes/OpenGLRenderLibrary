@@ -17,7 +17,7 @@
 //6 = 2 moving texture, 1 static texture - task: pick a moving texture
 //7 = 3 static textures - task: pick a static texture
 
-int EXPERIMENT_NUMBER=12;  
+int EXPERIMENT_NUMBER=15;  
 vec4 BACKGROUND_COLOR=vec4(128,128,128,255);
 
 bool I_AM_READY  = false;
@@ -167,6 +167,13 @@ void RendererColorCues::Initialize() {
       which = 16;
     } else if ( i < 40 ){
       which = 17;
+    } else if ( i < 45 ){
+      which = 18;
+    } else if ( i < 50 ){
+      which = 19;
+    } else if ( i < 55){
+      which = 20;
+
     } else {
       which = 0;
     }
@@ -310,7 +317,7 @@ void RendererColorCues::Initialize() {
     */
     
     RectGrating* r;
-    vec4 rcolor = GratingFunctions::ChooseColor(Utils::randomIntBetween(6,19));
+    vec4 rcolor = GratingFunctions::ChooseColor(Utils::randomIntBetween(9,19));
     
     switch(which) {
         
@@ -369,8 +376,17 @@ void RendererColorCues::Initialize() {
         } 
         
         break;
+      case 18: //pulsing C
+        r = new RectGrating(99, circleMask, rcolor, rcolor, 0.5, 0.0, 0.0, Utils::randomFloatBetween(0.05, 0.05) );
         
+        break; 
+      case 19: //moving C
+        r = new RectGrating(0, circleMask, rcolor, colorDG, 6.0, 0.0, Utils::randomFloatBetween(0.0,179.0), 0.15 );
+        break;
         
+      case 20: //static grating C
+        r = new RectGrating(50, circleMask, rcolor, colorDG, Utils::randomFloatBetween(4.0,7.0), 0.5, Utils::randomFloatBetween(0.0,179.0), 0.0 );
+        break;
         
       case 0: //not pulsing
         r = new RectGrating(99, circleMask, rcolor, rcolor, 0.01, 0.5, 0.0,  0.0 );
