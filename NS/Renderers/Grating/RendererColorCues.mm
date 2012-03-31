@@ -17,7 +17,7 @@
 //6 = 2 moving texture, 1 static texture - task: pick a moving texture
 //7 = 3 static textures - task: pick a static texture
 
-int EXPERIMENT_NUMBER=1;  
+int EXPERIMENT_NUMBER=12;  
 vec4 BACKGROUND_COLOR=vec4(128,128,128,255);
 
 bool I_AM_READY  = false;
@@ -56,26 +56,34 @@ void RendererColorCues::Initialize() {
   vec4 rcolor4;
   vec4 rcolor5;
   vec4 rcolor6;
+  vec4 rcolor7;
+  vec4 rcolor8;
   
   float ang1;
   float ang2;
   float ang3;
- 
+  float ang4;
+  
   switch(Utils::randomIntBetween(0,2)) {
     case 0:
       ang1 = 0.0;
       ang2 = 45.0;
       ang3 = 90.0;
+      ang4 = 135.0;
+      
       break;
     case 1:
       ang2 = 0.0;
       ang3 = 45.0;
-      ang1 = 90.0;
+      ang4 = 90.0;
+      ang1 = 135.0;
+      
       break;
     case 2:
       ang3 = 0.0;
-      ang1 = 45.0;
-      ang2 = 90.0;
+      ang4 = 45.0;
+      ang1 = 90.0;
+      ang2 = 135.0;
       break;
   }
   
@@ -87,6 +95,9 @@ void RendererColorCues::Initialize() {
       rcolor4 = GratingFunctions::ChooseColor(3);
       rcolor5 = GratingFunctions::ChooseColor(2);
       rcolor6 = GratingFunctions::ChooseColor(5);
+      rcolor7 = GratingFunctions::ChooseColor(7);
+      rcolor8 = GratingFunctions::ChooseColor(8);
+      
       break;
     case 1:
       rcolor1 = GratingFunctions::ChooseColor(5);
@@ -95,14 +106,20 @@ void RendererColorCues::Initialize() {
       rcolor4 = GratingFunctions::ChooseColor(2);
       rcolor5 = GratingFunctions::ChooseColor(1);
       rcolor6 = GratingFunctions::ChooseColor(0);
+      rcolor7 = GratingFunctions::ChooseColor(8);
+      rcolor8 = GratingFunctions::ChooseColor(7);
+      
       break;
     case 2:
       rcolor1 = GratingFunctions::ChooseColor(4);
       rcolor2 = GratingFunctions::ChooseColor(3);
       rcolor3 = GratingFunctions::ChooseColor(2);
       rcolor4 = GratingFunctions::ChooseColor(5);
-      rcolor5 = GratingFunctions::ChooseColor(0);
+      rcolor5 = GratingFunctions::ChooseColor(8);
       rcolor6 = GratingFunctions::ChooseColor(1);
+      rcolor7 = GratingFunctions::ChooseColor(7);
+      rcolor8 = GratingFunctions::ChooseColor(0);
+      
     break;
   }
   
@@ -134,7 +151,51 @@ void RendererColorCues::Initialize() {
     
     int which;
     
+    if ( i < 5 ) {
+      which = 10;
+    } else if ( i < 10 ) {
+      which = 11;
+    } else if ( i < 15 ) {
+      which = 12;
+    } else if ( i < 20 ) {
+      which = 13;
+    } else if ( i < 25 ) {
+      which = 14;
+    } else if ( i < 30 ) {
+      which = 15;
+    } else if ( i < 35 ) {
+      which = 16;
+    } else if ( i < 40 ){
+      which = 17;
+    } else {
+      which = 0;
+    }
+
+   
+    /*
     switch (EXPERIMENT_NUMBER) {
+      case 0:
+        //EXPERIMENT 1 : 3 pulsing colors
+        
+        if ( i < 12 ) {
+          which = 10;
+        } else if ( i < 24 ) {
+          which = 11;
+        } else if ( i < 36 ) {
+          which = 12;
+        } else if ( i < 50 ) {
+          which = 13;
+        } else if ( i < 62 ) {
+          which = 14;
+        } else if ( i < 74 ) {
+          which = 15;
+        } else if ( i < 86 ) {
+          which = 16;
+        } else {
+          which = 17;
+        }
+        break;
+        
       case 1:
         //EXPERIMENT 1 : 3 pulsing colors
         
@@ -246,11 +307,70 @@ void RendererColorCues::Initialize() {
         printf("ERROR, experiment number not defined\n");
         exit(0);
     }
+    */
     
     RectGrating* r;
     vec4 rcolor = GratingFunctions::ChooseColor(Utils::randomIntBetween(6,19));
     
     switch(which) {
+        
+      case 10: //not pulsing A
+        r = new RectGrating(99, circleMask, rcolor1, rcolor1, 0.01, 0.5, 0.0,  0.0 );
+        if (EXPERIMENT_NUMBER == 10) {
+          r->choose = true;
+        } 
+        break;
+      case 11: //not pulsing B
+        r = new RectGrating(99, circleMask, rcolor2, rcolor2, 0.01, 0.5, 0.0,  0.0 );
+        if (EXPERIMENT_NUMBER == 11) {
+          r->choose = true;
+        } 
+        
+        break;
+      case 12: //pulsing A
+        r = new RectGrating(99, circleMask, rcolor3, rcolor3, 0.0, 0.0, 0.0, Utils::randomFloatBetween(0.05, 0.05) );
+        if (EXPERIMENT_NUMBER == 12) {
+          r->choose = true;
+        } 
+        
+        break;
+      case 13: //pulsing B
+        r = new RectGrating(99, circleMask, rcolor4, rcolor4, 0.5, 0.0, 0.0, Utils::randomFloatBetween(0.05, 0.05) );
+        if (EXPERIMENT_NUMBER == 13) {
+          r->choose = true;
+        } 
+        
+        break; 
+      case 14: //moving A
+        r = new RectGrating(0, circleMask, rcolor5, colorDG, 6.0, 0.0, ang1, 0.15 );
+        if (EXPERIMENT_NUMBER == 14) {
+          r->choose = true;
+        } 
+        
+        break;
+      case 15: //moving B
+        r = new RectGrating(0, circleMask, rcolor6, colorDG, 6.0, 0.0, ang2, 0.15 );
+        if (EXPERIMENT_NUMBER == 15) {
+          r->choose = true;
+        } 
+        
+        break;
+      case 16: //static grating A
+        r = new RectGrating(50, circleMask, rcolor7, colorDG, 4.0, 0.5, ang3, 0.0 );
+        if (EXPERIMENT_NUMBER == 16) {
+          r->choose = true;
+        } 
+        
+        break;
+      case 17: //static grating B
+        r = new RectGrating(50, circleMask, rcolor8, colorDG, 4.0, 0.5, ang4, 0.0 );
+        if (EXPERIMENT_NUMBER == 17) {
+          r->choose = true;
+        } 
+        
+        break;
+        
+        
         
       case 0: //not pulsing
         r = new RectGrating(99, circleMask, rcolor, rcolor, 0.01, 0.5, 0.0,  0.0 );
@@ -329,6 +449,42 @@ void RendererColorCues::Initialize() {
   
   
   switch(EXPERIMENT_NUMBER) {
+      
+    case 10:
+      selectRect = new RectGrating(99, circleMask, rcolor1, rcolor1, 0.01, 0.5, 0.0,  0.0 );
+      break;
+    case 11:
+      selectRect = new RectGrating(99, circleMask, rcolor2, rcolor2, 0.01, 0.5, 0.0,  0.0 );
+      break;
+    case 12:
+      selectRect = new RectGrating(99, circleMask, rcolor3, rcolor3, 0.0, 0.0, 0.0, Utils::randomFloatBetween(0.05, 0.05) );
+      break;
+    case 13:
+      selectRect = new RectGrating(99, circleMask, rcolor4, rcolor4, 0.5, 0.0, 0.0, Utils::randomFloatBetween(0.05, 0.05) );
+      break;
+    case 14:
+      selectRect = new RectGrating(0, circleMask, rcolor5, colorDG, 6.0, 0.0, ang1, 0.15 );
+      
+      break;
+    case 15:
+      selectRect = new RectGrating(0, circleMask, rcolor6, colorDG, 6.0, 0.0, ang2, 0.15 );
+      
+      break;
+    case 16:
+      selectRect = new RectGrating(50, circleMask, rcolor7, colorDG, 4.0, 0.5, ang3, 0.0 );
+      
+      break;
+    case 17:
+      selectRect = new RectGrating(50, circleMask, rcolor8, colorDG, 4.0, 0.5, ang4, 0.0 );
+      
+      break;
+      
+      
+      
+    case 0:
+      selectRect = new RectGrating(99, circleMask, rcolor2, rcolor2, 0.0, 0.0, 0.0, Utils::randomFloatBetween(0.05, 0.05) );
+      break;
+      
     case 1:
       selectRect = new RectGrating(99, circleMask, rcolor2, rcolor2, 0.0, 0.0, 0.0, Utils::randomFloatBetween(0.05, 0.05) );
       break;
@@ -353,7 +509,7 @@ void RendererColorCues::Initialize() {
   
   selectRect->SetTranslate(vec3(-0.7, 0.4, 0.0));
   selectRect->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
-  selectRect->SetScale(vec3(0.05, 0.05 * camera->aspect, 1.0));
+  selectRect->SetScale(vec3(0.07, 0.07 * camera->aspect, 1.0));
   selectRect->Transform();
   
   I_AM_READY = true;

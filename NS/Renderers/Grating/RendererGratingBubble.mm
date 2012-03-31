@@ -67,13 +67,13 @@ void RendererGratingBubble::Initialize() {
   fs1->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
   fs1->SetScale(vec3(2.0, 2.0, 1.0));
   fs1->Transform();
-  RectGrating* fs2 = new RectGrating(7, tex3, color7, vec4(0.0,1.0), 70.0, 0.0, 0.0, 0.0,
+  RectGrating* fs2 = new RectGrating(7, tex3, color7, vec4(0.0,1.0), 70.0, 0.0, 0.0, 0.2,
                                      1, 0.95);
   fs2->SetTranslate(vec3(-0.5, -0.5, 0.0));
   fs2->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
   fs2->SetScale(vec3(2.0, 2.0, 1.0));
   fs2->Transform();
-  RectGrating* fs3 = new RectGrating(7, tex3, color7, vec4(0.0,1.0), 70.0, 0.0, 90.0, 0.00,
+  RectGrating* fs3 = new RectGrating(7, tex3, color7, vec4(0.0,1.0), 70.0, 0.0, 90.0, 0.10,
                                      1, 0.95);
   fs3->SetTranslate(vec3(-0.5, -0.5, 0.0));
   fs3->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
