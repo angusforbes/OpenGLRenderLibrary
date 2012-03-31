@@ -17,12 +17,115 @@
 //6 = 2 moving texture, 1 static texture - task: pick a moving texture
 //7 = 3 static textures - task: pick a static texture
 
-int EXPERIMENT_NUMBER=15;  
+int EXPERIMENT_NUMBER=4; //15;  
 vec4 BACKGROUND_COLOR=vec4(128,128,128,255);
+//vec4 BACKGROUND_COLOR=vec4(0,0,0,255);
 
 bool I_AM_READY  = false;
 
 RendererColorCues::RendererColorCues() : Renderer() {
+}
+
+void RendererColorCues::InitializeImagesOnly() {
+  ResourceHandler* rh = ResourceHandler::GetResourceHandler();
+  Texture* circleMask = rh->CreateTextureFromImageFile("circle3.png");
+  
+  vec4 color = vec4(1.0,1.0,1.0,1.0);
+  vec4 colorDG = vec4(0.0, 1.0);
+  
+  //top row = change in phase
+  
+  RectGrating* r1 = new RectGrating(0, circleMask, color, colorDG, 4.0, 0.0, 0.0, 0.0 );
+  r1->SetTranslate(vec3(-0.8, 0.2, 0.0));
+  r1->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
+  r1->SetScale(vec3(0.15, 0.15 * camera->aspect, 1.0));
+  r1->Transform();       
+  AddGeom(r1);
+ 
+  RectGrating* r2 = new RectGrating(0, circleMask, color, colorDG, 4.0, M_PI/3.0, 0.0, 0.0 );
+  r2->SetTranslate(vec3(-0.6, 0.2, 0.0));
+  r2->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
+  r2->SetScale(vec3(0.15, 0.15 * camera->aspect, 1.0));
+  r2->Transform();       
+  AddGeom(r2);
+  
+  RectGrating* r3 = new RectGrating(0, circleMask, color, colorDG, 4.0, (M_PI/3.0)*2.0, 0.0, 0.0 );
+  r3->SetTranslate(vec3(-0.4, 0.2, 0.0));
+  r3->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
+  r3->SetScale(vec3(0.15, 0.15 * camera->aspect, 1.0));
+  r3->Transform();       
+  AddGeom(r3);
+  
+  RectGrating* r4 = new RectGrating(0, circleMask, color, colorDG, 4.0, M_PI, 0.0, 0.0 );
+  r4->SetTranslate(vec3(-0.2, 0.2, 0.0));
+  r4->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
+  r4->SetScale(vec3(0.15, 0.15 * camera->aspect, 1.0));
+  r4->Transform();       
+  AddGeom(r4);
+  
+  //row 2
+  RectGrating* r5 = new RectGrating(0, circleMask, color, colorDG, 6.0, 0.0, 0.0, 0.0 );
+  r5->SetTranslate(vec3(-0.8, -0.1, 0.0));
+  r5->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
+  r5->SetScale(vec3(0.15, 0.15 * camera->aspect, 1.0));
+  r5->Transform();       
+  AddGeom(r5);
+  
+  RectGrating* r6 = new RectGrating(0, circleMask, color, colorDG, 6.0, 0.0, 20.0, 0.0 );
+  r6->SetTranslate(vec3(-0.6, -0.1, 0.0));
+  r6->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
+  r6->SetScale(vec3(0.15, 0.15 * camera->aspect, 1.0));
+  r6->Transform();       
+  AddGeom(r6);
+ 
+  RectGrating* r7 = new RectGrating(0, circleMask, color, colorDG, 6.0, 0.0, 40.0, 0.0 );
+  r7->SetTranslate(vec3(-0.4, -0.1, 0.0));
+  r7->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
+  r7->SetScale(vec3(0.15, 0.15 * camera->aspect, 1.0));
+  r7->Transform();       
+  AddGeom(r7);
+  
+  RectGrating* r8 = new RectGrating(0, circleMask, color, colorDG, 6.0, 0.0, 60.0, 0.0 );
+  r8->SetTranslate(vec3(-0.2, -0.1, 0.0));
+  r8->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
+  r8->SetScale(vec3(0.15, 0.15 * camera->aspect, 1.0));
+  r8->Transform();       
+  AddGeom(r8);
+  
+  
+  //row 3
+  //row 2
+  RectGrating* r9 = new RectGrating(0, circleMask, color, colorDG, 6.0, 0.0, 0.0, 0.0 );
+  r9->SetTranslate(vec3(-0.8, -0.1, 0.0));
+  r9->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
+  r9->SetScale(vec3(0.15, 0.15 * camera->aspect, 1.0));
+  r9->Transform();       
+  AddGeom(r9);
+  
+  RectGrating* r10 = new RectGrating(0, circleMask, color, colorDG, 6.0, 0.0, 20.0, 0.0 );
+  r10->SetTranslate(vec3(-0.6, -0.1, 0.0));
+  r10->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
+  r10->SetScale(vec3(0.15, 0.15 * camera->aspect, 1.0));
+  r10->Transform();       
+  AddGeom(r10);
+  
+  RectGrating* r11 = new RectGrating(0, circleMask, color, colorDG, 6.0, 0.0, 40.0, 0.0 );
+  r11->SetTranslate(vec3(-0.4, -0.1, 0.0));
+  r11->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
+  r11->SetScale(vec3(0.15, 0.15 * camera->aspect, 1.0));
+  r11->Transform();       
+  AddGeom(r11);
+  
+  RectGrating* r12 = new RectGrating(0, circleMask, color, colorDG, 6.0, 0.0, 60.0, 0.0 );
+  r12->SetTranslate(vec3(-0.2, -0.1, 0.0));
+  r12->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
+  r12->SetScale(vec3(0.15, 0.15 * camera->aspect, 1.0));
+  r12->Transform();       
+  AddGeom(r8);
+
+  
+   I_AM_READY = true;
+  //exit(0);
 }
 
 void RendererColorCues::Initialize() {
@@ -35,6 +138,11 @@ void RendererColorCues::Initialize() {
   GetPrograms().insert(std::pair<string, Program*>("GratingPatch", new Program("GratingPatch")));
   GetPrograms().insert(std::pair<string, Program*>("OutputTexture", new Program("OutputTexture")));
   //GetPrograms().insert(std::pair<string, Program*>("SingleTexture", new Program("SingleTexture")));
+  
+  if (EXPERIMENT_NUMBER == 99) {
+    InitializeImagesOnly();
+    return;
+  }
   
   
   vec4 colorLG = vec4(1.0, 1.0);
@@ -151,6 +259,7 @@ void RendererColorCues::Initialize() {
     
     int which;
     
+    /*
     if ( i < 5 ) {
       which = 10;
     } else if ( i < 10 ) {
@@ -171,15 +280,15 @@ void RendererColorCues::Initialize() {
       which = 18;
     } else if ( i < 50 ){
       which = 19;
-    } else if ( i < 55){
+    } else if ( i < 70){
       which = 20;
 
     } else {
       which = 0;
     }
-
+     */
    
-    /*
+    
     switch (EXPERIMENT_NUMBER) {
       case 0:
         //EXPERIMENT 1 : 3 pulsing colors
@@ -314,7 +423,9 @@ void RendererColorCues::Initialize() {
         printf("ERROR, experiment number not defined\n");
         exit(0);
     }
-    */
+    
+    
+    
     
     RectGrating* r;
     vec4 rcolor = GratingFunctions::ChooseColor(Utils::randomIntBetween(9,19));
@@ -567,6 +678,8 @@ void RendererColorCues::Render() {
   }
   
   
+  if (EXPERIMENT_NUMBER != 99) {
+    
   // BindDefaultFrameBuffer();
   //textRect->Transform();
   Program* p1 = GetPrograms()["SingleTexture"]; 
@@ -592,7 +705,7 @@ void RendererColorCues::Render() {
   
   selectRect->phase += selectRect->phaseSpeed;
   GratingFunctions::DrawGrating(NULL, program, selectRect);
-  
+  }
 }
 
 bool RendererColorCues::CheckIfAnyLeftOfKind(int kind) {

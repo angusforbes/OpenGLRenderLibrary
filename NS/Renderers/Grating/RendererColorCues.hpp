@@ -30,6 +30,8 @@ public:
   virtual void Initialize();
   virtual void Render();
   
+  void InitializeImagesOnly();
+  
   bool CheckIfAnyLeftOfKind(int ofKind);
   void HandleTouchBegan(ivec2 mouse);
 private:
