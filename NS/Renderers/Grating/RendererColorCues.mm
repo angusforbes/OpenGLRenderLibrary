@@ -13,11 +13,11 @@
 //2 = 2 colors, 1 texture - task: pick a moving texture
 //3 = 1 color, 2 texture - task: pick a moving texture
 //4 = 3 textures - task: pick a moving texture
-//5 = 1 color, 1 moving texture, 2 static textures - task: pick a moving texture
-//6 = 2 colors, 1 moving texture, 1 static texture - task: pick a moving texture
-//7 = 1 moving textures, 3 static textures - task: pick a moving texture
+//5 = 1 moving texture, 2 static textures - task: pick a moving texture
+//6 = 2 moving texture, 1 static texture - task: pick a moving texture
+//7 = 3 static textures - task: pick a static texture
 
-int EXPERIMENT_NUMBER=7;  
+int EXPERIMENT_NUMBER=1;  
 vec4 BACKGROUND_COLOR=vec4(128,128,128,255);
 
 bool I_AM_READY  = false;
@@ -140,9 +140,9 @@ void RendererColorCues::Initialize() {
         
         if ( i < 5 ) {
           which = 1;
-        } else if ( i < 7 ) {
+        } else if ( i < 10 ) {
           which = 2;
-        } else if ( i < 11 ) {
+        } else if ( i < 17 ) {
           which = 3;
         } else {
           which = 0;
@@ -153,11 +153,11 @@ void RendererColorCues::Initialize() {
         
         //EXPERIMENT 2 : 2 pulsing colors, 1 moving texture
         
-        if ( i < 6 ) {
+        if ( i < 5 ) {
           which = 1;
-        } else if ( i < 11 ) {
+        } else if ( i < 10 ) {
           which = 4;
-        } else if ( i < 17 ) {
+        } else if ( i < 16 ) {
           which = 3;
         } else {
           which = 0;
@@ -167,7 +167,7 @@ void RendererColorCues::Initialize() {
       
         
         //EXPERIMENT 3 : 1 pulsing color, 2 moving textures
-        if ( i < 7 ) {
+        if ( i < 5 ) {
           which = 1;
         } else if ( i < 11 ) {
           which = 4;
@@ -196,12 +196,11 @@ void RendererColorCues::Initialize() {
         
       case 5:
         
-        //EXPERIMENT 5 : 1 pulsing color, 1 moving textures, 2 static textures
-        if ( i < 7 ) {
-          which = 1;
-        } else if ( i < 12 ) {
+        //EXPERIMENT 5 : 1 moving textures, 2 static textures
+       
+       if ( i < 5 ) {
           which = 4; //choose
-        } else if ( i < 20 ) {
+        } else if ( i < 12 ) {
           which = 7;
         } else if ( i < 24 ) {
           which = 8;
@@ -214,18 +213,13 @@ void RendererColorCues::Initialize() {
 
       case 6:
         
-        //EXPERIMENT 5 : 2 pulsing color, 1 moving textures, 1 static textures
+        //EXPERIMENT 5 : 2 moving textures, 1 static texture
         if ( i < 5 ) {
-          which = 1;
-        } else if ( i < 11 ) {
-          which = 2;
-        } else if ( i < 16 ) {
           which = 4; //choose
-        
-        } else if ( i < 20 ) {
+        } else if ( i < 12 ) {
+          which = 5;
+        } else if ( i < 19 ) {
           which = 7;
-
-          
         } else {
           which = 0;
         }
@@ -234,12 +228,10 @@ void RendererColorCues::Initialize() {
 
       case 7:
         
-        //EXPERIMENT 7 : 1 moving textures, 3 static textures
+        //EXPERIMENT 7 : 3 static textures
        
-        if ( i < 5) {
-          which = 4; //choose
-        } else if ( i < 11 ) {
-          which = 7;
+        if ( i < 5 ) {
+          which = 7; //choose
         } else if ( i < 15 ) {
           which = 8;
         } else if ( i < 21 ) {
@@ -288,9 +280,7 @@ void RendererColorCues::Initialize() {
         if (EXPERIMENT_NUMBER == 6) {
           r->choose = true;
         } 
-        if (EXPERIMENT_NUMBER == 7) {
-          r->choose = true;
-        } 
+       
         
         break;
       case 5: //moving 2
@@ -306,7 +296,10 @@ void RendererColorCues::Initialize() {
         } 
         break;
       case 7: //static grating
-        r = new RectGrating(50, circleMask, rcolor, colorDG, 4.0, 0.5, ang3, 0.0 );
+        r = new RectGrating(50, circleMask, rcolor1, colorDG, 4.0, 0.5, ang3, 0.0 );
+        if (EXPERIMENT_NUMBER == 7) {
+          r->choose = true;
+        } 
         break;
       case 8: //static grating
         r = new RectGrating(50, circleMask, rcolor, colorDG, 4.0, 0.5, ang2, 0.0 );
@@ -350,8 +343,10 @@ void RendererColorCues::Initialize() {
       break;
     case 5:
     case 6:
-    case 7:
       selectRect = new RectGrating(0, circleMask, rcolor4, colorDG, 5.0, 0.0, ang1, 0.2 );
+      break;
+    case 7:
+      selectRect = new RectGrating(50, circleMask, rcolor1, colorDG, 4.0, 0.5, ang3, 0.0 );
       break;
       
   }
