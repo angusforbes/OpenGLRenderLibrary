@@ -39,8 +39,8 @@ void main() {
     
     //currently encoding a border as red pixels...
     if (maskColor.r > 0.0) {
-      gl_FragColor = vec4(maskColor.r, maskColor.r, maskColor.r, 0.5);
-      //gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);  
+      //gl_FragColor = vec4(maskColor.r, maskColor.r, maskColor.r, 0.5);
+      gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);  
     } else {
       vec4 useColor = (vec4(sv1) * BaseColor) + (vec4(1.0-sv1) * ContrastColor) ;
       gl_FragColor = vec4(useColor) * maskColor.a;

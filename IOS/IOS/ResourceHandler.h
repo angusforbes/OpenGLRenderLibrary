@@ -2,6 +2,7 @@
 #include "Defines.h"
 
 #include "Texture.hpp"
+#include "FontAtlas.hpp"
 //#include <CoreMotion/CoreMotion.h>
 #include <iostream> 
 //#include "Renderer.hpp"
@@ -27,9 +28,18 @@ public:
   
   Texture* CreateTextureFromImageFile(const string &fname) ;  
   Texture* CreateCubeMapTextureFromImageFile(const string &fname) ;
-
+  Texture* CreateTextureFromBytes(int tw, int th, GLubyte* bytes) ;
   
   Texture* LoadDunitesTexture(const string &fname);
+  Texture** LoadNaturalMaterialsTexture(const string &fname, int tw, int th, int cols, int rows, int slices, int textures);
+
+  GLubyte* CompressToBits(int tw, int th, GLubyte* data);
+  GLubyte* UncompressFromBits(int bw, int bh, GLubyte* data);
+  Texture* MakeLookupTable();
+  
+  
+  FontAtlas* LoadFontAtlas(const string &fname);
+
   
   void* GetView();
   bool IsUsingGyro();

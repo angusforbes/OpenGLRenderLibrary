@@ -280,6 +280,11 @@ void ResourceHandler::PlayAudioResource(const string &fname, double atTime) {
  */
 
 
+Texture* ResourceHandler::CreateTextureFromBytes(int tw, int th, GLubyte* bytes) {
+
+  return new Texture(bytes, tw, th, GL_RGBA, GL_UNSIGNED_BYTE);
+}
+
 Texture* ResourceHandler::CreateTextureFromImageFile(const string &fname) {
   
   NSString* basePath = [[NSString alloc] initWithUTF8String:fname.c_str()];
@@ -337,12 +342,396 @@ Texture* ResourceHandler::CreateTextureFromImageFile(const string &fname) {
 }
 
 
+Texture* ResourceHandler::MakeLookupTable() {
+  GLubyte* lookup = (GLubyte*)malloc( (4 * 4) * 1 ); //luminance texture
+ 
+  lookup[0] = 1;
+  lookup[1] = 2;
+  lookup[2] = 4;
+  lookup[3] = 8;
+  lookup[4] = 16;
+  lookup[5] = 32;
+  lookup[6] = 64;
+  lookup[7] = 128;
+  lookup[8] = 1;
+  lookup[9] = 2;
+  lookup[10] = 4;
+  lookup[11] = 8;
+  lookup[12] = 16;
+  lookup[13] = 32;
+  lookup[14] = 64;
+  lookup[15] = 128;
+  
+  Texture* lookupTexture = new Texture(lookup, 4, 4, GL_LUMINANCE, GL_UNSIGNED_BYTE);
+  return lookupTexture;
+}
 
-Texture* ResourceHandler::LoadDunitesTexture(const string &fname) {
+GLubyte* ResourceHandler::CompressToBits(int tw, int th, GLubyte* data) {
+  
+  int bw = tw/4;
+  int bh = th/4;
+  GLubyte* compressedData = (GLubyte*)malloc( (bw) * (bh) * 4 );
+  
+  int cidx = 0;
+  
+  for (int by = 0; by < bh; by++) {
+    for (int bx = 0; bx < bw; bx++) {
+      
+      int red = 0;
+      int green = 0;
+      
+      for (int m = 0; m < 4; m++) {
+        for (int n = 0; n < 4; n++) {
+          
+          int rowOffset = ((by * 16) * tw) + ((m*4) * (tw)); //correct
+          int colOffset = (bx * 16) + (n*4); 
+          
+          int idx = rowOffset  +  colOffset;
+        
+        //    printf("(%d/%d):(%d,%d): rowIdx/colOffset = %d/%d, idx = %d\n", by,bx,m,n, rowOffset, colOffset, idx);
+          
+          //just need to check the red pixel to see if black or white
+          if (data[idx] > 0) {
+            //white
+            
+            int bit = (m * 4) + n; //0 -> 15
+            if (bit >= 8) {
+              //use green
+              bit -= 8;
+              green += (int)pow(2.0, bit);
+            } else {
+              //use red
+              red += (int)pow(2.0, bit);
+            }
+            
+          } else {
+            //black 
+          }
+        }
+      }
+      
+      compressedData[cidx] = red;
+      compressedData[cidx+1] = green;
+      compressedData[cidx+2] = 0;
+      compressedData[cidx+3] = 0;
+      
+      cidx+=4;
+    }
+  }
+  
+  return compressedData;
+}
+
+GLubyte* ResourceHandler::UncompressFromBits(int bw, int bh, GLubyte* data) {
+  
+  GLubyte* uncompressedData = (GLubyte*)malloc( (bw*4) * (bh*4) * 4 );
+  
+  int ubw = bw * 4;
+  
+  int cidx = 0;
+  int uidx; 
+  
+  for (int i = 0; i < bh; i++) {
+    for (int j = 0; j < bw; j++) {
+      
+      int red = data[cidx];
+      int green = data[cidx + 1];
+      
+     // printf("block (%d,%d), red=%d, green=%d\n", i, j, red, green);
+      
+      for (int m = 0; m < 4; m++) {
+        for (int n = 0; n < 4; n++) {
+   
+          int rowOffset = 4 * ((i * ubw * 4) + (m * ubw));
+          int colOffset = (j * 16) + (n*4);                   
+          
+          uidx = rowOffset + colOffset; 
+        
+         // printf("\tpos(%d/%d) = %d/%d, %d : ", m,n,rowOffset, colOffset,uidx);
+          
+          bool isOn = false;
+          int bit = (m * 4) + n; //0 -> 15
+          if (bit >= 8) {
+            //use green
+            bit -= 8;
+            
+            int mask = (int)pow(2.0, bit);
+          //  printf(" bit = %d, green, %d ", bit, mask);
+            
+            if ((green & mask) > 0 ) {
+              isOn = true;
+              //printf("is ON!!!\n");
+            }
+          } else {
+            //use red
+            int mask = (int)pow(2.0, bit);
+            if ((red & mask) > 0) {
+              isOn = true;
+            }
+          }
+          
+          if (isOn) {
+            uncompressedData[uidx] = 255;
+            uncompressedData[uidx + 1] = 255;
+            uncompressedData[uidx + 2] = 255;
+            uncompressedData[uidx + 3] = 255;
+          } else {
+            uncompressedData[uidx] = 0;
+            uncompressedData[uidx + 1] = 0;
+            uncompressedData[uidx + 2] = 0;
+            uncompressedData[uidx + 3] = 255;
+          }
+                 
+        }
+      }
+      
+      cidx += 4;
+    }
+  }
+  
+  return uncompressedData;
+}
+
+Texture** ResourceHandler::LoadNaturalMaterialsTexture(const string &fname, int tw, int th, int cols, int rows, int slices, int numTextures) {
+  
+  bool compressToBits = false; //true;
+  bool useLuminance = true;
+  NSString* basePath = [[NSString alloc] initWithUTF8String:fname.c_str()];
+  NSArray* splits = [basePath componentsSeparatedByString: @"."];
+  
+  NSString* fileStr = [splits objectAtIndex:0];
+  NSString* typeStr = [splits objectAtIndex:1];
+  
+  int dw = tw * cols;
+  int dh = th * rows;
+  
+  //int numTextures = 2;
+  Texture** textures = (Texture**)malloc(numTextures * sizeof(Texture*));
+  
+  int i = 1;
+  
+  for (int t = 0; t < numTextures; t++) {
+    
+    Texture* duniteTex;
+    
+    if (compressToBits == true) {
+      duniteTex = new Texture(dw / 4, dh / 4, GL_RGBA, GL_UNSIGNED_BYTE);
+      duniteTex->SetFilterModes(GL_LINEAR, GL_LINEAR);
+    } else if (useLuminance == true) {
+      duniteTex = new Texture(dw, dh, GL_LUMINANCE, GL_UNSIGNED_BYTE);
+     // duniteTex->SetFilterModes(GL_NEAREST, GL_NEAREST);
+      
+    } else {
+      duniteTex = new Texture(dw, dh, GL_RGBA, GL_UNSIGNED_BYTE);
+    }    
+    
+    for (int y = 0; y < rows; y++) {
+      for (int x = 0; x < cols; x++) {
+        
+        NSString* useFileStr = [NSString stringWithFormat:@"%@%d", fileStr, i];
+        NSString* path = [[NSBundle mainBundle] pathForResource:useFileStr ofType:typeStr];
+        //NSLog(@"Loading texture: %@.%@\n", useFileStr, typeStr);
+        
+        NSData *texData = [[NSData alloc] initWithContentsOfFile:path];
+        UIImage *image = [[UIImage alloc] initWithData:texData];
+        
+        int _w = CGImageGetWidth(image.CGImage);
+        int _h = CGImageGetHeight(image.CGImage);
+        
+        //CGColorSpaceRef colorSpace = CGImageGetColorSpace(image.CGImage);
+        //CGColorSpaceRef colorSpace = kCGColorSpaceModelMonochrome;
+        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+        //CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceGray();
+        GLubyte* data = (GLubyte*)malloc( _w * _h * 4 );
+       
+        CGContextRef context = CGBitmapContextCreate( data, _w, _h, 8, 4 * _w, colorSpace,   kCGImageAlphaPremultipliedLast |kCGBitmapByteOrder32Big );
+        
+        CGColorSpaceRelease( colorSpace );
+        CGContextClearRect( context, CGRectMake( 0, 0, _w, _h ) );
+        
+        CGContextDrawImage( context, CGRectMake( 0, 0, _w, _h ), image.CGImage );
+        //CGContextDrawImage( context, CGRectMake( marginW, marginH, useW, useH ), image.CGImage );    
+        CGContextRelease(context);
+        [texData release];
+        
+        //write this data into the big texture
+        duniteTex->Bind();
+        
+        if (compressToBits == true) {
+    
+          GLubyte* compressedData = CompressToBits(tw, th, data);
+          
+          glTexSubImage2D(GL_TEXTURE_2D, 0, x * (_w/4), y * (_h/4), (_w/4), (_h/4), GL_RGBA, GL_UNSIGNED_BYTE, compressedData);
+          free(data);
+          
+        } else if (useLuminance == true) {
+          
+          GLubyte* luminanceData = (GLubyte*)malloc( _w * _h );
+          for (int idx = 0, lidx = 0; idx < _w * _h * 4; idx += 4, lidx++) {
+            luminanceData[lidx] = data[idx];
+          }
+//          
+          glTexSubImage2D(GL_TEXTURE_2D, 0, x * _w, y * _h, _w, _h, GL_LUMINANCE, GL_UNSIGNED_BYTE, luminanceData);
+          //glTexSubImage2D(GL_TEXTURE_2D, 0, x * _w, y * _h, _w, _h, GL_LUMINANCE, GL_UNSIGNED_BYTE, data);
+          
+          free(luminanceData);
+          free(data);
+        } else {
+          
+          //normal rgba
+          glTexSubImage2D(GL_TEXTURE_2D, 0, x * _w, y * _h, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, data);
+          free(data);
+          
+        }
+        
+        duniteTex->Unbind();
+        i++;
+      }
+    }
+  
+    textures[t] = duniteTex;
+    
+  }
+  
+  return textures;
+}
+
+
+
+int MatchPattern(NSString *string, NSString* pattern) {
+  
+  NSError *error;
+  //NSString *pattern = @"x=[0-9+]";
+  
+  NSRegularExpression *regularExpression = [NSRegularExpression regularExpressionWithPattern:pattern options:0 error:&error];
+  if ( ! regularExpression) {
+    NSLog(@"Error in pattern <%@>: %@", pattern, error);
+    exit(0);
+  }
+  
+  NSRange range = NSMakeRange(0, [string length]);
+  NSArray *matches = [regularExpression matchesInString:string options:0 range:range];
+  if ([matches count]) {
+    NSTextCheckingResult *firstMatch = [matches objectAtIndex:0];
+    // NSLog(@"Found %lu submatches", (unsigned long)[firstMatch numberOfRanges]);
+    for (NSUInteger i = 0; i < [firstMatch numberOfRanges]; ++i) {
+      NSRange range = [firstMatch rangeAtIndex:i];
+      NSString *submatch = [string substringWithRange:range];
+      // NSLog(@"submatch %lu: <%@>", (unsigned long)i, submatch);   
+      
+      NSArray* splits = [submatch componentsSeparatedByString: @"="];
+      return [[splits objectAtIndex:1] intValue];
+    }
+  } else {
+    // NSLog(@"Pattern <%@> doesn't match string <%@>", pattern, string);
+  }
+  return -1;
+}
+
+NSString* MatchPatternString(NSString *string, NSString* pattern) {
+  
+  NSError *error;
+  
+  NSRegularExpression *regularExpression = [NSRegularExpression regularExpressionWithPattern:pattern options:0 error:&error];
+  if ( ! regularExpression) {
+    NSLog(@"Error in pattern <%@>: %@", pattern, error);
+    exit(0);
+  }
+  
+  NSRange range = NSMakeRange(0, [string length]);
+  NSArray *matches = [regularExpression matchesInString:string options:0 range:range];
+  if ([matches count]) {
+    NSTextCheckingResult *firstMatch = [matches objectAtIndex:0];
+    // NSLog(@"Found %lu submatches", (unsigned long)[firstMatch numberOfRanges]);
+    for (NSUInteger i = 0; i < [firstMatch numberOfRanges]; ++i) {
+      NSRange range = [firstMatch rangeAtIndex:i];
+      NSString *submatch = [string substringWithRange:range];
+      // NSLog(@"submatch %lu: <%@>", (unsigned long)i, submatch);   
+      
+      NSArray* splits = [submatch componentsSeparatedByString: @"=\""];
+      return [splits objectAtIndex:1];
+    }
+  } else {
+    // NSLog(@"Pattern <%@> doesn't match string <%@>", pattern, string);
+  }
+  return @"UNKNOWN";
+}
+
+
+//requires there to be a (.png) texture atlas and its associated AngelFont (.fnt) file 
+FontAtlas* ResourceHandler::LoadFontAtlas(const string &fname) {
+  
+  NSString* face;
+  int sizeVal;
+  bool isBold;
+  bool isItalic;
+  int lineHeightVal;
+  int baseVal;
+  int twVal;
+  int thVal;
+  map<char, FontData*> values;
+  
+  cout << "fontName = " <<fname <<"\n"; 
+  Texture* fontTexture = CreateTextureFromImageFile(fname + ".png");
+  
+  NSString* basePath = [[NSString alloc] initWithUTF8String:fname.c_str()];
+  NSString* path = [[NSBundle mainBundle] pathForResource:basePath ofType:@"fnt"];
+  //NSLog(@"path: %@\n", path);
+  
+  NSString *contents = [NSString stringWithContentsOfFile:path encoding:NSASCIIStringEncoding error:nil];
+  NSArray *lines = [contents componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"\r\n"]];
+  for (NSString* line in lines) {
+    if (line.length) {
+      //NSLog(@"line: %@", line);
+      
+      if([line hasPrefix:@"info"]) {
+        //printf("info line...\n");
+        
+        face = MatchPatternString(line, @"face=\"[0-9a-zA-Z]+");
+        sizeVal = MatchPattern(line, @"size=[0-9]+");
+        isBold = MatchPattern(line, @"bold=[0-9]+");
+        isItalic = MatchPattern(line, @"italic=[0-9]+");
+        //NSLog(@"info: face=%@, size=%d, isBold=%d, isItalic=%d\n", face, sizeVal, isBold, isItalic); 
+      } else if ([line hasPrefix:@"common"]) {
+        lineHeightVal = MatchPattern(line, @"lineHeight=[0-9]+");
+        baseVal = MatchPattern(line, @"base=[0-9]+");
+        twVal = MatchPattern(line, @"scaleW=[0-9]+");
+        thVal = MatchPattern(line, @"scaleH=[0-9]+");
+        //printf("found line lineHeight:%d, base:%d, scaleW:%d scaleH:%d\n", lineHeightVal, baseVal, twVal, thVal);
+      } else if ([line hasPrefix:@"char id"]) {
+        int idVal = MatchPattern(line, @"id=[0-9]+");
+        int xVal = MatchPattern(line, @"x=[0-9]+");
+        int yVal = MatchPattern(line, @"y=[0-9]+");
+        int wVal = MatchPattern(line, @"width=[0-9]+");
+        int hVal = MatchPattern(line, @"height=[0-9]+");
+        int xOffsetVal = MatchPattern(line, @"xoffset=[0-9]+");
+        int yOffsetVal = MatchPattern(line, @"yoffset=[0-9]+");
+        int xAdvance = MatchPattern(line, @"xadvance=[0-9]+");
+        
+        //printf("found x (%c) ,y,id : %d, %d, %d\n", idVal, xVal, yVal, idVal);
+        values.insert(std::pair<char, FontData*>(idVal, new FontData((char)idVal, xVal, yVal, wVal, hVal, xOffsetVal, yOffsetVal, xAdvance)));
+        
+      } else {
+        //printf("HUH???");
+      }
+    }
+  }
+  
+  return new FontAtlas(fontTexture, twVal, thVal, 
+                       [face UTF8String], isBold, isItalic, 
+                       lineHeightVal, baseVal,
+                       values );
+  
+}
+
+
+
+
+Texture* ResourceHandler::LoadDunitesTexture(const string &fname) { //, int _w, int _h, int _d) {
   
   int _w = 123;
   int _h = 200;
-  int _d = 60;
+  //int _d = 60;
   
   int cols = 10;
   int rows = 6;

@@ -250,7 +250,8 @@ void audioRouteChangeListenerCallback(void * inClientData,AudioSessionPropertyID
 		startedCallback	= NO;
 		[manager closeDownAudioDevice];
 		
-		OSStatus err= [manager setUpAudioDevice]; //restart audio session
+    [manager setUpAudioDevice]; //restart audio session
+		//OSStatus err= [manager setUpAudioDevice]; //restart audio session
 		
 		//	if(err!=noErr) {
 		//		

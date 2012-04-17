@@ -60,8 +60,8 @@ void Rectangle3D::GenerateVertices() {
   int tc_idx = 0;
   
   float depthTC = 0.0;
-  float min = 0.0;
-  float max = 0.0;
+//  float min = 0.0;
+//  float max = 0.0;
   
   
 //  rectVertices[v_idx++] = 0.0; rectVertices[v_idx++] = 0.0; rectVertices[v_idx++] = 0.0;

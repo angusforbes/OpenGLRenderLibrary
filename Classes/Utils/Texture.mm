@@ -6,8 +6,8 @@ Texture::Texture(int _w, int _h, GLenum _format, GLenum _type) {
   printf("in Texture::Texture(int _w, int _h, GLenum _format, GLenum _type)\n");
   width = _w;
   height = _h;
-  format = _format;
-  type = _type;
+  format = _format; //GL_RGBA, GL_LUMINANCE, etc
+  type = _type; //GL_UNSIGNED_BYTE, GL_FLOAT, etc
   kind = GL_TEXTURE_2D;
   
   wrapMode = GL_CLAMP_TO_EDGE;
@@ -301,7 +301,8 @@ void Texture::Create() {
   glTexParameteri(kind, GL_TEXTURE_WRAP_S, wrapMode);
   glTexParameteri(kind, GL_TEXTURE_WRAP_T, wrapMode);
 
-  glTexImage2D(kind, 0, GL_RGBA, width, height, 0, format, type, data);
+  //glTexImage2D(kind, 0, GL_RGBA, width, height, 0, format, type, data);
+  glTexImage2D(kind, 0, format, width, height, 0, format, type, data);
 
   printf("creating a texture at texID %d\n", texID);
   

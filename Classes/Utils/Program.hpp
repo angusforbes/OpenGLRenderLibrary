@@ -1,10 +1,9 @@
-#include <iostream>
+//#include <iostream>
 #include <map>
 #include "ResourceHandler.h"
 
 #ifndef PROGRAM
 #define PROGRAM
-
 
 using namespace std;
 

@@ -1,6 +1,5 @@
 
-
-#include <iostream>
+//#include <iostream>
 #include "RendererColorCues.hpp"
 #include "Utils.hpp" 
 #include "NSGLView.h"
@@ -18,8 +17,9 @@
 //7 = 3 static textures - task: pick a static texture
 
 int EXPERIMENT_NUMBER=4; //15;  
-vec4 BACKGROUND_COLOR=vec4(128,128,128,255);
-//vec4 BACKGROUND_COLOR=vec4(0,0,0,255);
+vec4 BACKGROUND_COLOR=vec4(100,255);
+//vec4 BACKGROUND_COLOR=vec4(128,128,128,255);
+//vec4 BACKGROUND_COLOR=vec4(255,255,255,255);
 
 bool I_AM_READY  = false;
 
@@ -31,10 +31,11 @@ void RendererColorCues::InitializeImagesOnly() {
   Texture* circleMask = rh->CreateTextureFromImageFile("circle3.png");
   
   vec4 color = vec4(1.0,1.0,1.0,1.0);
+  vec4 color2 = GratingFunctions::ChooseColor(4);
   vec4 colorDG = vec4(0.0, 1.0);
   
   //top row = change in phase
-  
+  /*
   RectGrating* r1 = new RectGrating(0, circleMask, color, colorDG, 4.0, 0.0, 0.0, 0.0 );
   r1->SetTranslate(vec3(-0.8, 0.2, 0.0));
   r1->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
@@ -63,7 +64,7 @@ void RendererColorCues::InitializeImagesOnly() {
   r4->Transform();       
   AddGeom(r4);
   
-  //row 2
+  //row 2  //change in angle
   RectGrating* r5 = new RectGrating(0, circleMask, color, colorDG, 6.0, 0.0, 0.0, 0.0 );
   r5->SetTranslate(vec3(-0.8, -0.1, 0.0));
   r5->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
@@ -71,21 +72,21 @@ void RendererColorCues::InitializeImagesOnly() {
   r5->Transform();       
   AddGeom(r5);
   
-  RectGrating* r6 = new RectGrating(0, circleMask, color, colorDG, 6.0, 0.0, 20.0, 0.0 );
+  RectGrating* r6 = new RectGrating(0, circleMask, color, colorDG, 6.0, M_PI/3.0, 20.0, 0.0 );
   r6->SetTranslate(vec3(-0.6, -0.1, 0.0));
   r6->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
   r6->SetScale(vec3(0.15, 0.15 * camera->aspect, 1.0));
   r6->Transform();       
   AddGeom(r6);
  
-  RectGrating* r7 = new RectGrating(0, circleMask, color, colorDG, 6.0, 0.0, 40.0, 0.0 );
+  RectGrating* r7 = new RectGrating(0, circleMask, color, colorDG, 6.0, (M_PI/3.0)*2.0, 40.0, 0.0 );
   r7->SetTranslate(vec3(-0.4, -0.1, 0.0));
   r7->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
   r7->SetScale(vec3(0.15, 0.15 * camera->aspect, 1.0));
   r7->Transform();       
   AddGeom(r7);
   
-  RectGrating* r8 = new RectGrating(0, circleMask, color, colorDG, 6.0, 0.0, 60.0, 0.0 );
+  RectGrating* r8 = new RectGrating(0, circleMask, color, colorDG, 6.0, M_PI, 60.0, 0.0 );
   r8->SetTranslate(vec3(-0.2, -0.1, 0.0));
   r8->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
   r8->SetScale(vec3(0.15, 0.15 * camera->aspect, 1.0));
@@ -93,36 +94,66 @@ void RendererColorCues::InitializeImagesOnly() {
   AddGeom(r8);
   
   
-  //row 3
-  //row 2
-  RectGrating* r9 = new RectGrating(0, circleMask, color, colorDG, 6.0, 0.0, 0.0, 0.0 );
-  r9->SetTranslate(vec3(-0.8, -0.1, 0.0));
+  //row 3  //change in freq
+  RectGrating* r9 = new RectGrating(0, circleMask, color, colorDG, 4.0, (M_PI/3.0)*2.0, 45.0, 0.0 );
+  r9->SetTranslate(vec3(-0.8, -0.4, 0.0));
   r9->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
   r9->SetScale(vec3(0.15, 0.15 * camera->aspect, 1.0));
   r9->Transform();       
   AddGeom(r9);
   
-  RectGrating* r10 = new RectGrating(0, circleMask, color, colorDG, 6.0, 0.0, 20.0, 0.0 );
-  r10->SetTranslate(vec3(-0.6, -0.1, 0.0));
+  RectGrating* r10 = new RectGrating(0, circleMask, color, colorDG, 6.0, M_PI/3.0, 45.0, 0.0 );
+  r10->SetTranslate(vec3(-0.6, -0.4, 0.0));
   r10->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
   r10->SetScale(vec3(0.15, 0.15 * camera->aspect, 1.0));
   r10->Transform();       
   AddGeom(r10);
   
-  RectGrating* r11 = new RectGrating(0, circleMask, color, colorDG, 6.0, 0.0, 40.0, 0.0 );
-  r11->SetTranslate(vec3(-0.4, -0.1, 0.0));
+  RectGrating* r11 = new RectGrating(0, circleMask, color, colorDG, 8.0, (M_PI/3.0)*2.0, 45.0, 0.0 );
+  r11->SetTranslate(vec3(-0.4, -0.4, 0.0));
   r11->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
   r11->SetScale(vec3(0.15, 0.15 * camera->aspect, 1.0));
   r11->Transform();       
   AddGeom(r11);
   
-  RectGrating* r12 = new RectGrating(0, circleMask, color, colorDG, 6.0, 0.0, 60.0, 0.0 );
-  r12->SetTranslate(vec3(-0.2, -0.1, 0.0));
+  RectGrating* r12 = new RectGrating(0, circleMask, color, colorDG, 10.0, M_PI, 45.0, 0.0 );
+  r12->SetTranslate(vec3(-0.2, -0.4, 0.0));
   r12->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
   r12->SetScale(vec3(0.15, 0.15 * camera->aspect, 1.0));
   r12->Transform();       
-  AddGeom(r8);
-
+  AddGeom(r12);
+*/
+  
+  //row 4
+  RectGrating* r13 = new RectGrating(0, circleMask, color2, colorDG, 8.0, 0.0, 60.0, 0.0 );
+  r13->SetTranslate(vec3(-0.8, -0.7, 0.0));
+  r13->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
+  r13->SetScale(vec3(0.15, 0.15 * camera->aspect, 1.0));
+  r13->Transform();       
+  AddGeom(r13);
+  
+  RectGrating* r14 = new RectGrating(0, circleMask, color2, colorDG, 8.0, M_PI/3.0, 50.0, 0.0 );
+  r14->SetTranslate(vec3(-0.6, -0.7, 0.0));
+  r14->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
+  r14->SetScale(vec3(0.15, 0.15 * camera->aspect, 1.0));
+  r14->Transform();       
+  AddGeom(r14);
+  
+  RectGrating* r15 = new RectGrating(0, circleMask, color2, colorDG, 8.0, 0.0, 20.0, 0.0 );
+  r15->SetTranslate(vec3(-0.4, -0.7, 0.0));
+  r15->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
+  r15->SetScale(vec3(0.15, 0.15 * camera->aspect, 1.0));
+  r15->Transform();       
+  AddGeom(r15);
+  
+  RectGrating* r16 = new RectGrating(0, circleMask, color2, colorDG, 8.0, M_PI, 00.0, 0.0 );
+  r16->SetTranslate(vec3(-0.2, -0.7, 0.0));
+  r16->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
+  r16->SetScale(vec3(0.15, 0.15 * camera->aspect, 1.0));
+  r16->Transform();       
+  AddGeom(r16);
+  
+  
   
    I_AM_READY = true;
   //exit(0);

@@ -22,11 +22,15 @@ public:
   void SetModelView(mat4 mv);
   
   vec3 GetTranslate();
+  void SetTranslate(float _x, float _y, float _z);
   void SetTranslate(vec3 _t);
   //ModelView* SetTranslate(vec3 _t);
   void Translate(vec3 _t);
   void Translate(float x, float y, float z);
- 
+  void TranslateX(float x);
+  void TranslateY(float y);
+  void TranslateZ(float z);
+  
   vec3 GetRotate();
   void SetRotate(float x, float y, float z);
   void SetRotate(vec3 _r);

@@ -1,15 +1,16 @@
 //make a SensorsHandler class - can only be accessed via Obj-C classes
 
+#import "AppDelegate.h"
 
 #import "IOSGLView.h"
 
 //#import "RendererRayTracingChapter.hpp"
-#import "RendererCubeMap.hpp"
-#import "RendererVideoTexture.hpp"
+/////#import "RendererCubeMap.hpp"
+//#import "RendererVideoTexture.hpp"
 //#import "RendererColoredGrid.hpp"
-#import "RendererPanoramic.hpp"
-#import "RendererDunites.hpp"
-#import "RendererGrating.hpp"
+//#import "RendererPanoramic.hpp"
+//#import "RendererDunites.hpp"
+//#import "RendererGrating.hpp"
 
 @implementation IOSGLView
 @synthesize m_renderer;
@@ -21,13 +22,19 @@
 
 bool IS_ANIMATED = true;
 bool USING_GYRO = NO; //YES;
-
+bool USE_RETINA = YES;
 //float prevRoll = 0.0;
 //float prevPitch = 0.0;
 //float prevYaw = 0.0;
 
 - (void) initRenderer:(CAEAGLLayer*) eaglLayer {
    
+  AppDelegate* app =  (( AppDelegate* )[[ UIApplication sharedApplication ] delegate ]);
+  m_renderer = (Renderer*)[app GetRenderer];
+  
+  //m_renderer = new RendererDunites(); //...1
+  
+  
   /*
    need to do the following, in order:
    1. instantiate the renderer, which will create and bind the RenderBuffer
@@ -38,11 +45,10 @@ bool USING_GYRO = NO; //YES;
   //m_renderer = new RendererRayTracingChapter(self); //...1
   //m_renderer = new RendererCubeMap(); //...1
   //m_renderer = new RendererPanoramic(); //...1
-  m_renderer = new RendererGrating(); //...1
+  //m_renderer = new RendererGrating(); //...1
   
   //m_renderer = new RendererColoredGrid(self);
   //m_renderer = new RendererVideoTexture(); //...1
-  //m_renderer = new RendererDunites(); //...1
   
   
   
@@ -50,6 +56,9 @@ bool USING_GYRO = NO; //YES;
   m_renderer->InitializeRenderBuffers(); //...3
   m_renderer->Initialize();
 
+  printf("GL Version = %s\n", glGetString(GL_VERSION));
+  printf("GLSL Version = %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+  
   
 }
 
@@ -88,7 +97,10 @@ bool USING_GYRO = NO; //YES;
 }
 
 - (bool) initializeGLView {
-  [self scaleToDevice];
+
+  if (USE_RETINA == YES) {
+    [self scaleToDevice];
+  }
   self.multipleTouchEnabled=YES; 
   CAEAGLLayer* eaglLayer = (CAEAGLLayer*) self.layer;
   eaglLayer.opaque = YES;
@@ -105,8 +117,6 @@ bool USING_GYRO = NO; //YES;
 //  CADisplayLink* displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(drawView:)];
 //  [displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
   
-
-
   //[self drawView: nil];
   m_timestamp = CACurrentMediaTime();
   
@@ -159,7 +169,6 @@ bool USING_GYRO = NO; //YES;
   swipeRecognizerDown.numberOfTouchesRequired = 1;
   //[self addGestureRecognizer:swipeRecognizerDown];
   //[swipeRecognizer release];
-
  
   /*
   UIPanGestureRecognizer *twoFingerPanRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(twoFingerPanGesture:)];
@@ -220,7 +229,7 @@ bool USING_GYRO = NO; //YES;
 }
 
 - (void)panGesture:(UIPanGestureRecognizer *)recognizer {
-  CGPoint velocity = [recognizer velocityInView:self];
+  //CGPoint velocity = [recognizer velocityInView:self];
 
   //m_appHandler->OnPan(ivec2(velocity.x, velocity.y));
   //[self drawView];
@@ -228,18 +237,20 @@ bool USING_GYRO = NO; //YES;
 
 //to "strafe" camera
 - (void)nnpanGesture:(UIPanGestureRecognizer *)recognizer {
+  /*
   CGPoint velocity = [recognizer velocityInView:self];
-  
   CGPoint pixelPos = [recognizer translationInView:self];
-//  NSLog(@"recorded trans %f,%f",pixelPos.x,pixelPos.y);
+  CGFloat pixelsPerSecond = sqrtf(velocity.x * velocity.x + velocity.y * velocity.y);
+  // NSLog(@"speed = %f", pixelsPerSecond);
+    */
+  
+  //  NSLog(@"recorded trans %f,%f",pixelPos.x,pixelPos.y);
 //  NSLog(@"recorded veloc %f,%f",velocity.x,velocity.y);
 //  
 //  CGPoint currentPos = [recognizer locationInView:self];
 //  NSLog(@"current point %f,%f",currentPos.x,currentPos.y);
   
   
-  CGFloat pixelsPerSecond = sqrtf(velocity.x * velocity.x + velocity.y * velocity.y);
- // NSLog(@"speed = %f", pixelsPerSecond);
   
   
   /*
@@ -265,7 +276,15 @@ bool USING_GYRO = NO; //YES;
 
 //to zoom camera in or out
 - (void) twoFingerPinch:(UIPinchGestureRecognizer *)recognizer {
-  m_renderer->HandlePinch(recognizer.scale);
+  
+  if (recognizer.state == UIGestureRecognizerStateChanged) {
+    m_renderer->HandlePinch(recognizer.scale);
+  } else if (recognizer.state == UIGestureRecognizerStateEnded ||
+             recognizer.state == UIGestureRecognizerStateCancelled ||
+             recognizer.state == UIGestureRecognizerStateFailed)
+  {
+    m_renderer->HandlePinchEnded();
+  }
   
  // [self drawView];
 }

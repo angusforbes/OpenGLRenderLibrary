@@ -14,8 +14,22 @@ vec3 ModelView::GetTranslate() {
 void ModelView::Translate(float x, float y, float z) {
   Translate(vec3(x,y,z));
 }
+void ModelView::TranslateX(float x) {
+  Translate(vec3(x,0.0,0.0));
+}
+void ModelView::TranslateY(float y) {
+  Translate(vec3(0.0,y,0.0));
+}
+void ModelView::TranslateZ(float z) {
+  Translate(vec3(0.0,0.0,z));
+}
+
 void ModelView::Translate(vec3 _t) {
   SetTranslate(vec3(translate.x + _t.x, translate.y + _t.y, translate.z + _t.z)); 
+}
+
+void ModelView::SetTranslate(float _x, float _y, float _z) {
+  SetTranslate(vec3(_x, _y, _z));  
 }
 
 void ModelView::SetTranslate(vec3 _t) {

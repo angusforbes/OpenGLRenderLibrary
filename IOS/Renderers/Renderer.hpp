@@ -14,7 +14,7 @@
 #include "Camera.hpp"
 #include "Vector.hpp"
 #include "Matrix.hpp"
-
+#include "FontAtlas.hpp"
 
 #ifndef RENDERER_H
 #define RENDERER_H
@@ -68,12 +68,22 @@ public:
   virtual void HandleTouchEnded(ivec2 mouse);
   virtual void HandleLongPress(ivec2 mouse);
   virtual void HandlePinch(float scale);
+  virtual void HandlePinchEnded();
   
   virtual void HandleKeyDown(char key, bool shift, bool control, bool command, bool option, bool function);
   
   void Cleanup();
 
+  FontAtlas* CurrentFont;
+  void Text(float pen_x, float pen_y, string text, vec4 color );
+  void Text(float pen_x, float pen_y, string text, vec4 color, bool usePixel );
   
+  void Text(FontAtlas* font, float pen_x, float pen_y, string text, vec4 color );
+  void Text(FontAtlas* font, float pen_x, float pen_y, string text, vec4 color, bool usePixel );
+  
+  FontAtlas* GetFont(string font);
+  
+
 protected: 
   FBO* CreateFBO(string FBOName, Texture* texture);
   Texture* CreateTexture(string TextureName, Texture* texture);
@@ -81,10 +91,14 @@ protected:
   map<string, Program*> programs;
   map<string, Texture*> textures;
   map<string, FBO*> fbos;
+  map<string, FontAtlas*> fonts;
+
   set<Geom*> geoms;
+
   
   void updateGeoms(bool cameraMoved);
-  bool LoadProgram(string programName);
+  Program* GetProgram(string programName);
+  Program* LoadProgram(string programName);
   
  
   GLuint m_colorRenderbuffer;

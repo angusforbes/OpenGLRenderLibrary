@@ -9,11 +9,12 @@
  
 }
 
-//@property (assign) IBOutlet NSWindow *window;
-//@property (assign) IBOutlet NSGLView *glview;
-//@property (assign) IBOutlet NSView *nsview;
 @property (assign) IBOutlet NSWindow *window;
 @property (assign) IBOutlet NSView *nsview;
 @property (assign) IBOutlet NSGLView *glview;
+
+
+- (void*) GetRenderer;
+
 
 @end

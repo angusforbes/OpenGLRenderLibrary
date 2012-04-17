@@ -108,7 +108,7 @@ void Rectangle::Transform() {
   mat4 mv = Renderer::GetRenderer()->GetCamera()->GetModelView();
   
   //printf("isTransformed!\n");
-  mv.Print();
+  //mv.Print();
    
   //translate
   mv = mat4::Translate(mv, GetTranslate());

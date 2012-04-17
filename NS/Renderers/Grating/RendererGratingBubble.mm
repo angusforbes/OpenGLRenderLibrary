@@ -61,26 +61,26 @@ void RendererGratingBubble::Initialize() {
   CreateFBO("fboE", Texture::CreateEmptyTexture(1024/div,1024/div));
   
   
-  RectGrating* fs1 = new RectGrating(7, tex1, color8, vec4(0.0,1.0), 100.0, 0.0, 45.0, 0.0,
-                                     1, 0.95);
+  RectGrating* fs1 = new RectGrating(7, tex1, color1, vec4(0.0,1.0), 100.0, 0.0, 45.0, 0.1,
+                                     1, 0.35);
   fs1->SetTranslate(vec3(-0.5, -0.5, 0.0));
   fs1->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
   fs1->SetScale(vec3(2.0, 2.0, 1.0));
   fs1->Transform();
-  RectGrating* fs2 = new RectGrating(7, tex3, color7, vec4(0.0,1.0), 70.0, 0.0, 0.0, 0.2,
-                                     1, 0.95);
+  RectGrating* fs2 = new RectGrating(7, tex2, color2, vec4(0.0,1.0), 70.0, 0.0, 0.0, 0.2,
+                                     1, 0.7);
   fs2->SetTranslate(vec3(-0.5, -0.5, 0.0));
   fs2->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
   fs2->SetScale(vec3(2.0, 2.0, 1.0));
   fs2->Transform();
-  RectGrating* fs3 = new RectGrating(7, tex3, color7, vec4(0.0,1.0), 70.0, 0.0, 90.0, 0.10,
-                                     1, 0.95);
+  RectGrating* fs3 = new RectGrating(7, tex3, color3, vec4(0.0,1.0), 70.0, 0.0, 90.0, 0.10,
+                                     1, 0.9);
   fs3->SetTranslate(vec3(-0.5, -0.5, 0.0));
   fs3->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
   fs3->SetScale(vec3(2.0, 2.0, 1.0));
   fs3->Transform();
-  RectGrating* fs4 = new RectGrating(7, tex4, color2, vec4(0.0,1.0), 100.0, 0.0, 135.0, 0.0,
-                                     1, 0.95);
+  RectGrating* fs4 = new RectGrating(7, tex4, color4, vec4(0.0,1.0), 100.0, 0.0, 135.0, 0.1,
+                                     1, 0.5);
   fs4->SetTranslate(vec3(-0.5, -0.5, 0.0));
   fs4->SetScaleAnchor(vec3(0.5, 0.5, 0.0));
   fs4->SetScale(vec3(2.0, 2.0, 1.0));

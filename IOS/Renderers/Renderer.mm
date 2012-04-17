@@ -18,7 +18,10 @@ Renderer::Renderer() {
   CreateRenderBuffer();
 
   //think this should be called as needed by individual renderers...
-  //CreateFullScreenRect(); //i.e. can be used to draw a full screen texture from an fbo
+  CreateFullScreenRect(); //i.e. can be used to draw a full screen texture from an fbo
+  
+  
+  
   
   instance = this;
 }
@@ -179,6 +182,46 @@ void Renderer::DrawFullScreenTexture(Texture* t) {
   } program->Unbind();
 }
 
+
+Program* Renderer::LoadProgram(string programName) {
+  Program* program = programs[programName];
+  
+  if (program != NULL) {
+    return program;
+  }
+  
+  // int sizeofM = GetPrograms().size();
+  // printf("sizeofM = %d\n", sizeofM);
+  
+  program = new Program(programName);
+  
+  if (program != NULL) {
+    cout << "program ID = " << program->programID << " for Program: " << programName << "\n";
+    //GetPrograms().insert(std::pair<string, Program*>("TextureAtlas", new Program("TextureAtlas")));
+    
+    programs[programName] = program;
+    
+    //  GetPrograms().insert(std::pair<string, Program*>(programName, program));
+    
+    Program* checkAgain = GetPrograms()["" + programName];
+    if (checkAgain != NULL) {
+      cout << "program check "<< checkAgain->programName << " not NULL \n";
+      
+      //return true; //already loaded
+    } else {
+      cout << "checkAgain WAS null\n";
+    }
+    
+    
+    return program; //return true if the shader is available (ie was just loaded or was already loaded
+  }
+  
+  cout << "COULDN'T LOAD " << programName << "\n"; 
+  
+  return NULL;
+}
+
+/*
 bool Renderer::LoadProgram(string programName) {
   //to do - check that the program isn't already loaded!
   
@@ -190,6 +233,13 @@ bool Renderer::LoadProgram(string programName) {
   return true; //return true if the shader is available (ie was just loaded or was already loaded
   //return false if we couldn't load the shader!
 }
+*/
+
+Program* Renderer::GetProgram(string programName) {
+  return LoadProgram(programName);
+}
+
+
 
 map<string, Program*>& Renderer::GetPrograms() {
   return programs;
@@ -218,7 +268,7 @@ FBO* Renderer::CreateFBO(string FBOName, Texture* texture) {
 }
 
 void Renderer::HandleTouchBegan(ivec2 mouse) {
-  printf("renderer not handling TouchBegan\n");
+  //printf("renderer not handling TouchBegan\n");
 }
 
 void Renderer::HandleTouchMoved(ivec2 prevMouse, ivec2 mouse) {
@@ -236,6 +286,11 @@ void Renderer::HandleLongPress(ivec2 mouse) {
 void Renderer::HandlePinch(float scale) {
   printf("renderer is not handling Pinch gesture\n");  
 }
+
+void Renderer::HandlePinchEnded() {
+  printf("renderer is not handling Pinch gesture\n");  
+}
+
 
 void Renderer::HandleKeyDown(char key, bool shift, bool control, bool command, bool option, bool function) {
   printf("renderer is not handling KeyDown\n");    
@@ -260,6 +315,121 @@ void Renderer::Cleanup() {
   glFinish();
  
 }
+
+
+void Renderer::Text(float pen_x, float pen_y, string text, vec4 color ) {
+  Text(CurrentFont, pen_x, pen_y, text, color, false ) ;
+}
+
+void Renderer::Text(float pen_x, float pen_y, string text, vec4 color, bool usePixel ) {
+  Text(CurrentFont, pen_x, pen_y, text, color, usePixel ) ;
+}
+
+
+void Renderer::Text(FontAtlas* font, float pen_x, float pen_y, string text, vec4 color ) {
+  Text(font, pen_x, pen_y, text, color, false ) ;
+}
+
+void Renderer::Text(FontAtlas* font, float pen_x, float pen_y, string text, vec4 color, bool usePixel ) {
+  
+  
+  glClearColor( 1, 1, 1, 1 );
+  glEnable( GL_BLEND );
+  glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+  glEnable( GL_TEXTURE_2D );
+  
+
+  
+  int fontTexWidth = font->tw;
+  int fontTexHeight = font->th;
+  int fontHeight = font->lineHeight;
+  int base = font->base;
+  float scaleW = ((float)fontHeight/(float)width)/(float)(fontHeight);
+  float scaleH = ((float)fontHeight/(float)height)/(float)(fontHeight);
+  float twScale = (1.0/(float)fontTexWidth);
+  float thScale = (1.0/(float)fontTexHeight);
+  
+  size_t i;
+  for( i=0; i< text.length(); ++i) {
+    
+    FontData* glyph = font->values[text[i]];
+    if (glyph == NULL) {
+      glyph = font->values[32];
+    }
+    //printf("glyph: %c %d %d %d %d\n", glyph->val, glyph->x, glyph->y, glyph->w, glyph->h);
+    
+    //printf("screen height = %d, glyph height = %d, fontTexture w/h %d/%d\n", height, fontHeight, fontTexWidth, fontTexHeight);
+    
+    
+    float x, y;
+    
+    if (usePixel == true) {
+      x = (pen_x + glyph->xoff) * scaleW; 
+      y = (height -  pen_y + (base) - glyph->yoff) * scaleH;
+    } else {
+      x = pen_x + (glyph->xoff * scaleW); 
+      y = pen_y + ((base - glyph->yoff) * scaleH);
+    }
+    float w = glyph->w * scaleW;
+    float h = glyph->h * scaleH;
+    
+    // printf("v: ('%c') x y w h %f %f %f %f\n", glyph->val, x, y, w, h);
+    
+    float s0 = glyph->x * twScale;
+    float s1 = (glyph->x * twScale) + (glyph->w * twScale) ;
+    float t0 = glyph->y * thScale;
+    float t1 = (glyph->y * thScale)+ (glyph->h * thScale);
+    
+    float ts[] = {s0, t0, 0.0, s0, t1, 0.0, s1, t1, 0.0, s0, t0, 0.0, s1, t1, 0.0, s1, t0, 0.0 };
+    float vs[] = { x, y, 0.0, x, y-h, 0.0, x+w,y-h,0.0, x, y, 0.0, x+w,y-h,0.0, x+w,y, 0.0 };
+    
+    Program* p = GetProgram("TextureAtlas");
+    p->Bind(); {
+      
+      glUniformMatrix4fv(p->Uniform("Modelview"), 1, 0,fullScreenRect->GetModelView().Pointer());
+      glUniformMatrix4fv(p->Uniform("Projection"), 1, 0, mat4::Identity().Pointer());
+      
+      font->fontTexture->Bind();
+      glUniform1i(p->Uniform("s_tex"), 0);
+      
+      glUniform4f(p->Uniform("letterColor"), color.x, color.y, color.z, color.w);
+      
+      glVertexAttribPointer ( p->Attribute("position"), 3, GL_FLOAT, GL_FALSE, 0, vs); 
+      glEnableVertexAttribArray ( p->Attribute("position") );
+      
+      glVertexAttribPointer ( p->Attribute("texCoord"), 3, GL_FLOAT, GL_FALSE, 0, ts); 
+      glEnableVertexAttribArray ( p->Attribute("texCoord") );
+      
+      glDrawArrays(GL_TRIANGLES, 0, 6);
+      
+      glDisableVertexAttribArray ( p->Attribute("position") );
+      glDisableVertexAttribArray ( p->Attribute("texCoord") );
+      
+      font->fontTexture->Unbind();
+      
+      if (usePixel == true) {
+        pen_x += glyph->xadvance; 
+      } else {
+        pen_x += (glyph->xadvance * scaleW); // - 12;   //- (glyph->xadvance * 0.15);
+      }
+    } p->Unbind();
+  }
+  
+  
+}
+
+
+
+FontAtlas* Renderer::GetFont(string font) {
+  FontAtlas* thefont = fonts[font];
+  if (thefont == NULL) {
+    ResourceHandler* rh = ResourceHandler::GetResourceHandler();
+    fonts[font] = rh->LoadFontAtlas("" + font);
+    return fonts[font]; 
+  }
+  return thefont;
+}
+
 
 
 
