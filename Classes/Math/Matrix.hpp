@@ -185,8 +185,34 @@ struct Matrix4 {
     return tm * m;
   }
 
+  static Matrix4<T> TranslateX(const Matrix4<T>& m, T x) {
+    Matrix4 tm = Translate(x,0,0);
+    return tm * m;
+  }
+
+  static Matrix4<T> TranslateY(const Matrix4<T>& m, T y) {
+    Matrix4 tm = Translate(0,y,0);
+    return tm * m;
+  }
+  
+  static Matrix4<T> TranslateZ(const Matrix4<T>& m, T z) {
+    Matrix4 tm = Translate(0,0,z);
+    return tm * m;
+  }
+
   static Matrix4<T> Scale(const Matrix4<T>& m, float s) {
     return Scale(m, s, s, s);
+  }
+ 
+  static Matrix4<T> ScaleX(const Matrix4<T>& m, float x) {
+    return Scale(m, x, 1, 1);
+  }
+  
+  static Matrix4<T> ScaleY(const Matrix4<T>& m, float y) {
+    return Scale(m, 1, y, 1);
+  }
+  static Matrix4<T> ScaleZ(const Matrix4<T>& m, float z) {
+    return Scale(m, 1, 1, z);
   }
   
   static Matrix4<T> Scale(const Matrix4<T>& m, vec3 s) {

@@ -9,12 +9,16 @@ class Vector;
 class Camera : public Geom {
   
 public:
-  
+  static Camera* CreateOrthographicCamera(ivec4 _vp);
+  static Camera* CreateOrthographicPixelCamera(ivec4 _vp);
+
   static Camera* CreatePerspectiveCamera(float _fovy, ivec4 _vp); //ranges between 0 -> 1 in both directions when depth = 0
   static Camera* CreatePerspectivePixelCamera(float _fovy, ivec4 _vp); //ranges bewteen 0->width and 0->height when depth = 0
   
-  Camera(vec3 translate, float fovy, float aspect, float nearPlane, float farPlane, ivec4 _viewport);
-  Camera(ivec4 _viewport);
+  Camera(vec3 translate, float fovy, float aspect, float nearPlane, float farPlane, ivec4 _viewport); //perspective
+  Camera(ivec4 _viewport); //ortho
+  Camera(ivec4 _viewport, int l, int r, int b, int t); //ortho
+  
   float fovy; //field of view angle, in	degrees, in the y	direction.
   float aspect; //the	aspect ratio that determines the field of view in the x direction. The aspect ratio is the ratio	of x (width) to	y (height).
   float nearPlane; //the	distance from the viewer to the	near clipping plane (always positive).

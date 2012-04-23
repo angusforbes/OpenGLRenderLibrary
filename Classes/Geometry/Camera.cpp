@@ -1,40 +1,13 @@
 #include "Camera.hpp"
 
-
-//Orthographic Camera
-Camera::Camera(ivec4 _viewport) {
-  
-  IsPerspective = false;
-
-  aspect = (float)_viewport.z/(float)_viewport.w;
-  //SetTranslate(vec3());
-  SetViewport(_viewport);
-  
-  //projection = mat4::Identity(); 
-  projection = mat4::Ortho(0, 1, 0, 1); 
-  //projection = mat4::Ortho(_viewport.z, _viewport.w); 
-  
-  //projection = mat4::Ortho(0, _viewport.z, _viewport.w, 0); 
-  
-  //vector camera init
-  posVec = vec3(0.0, 0.0, 0.0);
-  viewVec = vec3(0.0, 0.0f, -1.0);
-  rightVec = vec3(1.0, 0.0, 0.0);
-  upVec = vec3(0.0, 1.0, 0.0);  
-  
-  
-  //TEST for otho/pixel
-//  mat4 i = mat4::Identity();
-//  i = mat4::Translate(i,0,500,0);
-//  SetModelView(i);
-  
+//static convenience methods to create common cameras
+Camera* Camera::CreateOrthographicCamera(ivec4 _vp) { 
+  return new Camera(_vp);
 }
 
-/*
-Camera* Camera::CreateOrthographicCamera(float _fovy, ivec4 _vp) { }
-
-Camera* Camera::CreateOrthographicPixelCamera(float _fovy, ivec4 _vp) { }
-*/
+Camera* Camera::CreateOrthographicPixelCamera(ivec4 _vp) { 
+  return new Camera(_vp, 0, _vp.z, 0, _vp.w);
+}
 
 Camera* Camera::CreatePerspectiveCamera(float _fovy, ivec4 _vp) {
   
@@ -66,21 +39,60 @@ Camera* Camera::CreatePerspectivePixelCamera(float _fovy, ivec4 _vp) {
   return new Camera(vec3(uw/2.0, uh/2.0, -cameraZ), _fovy, ar, near, far, _vp );
 }
 
+
+//Orthographic Camera - 0.0->1.0 in both directions 
+Camera::Camera(ivec4 _viewport) {
+  
+  IsPerspective = false;
+  
+  aspect = (float)_viewport.z/(float)_viewport.w;
+  //SetTranslate(vec3());
+  SetViewport(_viewport);
+  
+  //projection = mat4::Identity(); 
+  projection = mat4::Ortho(0, 1, 0, 1); 
+  //projection = mat4::Ortho(_viewport.z, _viewport.w); 
+  
+  //projection = mat4::Ortho(0, _viewport.z, _viewport.w, 0); 
+  
+  //vector camera init
+  posVec = vec3(0.0, 0.0, 0.0);
+  viewVec = vec3(0.0, 0.0f, -1.0);
+  rightVec = vec3(1.0, 0.0, 0.0);
+  upVec = vec3(0.0, 1.0, 0.0);  
+}
+
+//Orthographic Camera - l->r & b->t
+Camera::Camera(ivec4 _vp, int l, int r, int b, int t) {  
+  IsPerspective = false;
+
+  aspect = ((float)(_vp.z - _vp.x)) / ((float)(_vp.w - _vp.y));
+  //aspect = (float)_viewport.z/(float)_viewport.w;
+  SetViewport(_vp);
+  
+  projection = mat4::Ortho(l,r,b,t); 
+  
+  //vector camera init
+  posVec = vec3(0.0, 0.0, 0.0);
+  viewVec = vec3(0.0, 0.0f, -1.0);
+  rightVec = vec3(1.0, 0.0, 0.0);
+  upVec = vec3(0.0, 1.0, 0.0);  
+}
+
 //Perspective Camera
-Camera::Camera(vec3 _translate, float _fovy, float _aspect, float _nearPlane, float _farPlane, ivec4 _viewport) {
+Camera::Camera(vec3 _translate, float _fovy, float _aspect, float _nearPlane, float _farPlane, ivec4 _vp) {
   
   IsPerspective = true;
   
-  //SetTranslate(_translate);
-  
-  
   fovy = _fovy;
-  aspect = _aspect;
+  //aspect = _aspect;
   nearPlane = _nearPlane;
   farPlane = _farPlane;
-  SetViewport(_viewport);
-
-  projection = mat4::Perspective(fovy, aspect, nearPlane, farPlane);  
+  SetViewport(_vp);
+  
+  projection = mat4::Perspective(fovy, _aspect, nearPlane, farPlane);  
+  
+  aspect = ((float)(_vp.z - _vp.x)) / ((float)(_vp.w - _vp.y));
   
   //vector camera init
   posVec = vec3(0.0, 0.0, 0.0);

@@ -36,10 +36,8 @@ bool USE_RETINA = YES;
   
   [m_context renderbufferStorage:GL_RENDERBUFFER fromDrawable: eaglLayer]; 
   m_renderer->InitializeRenderBuffers();
-  m_renderer->InstallDefaultCamera(new Camera(ivec4(0, 0, m_renderer->width, m_renderer->height))); //set default camera 
+  m_renderer->InstallDefaultCamera(Camera::CreateOrthographicCamera(ivec4(0, 0, m_renderer->width, m_renderer->height))); //set default camera 
   m_renderer->Initialize();
-
-  
 }
 
 
