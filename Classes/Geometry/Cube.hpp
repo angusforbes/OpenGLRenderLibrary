@@ -6,6 +6,7 @@
 #include "ModelView.hpp"
 //#include "Camera.hpp"
 #include "Ray.hpp"
+#include "Geom.hpp"
 //#include "ApplicationHandler.hpp"
 
 #include <vector>
@@ -13,9 +14,10 @@
 #ifndef CUBE_H
 #define CUBE_H
 
-class Cube : public ModelView, public Mesh {
+class Cube : public Geom {
   
 public:
+  Cube();
   Cube(vec3 translate, float scale);
   
   //from ModelView

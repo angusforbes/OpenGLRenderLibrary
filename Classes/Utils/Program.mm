@@ -2,8 +2,21 @@
 #include "Program.hpp"
 
 
-Program::Program() {
+//Program::Program() {
+//}
+
+
+Program::Program(string _name, string _vertex, string _frag)  {
+  programName = _name;
+  programID = -1;
+  vertID = -1;
+  fragID = -1;    
+  
+  CompileShaders(_vertex, _frag);
+  
+  InstallProgram();
 }
+
 
 Program::Program(string _name)  {
   programName = _name;
@@ -11,36 +24,55 @@ Program::Program(string _name)  {
   vertID = -1;
   fragID = -1;    
   
+  CompileShaders();
+  
   InstallProgram();
 }
 
-
 //pass in the name of a shader program, like "MyShader". assumes there is a file in your bundle
 //named "MyShader.vsh" and one named "MyShader.fsh".
-bool Program::InstallProgram() {
-  
-  //cout << ApplicationEngine::NUM;
+bool Program::CompileShaders() {
   
   programID = glCreateProgram();
   
-  cout << "installing " << programName << " into ID " << programID << "\n";
+  cout << "in CompileShaders : installing " << programName << " into ID " << programID << "\n";
   
-  string vsh = "vsh";
-  string vertShaderPathname = ResourceHandler::GetResourceHandler()->GetPathForResourceOfType(programName, vsh);
+  string vertShaderPathname = ResourceHandler::GetResourceHandler()->GetPathForResourceOfType(programName, "vsh");
   
   cout << "vertex shader located at: " << vertShaderPathname << "\n";
-  if (!compileShader(&vertID, GL_VERTEX_SHADER, vertShaderPathname)) {
-    return false;
-  }
-   
-  string fsh = "fsh";
-  string fragShaderPathname = ResourceHandler::GetResourceHandler()->GetPathForResourceOfType(programName, fsh);
+  string vertexSource = GetSource(vertShaderPathname);
   
-  if (!compileShader(&fragID, GL_FRAGMENT_SHADER, fragShaderPathname)) {
+  if (!CompileShader(&vertID, GL_VERTEX_SHADER, vertexSource )) {
     return false;
   }
   
+  string fragShaderPathname = ResourceHandler::GetResourceHandler()->GetPathForResourceOfType(programName, "fsh");
+  //const GLchar* fragSource = GetSource(fragShaderPathname);
+  string fragSource = GetSource(fragShaderPathname);
   
+  if (!CompileShader(&fragID, GL_FRAGMENT_SHADER, fragSource)) {
+    return false;
+  }
+  return true;
+}
+
+bool Program::CompileShaders(string _vertex, string _frag) {
+  
+  programID = glCreateProgram();
+  cout << "in CompileShaders(" << _vertex << ", " << _frag << "): installing " << programName << " into ID " << programID << "\n";
+  
+  if (!CompileShader(&vertID, GL_VERTEX_SHADER, _vertex)) {
+    return false;
+  }
+  
+  if (!CompileShader(&fragID, GL_FRAGMENT_SHADER, _frag)) {
+    return false;
+  }
+  return true;
+}
+  
+bool Program::InstallProgram() {
+ 
   // Attach vertex shader to program.
   //NSLog(@"attaching '%@.vsh' to '%@'\n", name, programName);
   glAttachShader(programID, vertID);
@@ -49,17 +81,12 @@ bool Program::InstallProgram() {
   //NSLog(@"attaching '%@.fsh' to '%@'\n", name, programName);
   glAttachShader(programID, fragID);
   
-  if (!linkProgram(programID)) {
+  if (!LinkProgram(programID)) {
     return false; 
   }
     
   MapAttributes();
   MapUniforms();
-  
-  // map uniform and attribute locations.
-  //[self mapAttributes];
-  //[self mapUniforms];
-  
   
   // Release vertex and fragment shaders.
   if (vertID) {
@@ -70,12 +97,9 @@ bool Program::InstallProgram() {
   }
   
   return true;
-  
 }
 
-
-
-bool Program::linkProgram(GLuint prog) {
+bool Program::LinkProgram(GLuint prog) {
   GLint status;
   
   glLinkProgram(prog);
@@ -90,7 +114,6 @@ bool Program::linkProgram(GLuint prog) {
     free(log);
   }
 
-  
   glGetProgramiv(prog, GL_LINK_STATUS, &status);
   if (status == 0) {
     cout << "Failed to link program " << programID;
@@ -114,29 +137,34 @@ bool Program::linkProgram(GLuint prog) {
   return true;
 }
 
+const string Program::GetSource(string path) {
+  const char *source;
 
-bool Program::compileShader(GLuint* shader, GLenum type, string file) {
+  source = (char *) (ResourceHandler::GetResourceHandler()->GetContentsOfFileAsString(path));
+  if (!source) {
+    cout << "Failed to load the shader at " << path;
+    return NULL;
+  }
+
+  string str = source;
+
+  return str;
+}
+bool Program::CompileShader(GLuint* shader, GLenum type, string const &source) {
   //NSLog(@"compiling shader '%@'", file);
   
   GLint status;
-  const GLchar *source;
-  
-  source = (GLchar *) (ResourceHandler::GetResourceHandler()->GetContentsOfFileAsString(file));
-  //source = (GLchar *)[[NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil] UTF8String];
-  if (!source)
-  {
-    cout << "Failed to load the shader at " << file;
-    return false;
-  }
   
   *shader = glCreateShader(type);
-  glShaderSource(*shader, 1, &source, NULL);
+  GLchar const *shader_source = source.c_str();
+  GLint const shader_length = source.size(); //length;
+
+  glShaderSource(*shader, 1, &shader_source, &shader_length);
   glCompileShader(*shader);
   
   GLint logLength;
   glGetShaderiv(*shader, GL_INFO_LOG_LENGTH, &logLength);
-  if (logLength > 0)
-  {
+  if (logLength > 0) {
     GLchar *log = (GLchar *)malloc(logLength);
     glGetShaderInfoLog(*shader, logLength, &logLength, log);
     cout << "Shader compile log:\n" << log;
@@ -144,16 +172,14 @@ bool Program::compileShader(GLuint* shader, GLenum type, string file) {
   }
   
   glGetShaderiv(*shader, GL_COMPILE_STATUS, &status);
-  if (status == 0)
-  {
+  if (status == 0) {
     glDeleteShader(*shader);
-    cout << "Failed to create the shader named %@" << file;
+    cout << "Failed to create the shader named " << programName;
     return false;
   }
   
   return true;
 }
-
 
 
 void Program::Bind() {
@@ -164,7 +190,6 @@ void Program::Bind() {
 void Program::Unbind() {
   glUseProgram(0);
 }
-
 
 
 GLuint Program::Uniform(string name) {
@@ -187,7 +212,8 @@ void Program::MapUniforms() {
   
   for (int i = 0; i < count[0]; i++) {
     glGetActiveUniform(programID, i, 100, length, size, type, name);
-    uniforms.insert(std::pair<string, GLuint>(name, glGetUniformLocation(programID, name)));
+    uniforms[name] = glGetUniformLocation(programID, name);
+    //uniforms.insert(std::pair<string, GLuint>(name, glGetUniformLocation(programID, name)));
   }
 }
 
@@ -204,76 +230,8 @@ void Program::MapAttributes() {
   
   for (int i = 0; i < count[0]; i++) {
     glGetActiveAttrib(programID, i, 100, length, size, type, name);
-    attributes.insert(std::pair<string, GLuint>(name, glGetAttribLocation(programID, name)));
+    attributes[name] = glGetAttribLocation(programID, name);
+    //attributes.insert(std::pair<string, GLuint>(name, glGetAttribLocation(programID, name)));
   }
 }
 
-/*
-
-- (BOOL)linkProgram:(GLuint)prog
-{
-  GLint status;
-  
-  glLinkProgram(prog);
-  
-#if defined(DEBUG)
-  GLint logLength;
-  glGetProgramiv(prog, GL_INFO_LOG_LENGTH, &logLength);
-  if (logLength > 0)
-  {
-    GLchar *log = (GLchar *)malloc(logLength);
-    glGetProgramInfoLog(prog, logLength, &logLength, log);
-    NSLog(@"Program link log:\n%s", log);
-    free(log);
-  }
-#endif
-  
-  glGetProgramiv(prog, GL_LINK_STATUS, &status);
-  if (status == 0) {
-    NSLog(@"Failed to link program: %d", programID);
-    
-    
-    if (vertID) {
-      glDeleteShader(vertID);
-      vertID = 0;
-    }
-    if (fragID) {
-      glDeleteShader(fragID);
-      fragID = 0;
-    }
-    if (programID) {
-      glDeleteProgram(programID);
-      programID = 0;
-    }
-    
-    return FALSE;
-  }
-  
-  return TRUE;
-}
-
-- (BOOL)validateProgram:(GLuint)prog
-{
-  GLint logLength, status;
-  
-  glValidateProgram(prog);
-  glGetProgramiv(prog, GL_INFO_LOG_LENGTH, &logLength);
-  if (logLength > 0)
-  {
-    GLchar *log = (GLchar *)malloc(logLength);
-    glGetProgramInfoLog(prog, logLength, &logLength, log);
-    NSLog(@"Program validate log:\n%s", log);
-    free(log);
-  }
-  
-  glGetProgramiv(prog, GL_VALIDATE_STATUS, &status);
-  if (status == 0)
-    return FALSE;
-  
-  return TRUE;
-}
-
-
-
-@end
-*/

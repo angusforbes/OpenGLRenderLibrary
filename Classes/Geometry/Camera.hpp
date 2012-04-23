@@ -1,22 +1,18 @@
-//#include "GLView.h"
 
-#include "Vector.hpp"
-#include "Matrix.hpp"
-#include "ModelView.hpp"
-//#include "Utils.hpp"
+#include "Geom.hpp"
 
+#ifndef CAMERA_OGRL_H
+#define CAMERA_OGRL_H
 
-#ifndef CAMERA_H
-#define CAMERA_H
+class Vector;
 
-
-
-
-
-class Camera : public ModelView {
-  
+class Camera : public Geom {
   
 public:
+  
+  static Camera* CreatePerspectiveCamera(float _fovy, ivec4 _vp); //ranges between 0 -> 1 in both directions when depth = 0
+  static Camera* CreatePerspectivePixelCamera(float _fovy, ivec4 _vp); //ranges bewteen 0->width and 0->height when depth = 0
+  
   Camera(vec3 translate, float fovy, float aspect, float nearPlane, float farPlane, ivec4 _viewport);
   Camera(ivec4 _viewport);
   float fovy; //field of view angle, in	degrees, in the y	direction.
@@ -27,10 +23,20 @@ public:
   ivec4 viewport; //lowerLeft.x, lowerLeft.y, width, height
   void Transform();
   
+  
+  
+  void Render();
+  void RenderChildren(Geom* g, bool cameraMoved); //if cameraMoved, then need to re-Transform everything
+  
+  
+  //from Geom
+  void Draw();
+  bool AddGeom(Geom* _g);
+  
+  
   void SetViewport(ivec4 viewport);
   void SetAspectRatio(float _aspect);
   void Reshape(int width, int height);
-  
   
   mat4 LookAt(float eyex, float eyey, float eyez,
               float centerx, float centery, float centerz,
@@ -52,6 +58,7 @@ public:
   void SetGyroscopeMatrix(mat4 gm);
   mat4 GetGyroscopeMatrix();
   
+  ivec2 Project(vec3 p);
 
 private:
   

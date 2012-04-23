@@ -2,7 +2,32 @@
 #include "Cube.hpp"
 #include "Renderer.hpp"
 #include "Camera.hpp"
+
+
+Cube::Cube() {
+  printf("in Cube() constructor\n");
+  useTexCoords = true;
+  useColors = false;
+  useNormals = false;
+  
+  //cout << "translate = " << GetTranslate().String() << "\n";
+  
+  //SetColor(vec3(1.0, 1.0, 0.0));
+  
+  GenerateVertices();
+  GenerateLineIndices();
+  GenerateTriangleIndices();
+  
+  isReflective =false;
+  SetIsTransformed(true);
+  //CalculateModelView();
+}
+
 Cube::Cube(vec3 _translate, float _scale) {
+  useTexCoords = true;
+  useColors = false;
+  useNormals = false;
+  
   printf("in Cube(vec3, float) constructor\n");
   SetTranslate(_translate);
   //cout << "translate = " << GetTranslate().String() << "\n";
@@ -34,7 +59,7 @@ int Cube::GetTriangleIndexCount() {
 
 void Cube::GenerateVertices() {
 
-  int radius = 1.0; //GetScale(); //1.0;
+  float radius = 0.5; //GetScale(); //1.0;
 
   int floatsPerVertex = 3; //3 for vertex, 3 for normal, 2 for tc
   vertices.resize(GetVertexCount() * floatsPerVertex);

@@ -87,6 +87,12 @@ int Texture::GetWidth() {
 }
 
 
+Texture* Texture::CreateSolidTexture(vec4 _color, int _w, int _h) {
+  GLubyte* data = Noise::CreateColorSolid(_color, _w, _h);
+  return new Texture(data, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE);
+}
+
+
 Texture* Texture::CreateEmptyTexture(int _w, int _h, GLenum _format, GLenum _type) {
   printf("in Texture::CreateEmptyTexture\n");
   return new Texture(_w, _h, _format, _type);

@@ -13,9 +13,19 @@ class Rectangle : public Geom {
 public:
   Rectangle();
   Rectangle(vec3 translate, float width, float height);
+
+  float GetWidth();
+  float GetHeight();
+  void SetWidth(float _w);
+  void SetHeight(float _h);
+  void SetSize(float _w, float _h);
+  //string String();
+  
+  //from Geom
+  virtual bool ContainsWindowPoint(ivec2 windowPt);
   
   //from ModelView
-  virtual void Transform();
+  //virtual void Transform();
   
   //from Mesh
   virtual void GenerateLineIndices();
@@ -24,9 +34,9 @@ public:
   virtual int GetLineIndexCount() ;
   virtual int GetTriangleIndexCount() ;
   
-  string String();
-  //float width;
-  //float height;
+protected:
+  float width;
+  float height;
 
   
 private:

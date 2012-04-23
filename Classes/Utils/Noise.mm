@@ -102,6 +102,21 @@ GLubyte* Noise::CreateLookUpTableForBitReduction16() {
 }
 */
 
+
+GLubyte* Noise::CreateColorSolid(vec4 _color, int _w, int _h) {
+  
+  GLubyte* data = (GLubyte*) malloc (_w*_h*4*sizeof(GLubyte));
+  
+  for (int i = 0; i < _w * _h * 4; i+=4) {
+    data[i] = _color.x;
+    data[i+1] = _color.y; 
+    data[i+2] = _color.z; 
+    data[i+3] = _color.w;
+  }  
+  return data;
+}
+
+
 GLubyte* Noise::CreateColorNoise(int _w, int _h) {
   
   GLubyte* data = (GLubyte*) malloc (_w*_h*4*sizeof(GLubyte));

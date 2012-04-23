@@ -5,7 +5,7 @@
 #ifndef MESH_H
 #define MESH_H
 
-using namespace std; 
+//using namespace std; 
 
 class Mesh {
   
@@ -27,11 +27,11 @@ public:
   
    
   //all subclasses must implement these functions
-  virtual void GenerateLineIndices() = 0;
-  virtual void GenerateTriangleIndices() = 0;
-  virtual int GetVertexCount()  = 0;
-  virtual int GetLineIndexCount()  = 0;
-  virtual int GetTriangleIndexCount()  = 0;
+  virtual void GenerateLineIndices();
+  virtual void GenerateTriangleIndices();
+  virtual int GetVertexCount();
+  virtual int GetLineIndexCount();
+  virtual int GetTriangleIndexCount();
   
   void PassVertices(Program* program, int mode);
   

@@ -4,13 +4,6 @@
 
 #import "IOSGLView.h"
 
-//#import "RendererRayTracingChapter.hpp"
-/////#import "RendererCubeMap.hpp"
-//#import "RendererVideoTexture.hpp"
-//#import "RendererColoredGrid.hpp"
-//#import "RendererPanoramic.hpp"
-//#import "RendererDunites.hpp"
-//#import "RendererGrating.hpp"
 
 @implementation IOSGLView
 @synthesize m_renderer;
@@ -28,13 +21,12 @@ bool USE_RETINA = YES;
 //float prevYaw = 0.0;
 
 - (void) initRenderer:(CAEAGLLayer*) eaglLayer {
-   
+  
+  //set the Renderer that you want to use in the AppDelegate via the GetRenderer function
   AppDelegate* app =  (( AppDelegate* )[[ UIApplication sharedApplication ] delegate ]);
   m_renderer = (Renderer*)[app GetRenderer];
   
-  //m_renderer = new RendererDunites(); //...1
-  
-  
+
   /*
    need to do the following, in order:
    1. instantiate the renderer, which will create and bind the RenderBuffer
@@ -42,23 +34,11 @@ bool USE_RETINA = YES;
    3. intialize the renderer, which will create the default FrameBuffer and DepthBuffer.
    */
   
-  //m_renderer = new RendererRayTracingChapter(self); //...1
-  //m_renderer = new RendererCubeMap(); //...1
-  //m_renderer = new RendererPanoramic(); //...1
-  //m_renderer = new RendererGrating(); //...1
-  
-  //m_renderer = new RendererColoredGrid(self);
-  //m_renderer = new RendererVideoTexture(); //...1
-  
-  
-  
-  [m_context renderbufferStorage:GL_RENDERBUFFER fromDrawable: eaglLayer]; //...2
-  m_renderer->InitializeRenderBuffers(); //...3
+  [m_context renderbufferStorage:GL_RENDERBUFFER fromDrawable: eaglLayer]; 
+  m_renderer->InitializeRenderBuffers();
+  m_renderer->InstallDefaultCamera(new Camera(ivec4(0, 0, m_renderer->width, m_renderer->height))); //set default camera 
   m_renderer->Initialize();
 
-  printf("GL Version = %s\n", glGetString(GL_VERSION));
-  printf("GLSL Version = %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
-  
   
 }
 

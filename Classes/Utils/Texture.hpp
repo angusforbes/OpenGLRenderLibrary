@@ -11,6 +11,7 @@
   #include <OpenGL/glext.h>
 #endif
 
+#include "Vector.hpp"
 #include <string>
 
 #ifndef TEXTURE_H
@@ -24,7 +25,8 @@ public:
   static Texture* CreateTextureFromImageFile(string filename);
   static Texture* CreateEmptyTexture(int _w, int _h);
   static Texture* CreateEmptyTexture(int _w, int _h, GLenum _format, GLenum _type);
-
+  static Texture* CreateSolidTexture(vec4 _color, int _w, int _h);
+  
   static Texture* CreateCubeMapFromImageFile(string filename);
     
   static Texture* CreateRgbNoiseTexture(int _w, int _h);

@@ -14,6 +14,9 @@ vec3 ModelView::GetTranslate() {
 void ModelView::Translate(float x, float y, float z) {
   Translate(vec3(x,y,z));
 }
+void ModelView::Translate(float x, float y) {
+  Translate(vec3(x,y,0.0));
+}
 void ModelView::TranslateX(float x) {
   Translate(vec3(x,0.0,0.0));
 }
@@ -26,6 +29,11 @@ void ModelView::TranslateZ(float z) {
 
 void ModelView::Translate(vec3 _t) {
   SetTranslate(vec3(translate.x + _t.x, translate.y + _t.y, translate.z + _t.z)); 
+}
+
+
+void ModelView::SetTranslate(float _x, float _y) {
+  SetTranslate(vec3(_x, _y, 0.0));  
 }
 
 void ModelView::SetTranslate(float _x, float _y, float _z) {
@@ -84,6 +92,15 @@ void ModelView::SetRotateAnchor(vec3 _ra) {
   SetIsTransformed(true);
 }
 
+
+void ModelView::SetScaleAnchor(float _x, float _y) {
+  SetScaleAnchor(vec3(_x,_y,0.0));
+}
+
+void ModelView::SetScaleAnchor(float _x, float _y, float _z) {
+  SetScaleAnchor(vec3(_x,_y,_z));
+}
+
 void ModelView::SetScaleAnchor(vec3 _sa) {
   scaleAnchor = _sa;
   SetIsTransformed(true);
@@ -104,6 +121,9 @@ void ModelView::Scale(vec3 _s) {
 }
 void ModelView::SetScale(float _s) {
   SetScale(vec3(_s, _s, _s));
+}
+void ModelView::SetScale(float _x, float _y) {
+  SetScale(vec3(_x, _y, 1.0));  
 }
 void ModelView::SetScale(float _x, float _y, float _z) {
   SetScale(vec3(_x, _y, _z));  
@@ -147,3 +167,6 @@ void ModelView::SetModelView(mat4 _mv) {
 
 
 
+void ModelView::Transform() {
+  printf("ModelView::Transform not defined\n");
+}

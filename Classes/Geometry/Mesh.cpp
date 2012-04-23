@@ -42,6 +42,14 @@ vector<unsigned short>& Mesh::GetTriangleIndices() {
 
 void Mesh::PassVertices(Program* program, int mode) {
   
+  /*
+  for (int i = 0; i < GetVertices().size(); i++) {
+    printf("%f.", GetVertices()[i]); 
+  }
+  
+  printf("\n");
+  */
+  
   glVertexAttribPointer ( program->Attribute("position"), 3, GL_FLOAT, GL_FALSE, 0, &GetVertices()[0] );
   glEnableVertexAttribArray ( program->Attribute("position") );
   
@@ -83,3 +91,15 @@ void Mesh::PassVertices(Program* program, int mode) {
   }
   
 }
+
+
+
+void Mesh::GenerateLineIndices() {}
+void Mesh::GenerateTriangleIndices() {};
+int Mesh::GetVertexCount() {return 0;}
+int Mesh::GetLineIndexCount() {return 0;}
+int Mesh::GetTriangleIndexCount() {return 0;}
+
+
+
+

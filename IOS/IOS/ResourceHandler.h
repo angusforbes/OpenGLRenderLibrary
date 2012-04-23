@@ -13,7 +13,7 @@
 
 //#import <AVFoundation/AVFoundation.h>
 
-using namespace std;
+//using namespace std;
 
 class ResourceHandler {
 public:

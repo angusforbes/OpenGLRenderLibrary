@@ -1,5 +1,6 @@
 #include "Camera.hpp"
 
+
 //Orthographic Camera
 Camera::Camera(ivec4 _viewport) {
   
@@ -9,7 +10,11 @@ Camera::Camera(ivec4 _viewport) {
   //SetTranslate(vec3());
   SetViewport(_viewport);
   
-  projection = mat4::Identity(); 
+  //projection = mat4::Identity(); 
+  projection = mat4::Ortho(0, 1, 0, 1); 
+  //projection = mat4::Ortho(_viewport.z, _viewport.w); 
+  
+  //projection = mat4::Ortho(0, _viewport.z, _viewport.w, 0); 
   
   //vector camera init
   posVec = vec3(0.0, 0.0, 0.0);
@@ -18,6 +23,47 @@ Camera::Camera(ivec4 _viewport) {
   upVec = vec3(0.0, 1.0, 0.0);  
   
   
+  //TEST for otho/pixel
+//  mat4 i = mat4::Identity();
+//  i = mat4::Translate(i,0,500,0);
+//  SetModelView(i);
+  
+}
+
+/*
+Camera* Camera::CreateOrthographicCamera(float _fovy, ivec4 _vp) { }
+
+Camera* Camera::CreateOrthographicPixelCamera(float _fovy, ivec4 _vp) { }
+*/
+
+Camera* Camera::CreatePerspectiveCamera(float _fovy, ivec4 _vp) {
+  
+  float ar = 1.0; 
+  float uw = 1.0; 
+  float uh = 1.0; 
+  
+  float rads = radians(_fovy) / 2.0;
+  float cameraZ = ((uh/2.0) / tanf(rads));
+  float near = cameraZ/10.0;
+  float far = cameraZ*10.0;
+  
+  return new Camera(vec3(uw/2.0, uh/2.0, -cameraZ), _fovy, ar, near, far, _vp );
+}
+
+//taken from Fry's Processing code. Objects placed at z=0 line up with pixels
+Camera* Camera::CreatePerspectivePixelCamera(float _fovy, ivec4 _vp) {
+  
+  float ar = (float)_vp.z/(float)_vp.w;
+  
+  float uw = _vp.z; //width
+  float uh = _vp.w; //height
+  
+  float rads = radians(_fovy) / 2.0;
+  float cameraZ = ((uh/2.0) / tanf(rads));
+  float near = cameraZ/10.0;
+  float far = cameraZ*10.0;
+  
+  return new Camera(vec3(uw/2.0, uh/2.0, -cameraZ), _fovy, ar, near, far, _vp );
 }
 
 //Perspective Camera
@@ -43,6 +89,53 @@ Camera::Camera(vec3 _translate, float _fovy, float _aspect, float _nearPlane, fl
   upVec = vec3(0.0, 1.0, 0.0);  
   
   moveCam(_translate);
+}
+
+
+
+bool Camera::AddGeom(Geom* _g) {
+  printf("in Camera::AddGeom(Geom* g) \n");
+
+  _g->parent = this;
+  _g->root = (Camera*)this;
+  geoms.push_back(_g);
+  //geoms.insert(0,_g);
+  return 1; //later make a real test- ie if it's already in there...
+}
+
+
+void Camera::Draw() {
+  ivec4 vp = viewport;
+  glViewport(vp.x, vp.y, vp.z, vp.w);
+}
+
+void Camera::Render() { 
+  bool cameraMoved = false;
+  if (IsTransformed()) {
+    cameraMoved = true;
+  }
+  
+  RenderChildren(this, cameraMoved);
+}
+
+
+void Camera::RenderChildren(Geom* parent, bool cameraMoved) {
+ 
+  if (cameraMoved == true || parent->IsTransformed() == true) {
+    parent->Transform();
+  }
+  parent->Draw();
+  
+  vector<Geom*>::iterator it;
+  for (it=parent->geoms.begin(); it!=parent->geoms.end(); it++) {
+    RenderChildren((Geom*) *it, cameraMoved);
+  }
+}
+
+
+ivec2 Camera::Project(vec3 p) {
+  vec3 wp = mat4::Project(p, modelview, projection, viewport);
+  return ivec2(wp.x, viewport.w - wp.y);
 }
 
 
@@ -370,6 +463,12 @@ void Camera::RenderCam() {
 //  modelview.Print();
   SetIsTransformed(false);
   
+ /* 
+  //TEST for otho/pixel
+  mat4 i = mat4::Identity();
+  i = mat4::Translate(i,0,1024,0);
+  SetModelView(i);
+  */
  /* 
     //gyroscope one ... can't do incremental rotations, so only makes sense to 
   //reset to identity at each frame , ie not a full vector camera

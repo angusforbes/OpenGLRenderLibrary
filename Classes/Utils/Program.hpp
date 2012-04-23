@@ -5,14 +5,15 @@
 #ifndef PROGRAM
 #define PROGRAM
 
-using namespace std;
+//using namespace std;
 
 class Program {
   
 public:
  
-  Program();
+  //Program();
   Program(string _name);
+  Program(string _name, string vertexString, string fragString);
   GLuint programID;
   GLuint vertID;
   GLuint fragID;
@@ -24,9 +25,16 @@ public:
   
   
 private:
+  bool CompileShaders();
+  bool CompileShaders(string _vertex, string _frag);
+
   bool InstallProgram();
-  bool compileShader(GLuint* shader, GLenum type, string file);
-  bool linkProgram(GLuint prog);
+  
+  const string GetSource(string path);
+  bool CompileShader(GLuint* shader, GLenum type, string const &source);
+  
+//  bool compileShader(GLuint* shader, GLenum type, const GLchar* source);
+  bool LinkProgram(GLuint prog);
   void MapAttributes();
   void MapUniforms();
   map<string, GLuint> uniforms;

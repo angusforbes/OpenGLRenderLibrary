@@ -16,17 +16,19 @@ public:
   
   ModelView();
   
-  virtual void Transform() = 0;
+  virtual void Transform();
   
-  mat4 GetModelView();
+  virtual mat4 GetModelView();
   void SetModelView(mat4 mv);
   
   vec3 GetTranslate();
   void SetTranslate(float _x, float _y, float _z);
+  void SetTranslate(float _x, float _y);
   void SetTranslate(vec3 _t);
   //ModelView* SetTranslate(vec3 _t);
   void Translate(vec3 _t);
   void Translate(float x, float y, float z);
+  void Translate(float x, float y);
   void TranslateX(float x);
   void TranslateY(float y);
   void TranslateZ(float z);
@@ -50,10 +52,13 @@ public:
   void ScaleY(float y);
   void ScaleZ(float z);
   void SetScale(vec3 _s);
+  void SetScale(float _x, float _y);
   void SetScale(float _x, float _y, float _z);
   void SetScale(float _s);
   vec3 GetScale();
   void SetScaleAnchor(vec3 _sa);
+  void SetScaleAnchor(float _x, float _y, float _z);
+  void SetScaleAnchor(float _x, float _y);
   
   void CalculateModelView();
   bool IsTransformed();
@@ -66,7 +71,6 @@ protected:
   vec3 scale; 
   vec3 scaleAnchor;
 private:
-  
   
   bool isTransformed;
   

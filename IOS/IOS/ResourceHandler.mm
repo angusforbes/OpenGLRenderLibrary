@@ -81,8 +81,6 @@ void ResourceHandler::ResetGyroscope() {
 string ResourceHandler::GetResourcePath() const {
   NSString* bundlePath =[[NSBundle mainBundle] resourcePath];
   return [bundlePath UTF8String];
-  
-   
 }
 
 const char* ResourceHandler::GetContentsOfFileAsString(string& file) {
@@ -95,10 +93,10 @@ string ResourceHandler::GetPathForResourceOfType(const string& resource, const s
   
   NSString* resourcePath = [[NSString alloc] initWithUTF8String:resource.c_str()];
   NSString* typePath = [[NSString alloc] initWithUTF8String:type.c_str()];
-  
   NSBundle* mainBundle = [NSBundle mainBundle];
   NSString* fullPath = [mainBundle pathForResource:resourcePath ofType:typePath];
   
+  //cout << "in GetPathForResourceOfType(...), pathStr = " << [fullPath UTF8String] << "\n";
   return [fullPath UTF8String];
 }
 
@@ -544,7 +542,7 @@ Texture** ResourceHandler::LoadNaturalMaterialsTexture(const string &fname, int 
         //CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceGray();
         GLubyte* data = (GLubyte*)malloc( _w * _h * 4 );
        
-        CGContextRef context = CGBitmapContextCreate( data, _w, _h, 8, 4 * _w, colorSpace,   kCGImageAlphaPremultipliedLast |kCGBitmapByteOrder32Big );
+        CGContextRef context = CGBitmapContextCreate( data, _w, _h, 8, 4 * _w, colorSpace, kCGImageAlphaPremultipliedLast |kCGBitmapByteOrder32Big );
         
         CGColorSpaceRelease( colorSpace );
         CGContextClearRect( context, CGRectMake( 0, 0, _w, _h ) );
@@ -565,23 +563,22 @@ Texture** ResourceHandler::LoadNaturalMaterialsTexture(const string &fname, int 
           free(data);
           
         } else if (useLuminance == true) {
-          
+        
           GLubyte* luminanceData = (GLubyte*)malloc( _w * _h );
           for (int idx = 0, lidx = 0; idx < _w * _h * 4; idx += 4, lidx++) {
             luminanceData[lidx] = data[idx];
           }
-//          
+          
           glTexSubImage2D(GL_TEXTURE_2D, 0, x * _w, y * _h, _w, _h, GL_LUMINANCE, GL_UNSIGNED_BYTE, luminanceData);
-          //glTexSubImage2D(GL_TEXTURE_2D, 0, x * _w, y * _h, _w, _h, GL_LUMINANCE, GL_UNSIGNED_BYTE, data);
           
           free(luminanceData);
           free(data);
+          
         } else {
           
           //normal rgba
           glTexSubImage2D(GL_TEXTURE_2D, 0, x * _w, y * _h, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, data);
           free(data);
-          
         }
         
         duniteTex->Unbind();

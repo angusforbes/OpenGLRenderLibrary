@@ -1,10 +1,142 @@
 
 #include "Geom.hpp"
+#include "Renderer.hpp"
+
+Geom::Geom() {
+  printf("in Geom::Geom()\n");
+  SetColor(1.0,1.0,1.0,1.0); //default color is white (for now, should be able to change this programmatically)
+  IsSelectable = false; //default selectability is false
+}
 
 
-Geom::Geom() {}
+
+Program* Geom::GetProgram(string _p) {
+  Renderer* r = Renderer::GetRenderer();
+  return r->GetProgram(_p);
+}
+
+vector<Geom*>& Geom::GetGeoms() {
+  return geoms;
+}
+
+bool Geom::AddGeom(Geom* _g) {
+  _g->parent = this;
+  _g->root = this->root;
+  geoms.push_back(_g);
+  //geoms.insert(0,_g);
+  return 1; //later make a real test- ie if it's already in there...
+}
+
+bool Geom::RemoveGeom(Geom* _g) {
+  //set<Geom*>::iterator it = geoms.find(_g);  
+  
+  geoms.erase( std::find( geoms.begin(), geoms.end(), _g ));
+  //geoms.erase(geoms.find(_g));
+  return 1;  //later make a real test- ie if it was there to be removed...
+}
 
 void Geom::Draw() {
+  //printf("Draw() not handled for this Geom\n");
+}
+
+void Geom::SetColor(float r, float g, float b, float a) {
+  SetColor(vec4(r,g,b,a));
+}
+
+void Geom::SetColor(float r, float g, float b) {
+  SetColor(vec4(r,g,b,1.0));
+}
+
+void Geom::SetColor(vec4 _Color) {
+  Color = _Color;
+}
+
+vec4 Geom::GetColor() {
+  return Color;
+}
+
+void Geom::Text(float pen_x, float pen_y, string text, vec4 color ) {
+  Renderer* r = Renderer::GetRenderer();
+  r->DrawText(r->CurrentFont, pen_x, pen_y, text, color, false ) ;
+}
+
+void Geom::Text(float pen_x, float pen_y, string text, vec4 color, bool usePixel ) {
+  Renderer* r = Renderer::GetRenderer();
+  r->DrawText(r->CurrentFont, pen_x, pen_y, text, color, usePixel ) ;
+}
+
+void Geom::Text(FontAtlas* font, float pen_x, float pen_y, string text, vec4 color ) {
+  Renderer* r = Renderer::GetRenderer();
+  r->DrawText(font, pen_x, pen_y, text, color, false ) ;
+}
+
+void Geom::Text(FontAtlas* font, float pen_x, float pen_y, string text, vec4 color, bool usePixel ) {
+  Renderer* r = Renderer::GetRenderer();
+  r->DrawText(font, pen_x, pen_y, text, color, usePixel ) ;
+}
+
+void Geom::Text(vec3 offsetPt, string text, vec4 color) {
+  Renderer* r = Renderer::GetRenderer();
+  vec3 p0 = mat4::multiplyMatrixByVector(modelview, offsetPt); 
+  ivec2 wp0 = root->Project(p0);
+  r->DrawText(wp0.x, wp0.y, text, color, true); 
+}
+
+bool Geom::ContainsWindowPoint(ivec2 windowPt) {
+  //printf("This object does not yet support checking if it contains a window point... to do...\n");
+  //we should iterate through all vertices, project them into 2D space, and then see if the point is inside all of them
   
+  return false; //default is false... need to be implemented by each Geom
+}
+
+
+void Geom::Transform() {
+  //if (IsTransformed()) {
+    
+  mat4 mv = parent->GetModelView();
+  
+  //mat4 mv = Renderer::GetRenderer()->GetCamera()->GetModelView();
+  
+  //printf("isTransformed!\n");
+  //mv.Print();
+  
+  //translate
+  mv = mat4::Translate(mv, GetTranslate());
+  
+  //scale
+  mv = mat4::Translate(mv, scaleAnchor);
+  mv = mat4::Scale(mv, GetScale());
+  mv = mat4::Translate(mv, -scaleAnchor);
+  
+  //rotate
+  mv = mat4::Translate(mv, rotateAnchor);
+  mv = mat4::RotateX(mv, GetRotate().x);
+  mv = mat4::RotateY(mv, GetRotate().y);
+  mv = mat4::RotateZ(mv, GetRotate().z);
+  mv = mat4::Translate(mv, (-rotateAnchor));
+  
+  
+  SetModelView(mv);
+  SetIsTransformed(false);
+  //}
+}
+
+void Geom::HandleTouchBegan(ivec2 mouse) {
+  printf("Geom::HandleTouchBegan, not handled\n");
+}
+void Geom::HandleTouchMoved(ivec2 prevMouse, ivec2 mouse) {
+  printf("Geom::HandleTouchMoved, not handled\n");
+}
+void Geom::HandleTouchEnded(ivec2 mouse) {
+  printf("Geom::HandleTouchEnded, not handled\n");
+}
+void Geom::HandleLongPress(ivec2 mouse) {
+  printf("Geom::HandleLongPress, not handled\n");
+}
+void Geom::HandlePinch(float scale) {
+  printf("Geom::HandlePinch, not handled\n");
+}
+void Geom::HandlePinchEnded() {
+  printf("Geom::HandlePinchEnded, not handled\n");
 }
 

@@ -11,6 +11,9 @@ Rectangle::Rectangle() {
   useColors = false;
   useNormals = false;
   
+  width = 1.0;
+  height = 1.0;
+  
   GenerateVertices();
   GenerateLineIndices();
   GenerateTriangleIndices();
@@ -19,16 +22,16 @@ Rectangle::Rectangle() {
 }
 
 
-Rectangle::Rectangle(vec3 _translate, float _w, float _h) {
+Rectangle::Rectangle(vec3 _translate, float _sx, float _sy) {
   printf("in Rectangle(vec3, float) constructor\n");
   useTexCoords = true;
   useColors = false;
   useNormals = false;
   
   SetTranslate(_translate);
-  SetScale(vec3(_w, _h, 0.0));
-  //width = _w;
-  //height = _h;
+  SetScale(vec3(_sx, _sy, 0.0));
+  width = 1.0;
+  height = 1.0;
   GenerateVertices();
   GenerateLineIndices();
   GenerateTriangleIndices();
@@ -37,6 +40,28 @@ Rectangle::Rectangle(vec3 _translate, float _w, float _h) {
 }
 
 
+void Rectangle::SetSize(float _w, float _h) {
+  width = _w;
+  height = _h;
+  GenerateVertices();
+}
+
+
+void Rectangle::SetWidth(float _w) {
+  SetSize(_w, height);
+}
+
+void Rectangle::SetHeight(float _h) {
+  SetSize(width, _h);
+}
+
+float Rectangle::GetWidth(void) {
+  return width;
+}
+
+float Rectangle::GetHeight(void) {
+  return height;
+}
 
 int Rectangle::GetVertexCount()  {    
   return 4;
@@ -62,17 +87,21 @@ void Rectangle::GenerateVertices() {
   int v_idx = 0;
   int tc_idx = 0;
   
+  
+//  printf("in GenerateVertices... width = %f, height = %f\n", width, height);
+  
   rectVertices[v_idx++] = 0.0; rectVertices[v_idx++] = 0.0; rectVertices[v_idx++] = 0.0;
   rectTexCoords[tc_idx++] = 0.0; rectTexCoords[tc_idx++] = 1.0; rectTexCoords[tc_idx++] = 0.0;
   
-  rectVertices[v_idx++] = 0.0; rectVertices[v_idx++] = 1.0; rectVertices[v_idx++] = 0.0;
+  rectVertices[v_idx++] = 0.0; rectVertices[v_idx++] = height; rectVertices[v_idx++] = 0.0;
   rectTexCoords[tc_idx++] = 0.0; rectTexCoords[tc_idx++] = 0.0; rectTexCoords[tc_idx++] = 0.0;
   
-  rectVertices[v_idx++] = 1.0; rectVertices[v_idx++] = 0.0; rectVertices[v_idx++] = 0.0;
+  rectVertices[v_idx++] = width; rectVertices[v_idx++] = 0.0; rectVertices[v_idx++] = 0.0;
   rectTexCoords[tc_idx++] = 1.0; rectTexCoords[tc_idx++] = 1.0; rectTexCoords[tc_idx++] = 0.0;
   
-  rectVertices[v_idx++] = 1.0; rectVertices[v_idx++] = 1.0; rectVertices[v_idx++] = 0.0;
+  rectVertices[v_idx++] = width; rectVertices[v_idx++] = height; rectVertices[v_idx++] = 0.0;
   rectTexCoords[tc_idx++] = 1.0; rectTexCoords[tc_idx++] = 0.0; rectTexCoords[tc_idx++] = 0.0;
+  
 }
 
 void Rectangle::GenerateLineIndices() {
@@ -81,12 +110,12 @@ void Rectangle::GenerateLineIndices() {
   vector<unsigned short>::iterator index = lineIndices.begin();
   
   *index++ = 0;
-  *index++ = 1;
-  *index++ = 1;
   *index++ = 2;
   *index++ = 2;
-  *index++ = 3; 
   *index++ = 3;
+  *index++ = 3;
+  *index++ = 1; 
+  *index++ = 1;
   *index++ = 0; 
 }
 
@@ -103,32 +132,23 @@ void Rectangle::GenerateTriangleIndices() {
   *index++ = 3;  
 }
 
-void Rectangle::Transform() {
-  //if (IsTransformed()) {
-  mat4 mv = Renderer::GetRenderer()->GetCamera()->GetModelView();
+bool Rectangle::ContainsWindowPoint(ivec2 pt) {
   
-  //printf("isTransformed!\n");
-  //mv.Print();
-   
-  //translate
-  mv = mat4::Translate(mv, GetTranslate());
+  Camera* camera = (Camera*) root; //Renderer::GetRenderer()->GetCamera();
+
+  camera->viewport.Print("root camera vp = ");
   
-  //scale
-  mv = mat4::Translate(mv, scaleAnchor);
-  mv = mat4::Scale(mv, GetScale());
-  mv = mat4::Translate(mv, -scaleAnchor);
-  
-  //rotate
-  mv = mat4::Translate(mv, rotateAnchor);
-  mv = mat4::RotateX(mv, GetRotate().x);
-  mv = mat4::RotateY(mv, GetRotate().y);
-  mv = mat4::RotateZ(mv, GetRotate().z);
-  mv = mat4::Translate(mv, (-rotateAnchor));
+  vec3 wp0 = mat4::Project(vec3(0,0,0), parent->modelview, camera->projection, camera->viewport);
+  vec3 wp2 = mat4::Project(vec3(width,height,0), parent->modelview, camera->projection, camera->viewport);
+
+  printf(" wp0.xy = %f/%f   wp2.xy = %f/%f\n", wp0.x, wp0.y, wp2.x, wp2.y);
   
   
-  SetModelView(mv);
-  SetIsTransformed(false);
-  //}
+  if (pt.x > wp0.x && pt.x < wp2.x && pt.y > wp0.y && pt.y < wp2.y) {
+    return true;
+  }
+  
+  return false;
 }
 
 

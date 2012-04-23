@@ -455,8 +455,11 @@ struct Matrix4 {
     return windowVec;
   }
   
+  //static vec3 Project(vec3 objectPt, Matrix4 modelview, Matrix4 projection, ivec4 viewport) {
+    
+  
   /**
-   Projects 2D mouse coordinates into 3D object coordinates.
+   Unprojects 2D mouse coordinates into 3D object coordinates.
    Example:
    vec3 ObjIn3DCoords = mat4::Unproject(mouseX, mouseY, myObjDepth, myCamera->modelview, myCamera->projection, myCamera->viewport);
   
@@ -473,7 +476,43 @@ struct Matrix4 {
     return normalizedObjectVec;
   }
   
+  //make orthographic projection from width + height,
+  //similar to glOrtho(l,r,b,t,n,f);, where l = 0, r = w, b = 0, t = h, n = -1, f = 1
+  static Matrix4<T> Ortho(float w, float h) {
+    return Ortho(0,w,0,h);
+  }
    
+  static Matrix4<T> Ortho(float left, float right, float bottom, float top) {
+    float nearval = -1.0;
+    float farval = -1.0;
+    
+    float m[16];
+    
+    #define M(row,col)  m[col*4+row]
+    M(0,0) = 2.0F / (right-left);
+    M(0,1) = 0.0F;
+    M(0,2) = 0.0F;
+    M(0,3) = -(right+left) / (right-left);
+    
+    M(1,0) = 0.0F;
+    M(1,1) = 2.0F / (top-bottom);
+    M(1,2) = 0.0F;
+    M(1,3) = -(top+bottom) / (top-bottom);
+    
+    M(2,0) = 0.0F;
+    M(2,1) = 0.0F;
+    M(2,2) = -2.0F / (farval-nearval);
+    M(2,3) = -(farval+nearval) / (farval-nearval);
+    
+    M(3,0) = 0.0F;
+    M(3,1) = 0.0F;
+    M(3,2) = 0.0F;
+    M(3,3) = 1.0F;
+    #undef M
+
+    return Matrix4(m);
+  }
+  
   static Matrix4<T> Perspective(T fovyInDegrees, T aspectRatio, T znear, T zfar) {
     float ymax = znear * tanf(fovyInDegrees * M_PI / 360.0);
     float xmax = ymax * aspectRatio;

@@ -49,6 +49,11 @@ struct Vector2 {
     
   }
   
+  
+  void Print(string str) const {
+    cout << str << " " << String() << "\n";
+  }
+
   void Print() const {
     cout << String() << "\n";
   }
@@ -219,6 +224,10 @@ struct Vector3 {
     
   }
   
+  void Print(string str) const {
+    cout << str << " " << String() << "\n";
+  }
+
   void Print() const {
     cout << String() << "\n";
   }
@@ -287,7 +296,10 @@ struct Vector4 {
     return ss.str();
     
   }
-  
+  void Print(string str) const {
+    cout << str << " " << String() << "\n";
+  }
+
   void Print() const {
     cout << String() << "\n";
   }

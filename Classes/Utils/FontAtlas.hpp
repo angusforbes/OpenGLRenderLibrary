@@ -8,7 +8,7 @@
 #ifndef OpenGLRenderLibraryNS_FontAtlas_hpp
 #define OpenGLRenderLibraryNS_FontAtlas_hpp
 
-using namespace std;
+//using namespace std;
 
 class FontAtlas { 
   
