@@ -116,9 +116,22 @@ vec3 ModelView::GetScale() {
 void ModelView::Scale(float _s) {
   Scale(vec3(_s, _s, _s));
 }
+void ModelView::Scale(float _x, float _y, float _z) {
+  Scale(vec3(_x, _y, _z));
+}
 void ModelView::Scale(vec3 _s) {
   SetScale(scale + _s);
 }
+void ModelView::ScaleX(float x) {
+  Scale(vec3(x,0,0));
+}
+void ModelView::ScaleY(float y) {
+  Scale(vec3(0,y,0));
+}
+void ModelView::ScaleZ(float z) {
+  Scale(vec3(0,0,z));
+}
+
 void ModelView::SetScale(float _s) {
   SetScale(vec3(_s, _s, _s));
 }
@@ -131,15 +144,6 @@ void ModelView::SetScale(float _x, float _y, float _z) {
 void ModelView::SetScale(vec3 _s) {
   scale = _s;
   SetIsTransformed(true);
-}
-void ModelView::ScaleX(float x) {
-  Scale(vec3(x,0,0));
-}
-void ModelView::ScaleY(float y) {
-  Scale(vec3(0,y,0));
-}
-void ModelView::ScaleZ(float z) {
-  Scale(vec3(0,0,z));
 }
 
 

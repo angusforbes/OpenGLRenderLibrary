@@ -103,6 +103,33 @@ struct Matrix4 {
     m.w.w = w.x * b.x.w + w.y * b.y.w + w.z * b.z.w + w.w * b.w.w;
     return m;
   }
+  
+  Vector3<T> operator * (const Vector3<T>& b) const {
+ //   vec4 v4 = multiplyMatrixByVector(A, vec4(v3.x, v3.y, v3.z, 1.0));
+    
+    Vector4<T> v;
+    v.x = x.x * b.x + y.x * b.y + z.x * b.z + w.x * 1.0;
+    v.y = x.y * b.x + y.y * b.y + z.y * b.z + w.y * 1.0;
+    v.z = x.z * b.x + y.z * b.y + z.z * b.z + w.z * 1.0;
+    v.w = x.w * b.x + y.w * b.y + z.w * b.z + w.w * 1.0;
+    return vec3(v.x, v.y, v.z);
+
+    
+   // Vector4<T> v4 = this*vec4(b.x, b.y, b.z, 1.0);
+   
+    /*
+    vec4 product;
+    
+    product.x = (A.x.x * vec.x) + (A.y.x * vec.y) + (A.z.x * vec.z) + (A.w.x * vec.w);
+    product.y = (A.x.y * vec.x) + (A.y.y * vec.y) + (A.z.y * vec.z) + (A.w.y * vec.w);
+    product.z = (A.x.z * vec.x) + (A.y.z * vec.y) + (A.z.z * vec.z) + (A.w.z * vec.w);
+    product.w = (A.x.w * vec.x) + (A.y.w * vec.y) + (A.z.w * vec.z) + (A.w.w * vec.w);
+    
+    
+    */
+   // return vec3(v4.x, v4.y, v4.z);
+  }
+  
   Vector4<T> operator * (const Vector4<T>& b) const {
 //    Vector4<T> v;
 //    v.x = x.x * b.x + x.y * b.y + x.z * b.z + x.w * b.w;
@@ -569,5 +596,6 @@ struct Matrix4 {
 typedef Matrix2<float> mat2;
 typedef Matrix3<float> mat3;
 typedef Matrix4<float> mat4;
+typedef Matrix4<double> mat4d;
 
 

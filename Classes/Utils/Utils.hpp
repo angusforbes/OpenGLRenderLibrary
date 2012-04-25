@@ -20,6 +20,9 @@ public:
   static float randomFloat();
   static float randomFloatBetween(float a, float b); 
   static void sleep(double seconds);
+  
+  static vec3 ArbitraryRotate(vec3 p, float theta, vec3 r);
+  
 private:
   
 };

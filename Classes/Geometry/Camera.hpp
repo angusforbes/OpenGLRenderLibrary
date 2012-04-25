@@ -5,6 +5,7 @@
 #define CAMERA_OGRL_H
 
 class Vector;
+class TextureCamera;
 
 class Camera : public Geom {
   
@@ -15,9 +16,13 @@ public:
   static Camera* CreatePerspectiveCamera(float _fovy, ivec4 _vp); //ranges between 0 -> 1 in both directions when depth = 0
   static Camera* CreatePerspectivePixelCamera(float _fovy, ivec4 _vp); //ranges bewteen 0->width and 0->height when depth = 0
   
+  static TextureCamera* CreateTextureCamera();
+  static TextureCamera* CreateTextureCamera(vec3 _initPosVec, vec3 _initRotVec, vec3 _initScaleVec);
+  
   Camera(vec3 translate, float fovy, float aspect, float nearPlane, float farPlane, ivec4 _viewport); //perspective
   Camera(ivec4 _viewport); //ortho
   Camera(ivec4 _viewport, int l, int r, int b, int t); //ortho
+  Camera();
   
   float fovy; //field of view angle, in	degrees, in the y	direction.
   float aspect; //the	aspect ratio that determines the field of view in the x direction. The aspect ratio is the ratio	of x (width) to	y (height).
@@ -25,7 +30,9 @@ public:
   float farPlane; //the	distance from the viewer to the	far clipping plane (always positive).
   mat4 projection;
   ivec4 viewport; //lowerLeft.x, lowerLeft.y, width, height
-  void Transform();
+  
+  virtual void Transform();
+  virtual void Reset();
   
   
   
@@ -55,9 +62,14 @@ public:
   void RenderCam();
   
   void Zoom(float dist);
-  void Reset();
   
   vec3 posVec;
+  
+  vec3 viewVec;
+  vec3 rightVec;
+  vec3 upVec;
+  
+  mat4 MakeCameraBasis();
   
   void SetGyroscopeMatrix(mat4 gm);
   mat4 GetGyroscopeMatrix();
@@ -69,9 +81,6 @@ private:
   bool IsPerspective;
   mat4 gyroscopeMatrix;
   
-  vec3 viewVec;
-  vec3 rightVec;
-  vec3 upVec;
   
 };
 

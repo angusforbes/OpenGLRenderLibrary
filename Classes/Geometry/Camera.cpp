@@ -1,4 +1,6 @@
 #include "Camera.hpp"
+#include "Utils.hpp"
+#include "TextureCamera.hpp"
 
 //static convenience methods to create common cameras
 Camera* Camera::CreateOrthographicCamera(ivec4 _vp) { 
@@ -39,6 +41,18 @@ Camera* Camera::CreatePerspectivePixelCamera(float _fovy, ivec4 _vp) {
   return new Camera(vec3(uw/2.0, uh/2.0, -cameraZ), _fovy, ar, near, far, _vp );
 }
 
+TextureCamera* Camera::CreateTextureCamera(vec3 _initPosVec, vec3 _initRotVec, vec3 _initScaleVec) {
+  return new TextureCamera(_initPosVec, _initRotVec, _initScaleVec);
+}
+
+TextureCamera* Camera::CreateTextureCamera() {
+  return new TextureCamera();
+}
+
+//Texture Camera, no projection
+Camera::Camera() {
+  IsPerspective = false;
+}
 
 //Orthographic Camera - 0.0->1.0 in both directions 
 Camera::Camera(ivec4 _viewport) {
@@ -103,15 +117,12 @@ Camera::Camera(vec3 _translate, float _fovy, float _aspect, float _nearPlane, fl
   moveCam(_translate);
 }
 
-
-
 bool Camera::AddGeom(Geom* _g) {
   printf("in Camera::AddGeom(Geom* g) \n");
 
   _g->parent = this;
   _g->root = (Camera*)this;
   geoms.push_back(_g);
-  //geoms.insert(0,_g);
   return 1; //later make a real test- ie if it's already in there...
 }
 
@@ -171,41 +182,114 @@ void Camera::SetViewport(ivec4 _viewport) {
   viewport = _viewport;
 }
 
+mat4 Camera::MakeCameraBasis() {
+  mat4 m = mat4::Identity();
+  m.x.x = rightVec.x;
+  m.x.y = rightVec.y;
+  m.x.z = rightVec.z;
+  m.y.x = upVec.x;
+  m.y.y = upVec.y;
+  m.y.z = upVec.z;
+  m.z.x = viewVec.x;
+  m.z.y = viewVec.y;
+  m.z.z = viewVec.z;
+  return m;
+}
+
+void Camera::Transform() {
+   printf("in Camera::Transform()\n");
+  
+  if (IsTransformed()) {
+    
+    //real one for incremental rotates... 
+    cerr << "po = " << posVec.String() << "\n";  
+    
+    vec3 viewpoint = vec3(posVec) + vec3(viewVec);
+    
+    //  cout << "vv = " << viewVec.String() << "\n";  
+    //  cerr << "rv = " << rightVec.String() << "\n";  
+    //  cerr << "uv = " << upVec.String() << "\n";  
+    //  cerr << "vp = " << viewpoint.String() << "\n";  
+    //  cerr << "sc = " << scale.String() << "\n";  
+    
+   
+    mat4 rotBasis = MakeCameraBasis();
+    
+    mat4 tm = mat4::Translate(vec3(-posVec.x, -posVec.y, -posVec.z));
+    tm = mat4(rotBasis) * tm;
+    
+    printf("here transformeMatrix = ...\n");
+    tm.Print();
+    printf("\n");
+    
+    SetModelView(tm);
+    SetIsTransformed(false);
+  } 
+  
+  /* 
+   //gyroscope one ... can't do incremental rotations, so only makes sense to 
+   //reset to identity at each frame , ie not a full vector camera
+   mat4 tm = mat4::Translate(posVec);
+   mat4 gm = GetGyroscopeMatrix() * tm;
+   mat4 mv = gm;
+   SetModelView(mv);
+   SetIsTransformed(false);  
+   */ 
+  
+}
+
+/*
 void Camera::Transform() {
   
  // printf("in Camera::Transform()\n");
   
   //hmm
   //rotx, roty, rotz, then trans?
-  /*
-  modelview = MatrixUtils.translate(modelview, rotateAnchor.x, rotateAnchor.y, rotateAnchor.z);
-  modelview = MatrixUtils.rotate(modelview, rotate.x, 1f, 0f, 0f);
-  modelview = MatrixUtils.rotate(modelview, rotate.y, 0f, 1f, 0f);
-  modelview = MatrixUtils.rotate(modelview, rotate.z, 0f, 0f, 1f);
-  modelview = MatrixUtils.translate(modelview, -rotateAnchor.x, -rotateAnchor.y, -rotateAnchor.z);
-  */ 
+  
+//  modelview = MatrixUtils.translate(modelview, rotateAnchor.x, rotateAnchor.y, rotateAnchor.z);
+//  modelview = MatrixUtils.rotate(modelview, rotate.x, 1f, 0f, 0f);
+//  modelview = MatrixUtils.rotate(modelview, rotate.y, 0f, 1f, 0f);
+//  modelview = MatrixUtils.rotate(modelview, rotate.z, 0f, 0f, 1f);
+//  modelview = MatrixUtils.translate(modelview, -rotateAnchor.x, -rotateAnchor.y, -rotateAnchor.z);
+   
    
   
   // REAL ONE //
-  /*
-  mat4 mv = mat4::Identity();
+  //
+  //mat4 mv = mat4::Identity();
 //  mv = mat4::RotateX(mv, GetRotate().x);
 //  mv = mat4::RotateY(mv, GetRotate().y);
 //  mv = mat4::RotateZ(mv, GetRotate().z);
  
-  mv = mat4::Translate(mv, GetTranslate());
-  
-  SetModelView(mv);
-  SetIsTransformed(false);
-  */
-  
-  //LookAt Cam
-  
-  RenderCam();
-  //RenderCam2();
+//  mv = mat4::Translate(mv, GetTranslate());
+//  
+//  SetModelView(mv);
+//  SetIsTransformed(false);
   
 }
+*/
 
+void Camera::rotateCamX (float angle) {
+  viewVec = Utils::ArbitraryRotate(viewVec, angle, rightVec);
+  upVec = vec3::Cross(viewVec, rightVec);
+  upVec *= -1;
+  SetIsTransformed(true);
+}
+
+void Camera::rotateCamY (float angle) {
+  viewVec = Utils::ArbitraryRotate(viewVec, angle, upVec);
+  rightVec = vec3::Cross(viewVec, upVec);
+  SetIsTransformed(true);
+}
+
+void Camera::rotateCamZ (float angle) {
+  rightVec = Utils::ArbitraryRotate(rightVec, angle, viewVec);
+  upVec = vec3::Cross(viewVec, rightVec);
+  upVec *= -1.0;
+  SetIsTransformed(true);
+}
+
+/*
 void Camera::rotateCamX (float angle) {
    
   //Rotate viewdir around the right vector:
@@ -285,7 +369,9 @@ void Camera::rotateCamZ (float angle)
  
   SetIsTransformed(true);
 }
+*/
 
+/*
 mat4 Camera::LookAt(float eyex, float eyey, float eyez,
                     float centerx, float centery, float centerz,
                     float upx, float upy, float upz) {
@@ -294,39 +380,35 @@ mat4 Camera::LookAt(float eyex, float eyey, float eyez,
   float x[3], y[3], z[3];
   float mag;
   
-  /* Make rotation matrix */
+  // Make rotation matrix 
   
-  /* Z vector */
+  // Z vector 
   z[0] = eyex - centerx;
   z[1] = eyey - centery;
   z[2] = eyez - centerz;
   mag = sqrt(z[0] * z[0] + z[1] * z[1] + z[2] * z[2]);
-  if (mag) {          /* mpichler, 19950515 */
+  if (mag) {          //
     z[0] /= mag;
     z[1] /= mag;
     z[2] /= mag;
   }
   
-  /* Y vector */
+  // Y
   y[0] = upx;
   y[1] = upy;
   y[2] = upz;
   
-  /* X vector = Y cross Z */
+  // X vector = Y cross Z
   x[0] = y[1] * z[2] - y[2] * z[1];
   x[1] = -y[0] * z[2] + y[2] * z[0];
   x[2] = y[0] * z[1] - y[1] * z[0];
   
-  /* Recompute Y = Z cross X */
+  // Recompute Y = Z cross X 
   y[0] = z[1] * x[2] - z[2] * x[1];
   y[1] = -z[0] * x[2] + z[2] * x[0];
   y[2] = z[0] * x[1] - z[1] * x[0];
   
-  /* mpichler, 19950515 */
-  /* cross product gives area of parallelogram, which is < 1.0 for
-   * non-perpendicular unit-length vectors; so normalize x, y here
-   */
-  
+    
   mag = sqrt(x[0] * x[0] + x[1] * x[1] + x[2] * x[2]);
   if (mag) {
     x[0] /= mag;
@@ -361,31 +443,11 @@ mat4 Camera::LookAt(float eyex, float eyey, float eyez,
   M(3, 3) = 1.0;
 #undef M
   
-  /*
-  mat4 transformedMatrix = mat4::Identity();
- 
-  
- // transformedMatrix = mat4::Translate(transformedMatrix, vec3(-eyex, -eyey, -eyez));
-  
-  transformedMatrix = mat4::Translate(transformedMatrix, -vec3(0.5,0.5,0.0));
-  
-  transformedMatrix *= mat4(m);
-  transformedMatrix = mat4::Translate(transformedMatrix, vec3(-eyex, -eyey, -eyez));
-  
-  //transformedMatrix = mat4::Translate(transformedMatrix, -vec3(0.5,0.5,0.0));
-  
-  
-  
-  return transformedMatrix;
-  */
-  //cout << "eyeVec = " << vec3(-eyex, -eyey, -eyez).String() << "\n";
-
-  mat4 transformedMatrix = mat4(m);
+   mat4 transformedMatrix = mat4(m);
   return mat4::Translate(transformedMatrix, vec3(-eyex, -eyey, -eyez));
   
 }
-
-
+*/
 
 void Camera::moveCamX(float dist) {
   posVec += (vec3(rightVec) * dist);
@@ -406,6 +468,7 @@ void Camera::moveCam(vec3 dist) {
   moveCamX(dist.x);
   moveCamY(dist.y);
   moveCamZ(dist.z);
+  SetIsTransformed(true);
 }
 
 float zoomAmt = 0.0;
@@ -450,47 +513,43 @@ void Camera::Reset() {
   SetGyroscopeMatrix(mat4()); //reset rotation matrix to identity
 
   modelview = mat4::Identity();
-  
-  
   SetIsTransformed(true); 
 }
 
+/*
 void Camera::RenderCam() {
 //  printf("in Camera::RenderCam()\n");
   //real one for incremental rotates... 
   
+  mat4 m = mat4::Identity();
+  m.x.x = rightVec.x;
+  m.x.y = rightVec.y;
+  m.x.z = rightVec.z;
+  m.y.x = upVec.x;
+  m.y.y = upVec.y;
+  m.y.z = upVec.z;
+  m.z.x = viewVec.x;
+  m.z.y = viewVec.y;
+  m.z.z = viewVec.z;
   
-  //viewpoint is the point at which the camera looks:
-  vec3 viewpoint = vec3(posVec) + viewVec;
   
- 
-  
-  mat4 transformedMatrix = LookAt (
-   posVec.x, posVec.y, posVec.z,
-   viewpoint.x, viewpoint.y, viewpoint.z,
-   upVec.x, upVec.y, upVec.z
-   );
-  SetModelView(transformedMatrix);
-//  printf("in Camera::RenderCam()\n");
-//  modelview.Print();
+  mat4 tm = mat4::Translate(vec3(-posVec.x, -posVec.y, -posVec.z));
+  tm = mat4(m) * tm;
+
+  SetModelView(tm);
   SetIsTransformed(false);
   
- /* 
-  //TEST for otho/pixel
-  mat4 i = mat4::Identity();
-  i = mat4::Translate(i,0,1024,0);
-  SetModelView(i);
-  */
- /* 
-    //gyroscope one ... can't do incremental rotations, so only makes sense to 
-  //reset to identity at each frame , ie not a full vector camera
-  mat4 tm = mat4::Translate(posVec);
-  mat4 gm = GetGyroscopeMatrix() * tm;
-  mat4 mv = gm;
-  SetModelView(mv);
-  SetIsTransformed(false);  
-  */ 
+  
+//  //gyroscope one ... can't do incremental rotations, so only makes sense to 
+//  //reset to identity at each frame , ie not a full vector camera
+//  mat4 tm = mat4::Translate(posVec);
+//  mat4 gm = GetGyroscopeMatrix() * tm;
+//  mat4 mv = gm;
+//  SetModelView(mv);
+//  SetIsTransformed(false);  
+   
 }
+*/
 
 void Camera::SetGyroscopeMatrix(mat4 gm) {
   //SetIsTransformed(true);

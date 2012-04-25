@@ -124,4 +124,36 @@ int Utils::IntersectsWithRay(ray3 theRay, Sphere* s, vec3* intersection) {
 }
 
 
+//a straightforward variation of Paul Bourke's code
+vec3 Utils::ArbitraryRotate(vec3 p, float theta, vec3 r) {
+  vec3 q = vec3(0.0,0.0,0.0);
+  double costheta,sintheta;
+  
+  p.Normalize();
+  r.Normalize();
+  
+  float rad = radians(theta);
+  costheta = cos(rad);
+  sintheta = sin(rad);
+  
+  q.x += (costheta + (1 - costheta) * r.x * r.x) * p.x;
+  q.x += ((1 - costheta) * r.x * r.y - r.z * sintheta) * p.y;
+  q.x += ((1 - costheta) * r.x * r.z + r.y * sintheta) * p.z;
+  
+  q.y += ((1 - costheta) * r.x * r.y + r.z * sintheta) * p.x;
+  q.y += (costheta + (1 - costheta) * r.y * r.y) * p.y;
+  q.y += ((1 - costheta) * r.y * r.z - r.x * sintheta) * p.z;
+  
+  q.z += ((1 - costheta) * r.x * r.z - r.y * sintheta) * p.x;
+  q.z += ((1 - costheta) * r.y * r.z + r.x * sintheta) * p.y;
+  q.z += (costheta + (1 - costheta) * r.z * r.z) * p.z;
+  
+  q.Normalize();
+  
+  return(q);
+}
+
+
+
+
   

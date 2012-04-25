@@ -47,6 +47,7 @@ public:
   void Rotate(float x, float y, float z);
   
   void Scale(vec3 _s);
+  void Scale(float _x, float _y, float _z);
   void Scale(float _s);
   void ScaleX(float x);
   void ScaleY(float y);
