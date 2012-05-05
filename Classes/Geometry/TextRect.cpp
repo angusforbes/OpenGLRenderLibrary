@@ -174,7 +174,6 @@ bool TextRect::ContainsWindowPoint(ivec2 pt) {
 
 void TextRect::SetWidth(float _w) {
   
-  
   TextHeight = _w/AspectRatio;
   
   SetScale(_w,TextHeight,1.0);
@@ -191,8 +190,8 @@ void TextRect::SetHeight(float _h) {
   
 }
 
-void TextRect::SetColor(float r, float g, float b, float a) {
-  Geom::SetColor(r,g,b,a);
+void TextRect::SetColor(Color* _c) {
+  Geom::SetColor(_c);
   needsToBeInitialized = true;
   //Init();
 }
@@ -351,7 +350,9 @@ void TextRect::DrawGlyph(FontAtlas* font, float* vs, float* ts) {
     font->fontTexture->Bind();
     glUniform1i(p->Uniform("s_tex"), 0);
     
-    glUniform4f(p->Uniform("letterColor"), Color.x, Color.y, Color.z, Color.w);
+    
+    //THIS WAS a glUniform4f
+    glUniform4i(p->Uniform("letterColor"), color->Red(), color->Green(), color->Blue(), color->Alpha());
     //glUniform4f(p->Uniform("backgroundColor"), 0.0, 1.0, 0.0, 1.0);
     
     glVertexAttribPointer ( p->Attribute("position"), 3, GL_FLOAT, GL_FALSE, 0, vs); 

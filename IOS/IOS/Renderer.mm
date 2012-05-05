@@ -59,6 +59,7 @@ Camera* Renderer::GetCamera() {
 Camera* Renderer::InstallDefaultCamera(Camera* _c) {
   InstallCamera("default", _c);
   AddGeom(Renderer::GetRenderer());
+  return _c;
 }
 
 Camera* Renderer::InstallCamera(string cameraName, Camera* _c) {
@@ -381,7 +382,6 @@ Texture* Renderer::CreateTexture(string TextureName, Texture* texture) {
 }
 
 FBO* Renderer::CreateFBO(string FBOName, Texture* texture) {
-  //GetTextures().insert(pair<string, Texture*>("fboATexture", Texture::CreateEmptyTexture(768,1024)));
   FBO* fbo = new FBO(texture);
   GetFbos().insert(pair<string, FBO*>(FBOName, fbo));
   
@@ -422,6 +422,7 @@ vector<Geom*> Renderer::GetGeomsContainingWindowPoint(ivec2 mouse) {
 
 vector<Geom*> Renderer::CheckGeomsForWindowPoint(Geom* parent, ivec2 mouse) {
   
+  printf("in Renderer::CheckGeomsForWindowPoint, mouse = %d/%d\n", mouse.x, mouse.y);
   vector<Geom*> gs;
   
   if ( parent->IsSelectable == true && parent->ContainsWindowPoint(mouse) == true ) {

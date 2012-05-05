@@ -5,7 +5,7 @@
 //#include "Program.hpp"
 
 Mesh::Mesh() { 
-  useTexCoords = true;
+  useTexCoords = false;
   useNormals = false;
   useColors = false;
 }
@@ -38,6 +38,16 @@ vector<unsigned short>& Mesh::GetLineIndices() {
 
 vector<unsigned short>& Mesh::GetTriangleIndices() {
   return triangleIndices; 
+}
+
+void Mesh::PrintVertices() {
+  int pIdx = 0;
+  for (int i = 0; i < GetVertices().size(); i+=3) {
+    printf("p%d: (%f.%f.%f) ", pIdx, GetVertices()[i], GetVertices()[i+1], GetVertices()[i+2]); 
+    pIdx++;
+  }
+  printf("\n");
+  
 }
 
 void Mesh::PassVertices(Program* program, int mode) {

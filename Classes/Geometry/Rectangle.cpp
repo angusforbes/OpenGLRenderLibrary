@@ -7,7 +7,7 @@
 
 Rectangle::Rectangle() {
   
-  useTexCoords = true;
+  useTexCoords = false;
   useColors = false;
   useNormals = false;
   
@@ -88,7 +88,7 @@ void Rectangle::GenerateVertices() {
   int tc_idx = 0;
   
   
-//  printf("in GenerateVertices... width = %f, height = %f\n", width, height);
+  //  printf("in GenerateVertices... width = %f, height = %f\n", width, height);
   
   rectVertices[v_idx++] = 0.0; rectVertices[v_idx++] = 0.0; rectVertices[v_idx++] = 0.0;
   rectTexCoords[tc_idx++] = 0.0; rectTexCoords[tc_idx++] = 1.0; rectTexCoords[tc_idx++] = 0.0;
@@ -134,15 +134,17 @@ void Rectangle::GenerateTriangleIndices() {
 
 bool Rectangle::ContainsWindowPoint(ivec2 pt) {
   
-  Camera* camera = (Camera*) root; //Renderer::GetRenderer()->GetCamera();
-
+  Camera* camera = root; //Renderer::GetRenderer()->GetCamera();
+  //Camera* camera = (Camera*) root; //Renderer::GetRenderer()->GetCamera();
+  
   camera->viewport.Print("root camera vp = ");
   
-  vec3 wp0 = mat4::Project(vec3(0,0,0), parent->modelview, camera->projection, camera->viewport);
-  vec3 wp2 = mat4::Project(vec3(width,height,0), parent->modelview, camera->projection, camera->viewport);
-
-  printf(" wp0.xy = %f/%f   wp2.xy = %f/%f\n", wp0.x, wp0.y, wp2.x, wp2.y);
+//  vec3 wp0 = mat4::Project(vec3(0,0,0), parent->modelview, camera->projection, camera->viewport);
+//  vec3 wp2 = mat4::Project(vec3(width,height,0), parent->modelview, camera->projection, camera->viewport);
+    vec3 wp0 = mat4::Project(vec3(0,0,0), modelview, camera->projection, camera->viewport);
+    vec3 wp2 = mat4::Project(vec3(width,height,0), modelview, camera->projection, camera->viewport);
   
+  //printf(" mouse=%d/%d wp0.xy = %f/%f   wp2.xy = %f/%f\n", pt.x, pt.y, wp0.x, wp0.y, wp2.x, wp2.y);
   
   if (pt.x > wp0.x && pt.x < wp2.x && pt.y > wp0.y && pt.y < wp2.y) {
     return true;
@@ -150,6 +152,55 @@ bool Rectangle::ContainsWindowPoint(ivec2 pt) {
   
   return false;
 }
+
+
+/*
+void Rectangle::Draw() {
+
+  
+}
+*/
+
+
+void Rectangle::Transform() {
+  //if (IsTransformed()) {
+  
+  mat4 mv;
+  
+  if (parent != NULL) {
+    mv = parent->GetModelView();
+  } else {
+    mv = mat4::Identity();
+  }
+  //mat4 mv = Renderer::GetRenderer()->GetCamera()->GetModelView();
+  
+  //printf("isTransformed!\n");
+  //mv.Print();
+  
+  
+  //translate
+  mv = mat4::Translate(mv, GetTranslate());
+  
+  //scale
+//  mv = mat4::Translate(mv, scaleAnchor); //rects are positioned at 0,0 already (i.e., not centered around it)
+  mv = mat4::Scale(mv, GetScale());
+  mv = mat4::Translate(mv, -scaleAnchor);
+  
+  
+  
+  //rotate
+  mv = mat4::Translate(mv, rotateAnchor);
+  mv = mat4::RotateX(mv, GetRotate().x);
+  mv = mat4::RotateY(mv, GetRotate().y);
+  mv = mat4::RotateZ(mv, GetRotate().z);
+  mv = mat4::Translate(mv, (-rotateAnchor));
+  
+  
+  SetModelView(mv);
+  SetIsTransformed(false);
+  //}
+}
+
 
 
 

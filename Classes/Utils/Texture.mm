@@ -87,7 +87,21 @@ int Texture::GetWidth() {
 }
 
 
-Texture* Texture::CreateSolidTexture(vec4 _color, int _w, int _h) {
+
+Texture* Texture::CreateSolidTexture(ivec4 _color, int _w, int _h, GLenum _format, GLenum _type) {
+  
+  GLubyte* _d;
+  if (_format == GL_RGBA) {
+    _d = Noise::CreateColorSolid(_color, _w, _h);
+    
+  } else if (_format == GL_BGRA) {
+    _d = Noise::CreateColorSolid(ivec4(_color.z, _color.y, _color.x, _color.w), _w, _h);
+  }
+  
+  return new Texture(_d, _w, _h, _format, _type);
+}
+
+Texture* Texture::CreateSolidTexture(ivec4 _color, int _w, int _h) {
   GLubyte* data = Noise::CreateColorSolid(_color, _w, _h);
   return new Texture(data, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE);
 }
@@ -307,8 +321,8 @@ void Texture::Create() {
   glTexParameteri(kind, GL_TEXTURE_WRAP_S, wrapMode);
   glTexParameteri(kind, GL_TEXTURE_WRAP_T, wrapMode);
 
-  //glTexImage2D(kind, 0, GL_RGBA, width, height, 0, format, type, data);
-  glTexImage2D(kind, 0, format, width, height, 0, format, type, data);
+  glTexImage2D(kind, 0, GL_RGBA, width, height, 0, format, type, data); //this works!
+  //glTexImage2D(kind, 0, format, width, height, 0, format, type, data);
 
   printf("creating a texture at texID %d\n", texID);
   
@@ -366,6 +380,7 @@ void Texture::Bind() {
 }
 
 void Texture::Bind(GLuint slot) {  
+  //glEnable(GL_TEXTURE_2D);
   glActiveTexture(slot); //i.e GL_TEXTURE0, etc
   glBindTexture(kind, texID);
   isBound = true;
@@ -423,4 +438,104 @@ void Texture::flipBufferY(GLubyte* buffer, int _w, int _h) {
     }
   }
 }
+
+
+//assuming an 32-unsigned byte pixel for now...
+int Texture::GetIndexAt(int x, int y) {
+  return (y * width * 4) + (x * 4);
+}
+
+//returns an RGBA for now...
+ivec4 Texture::GetPixelAt(int x, int y) { 
+  int idx = GetIndexAt(x,y);
+  
+  if (data != NULL) {
+    if (format == GL_RGBA) {
+      return ivec4(data[idx+0], data[idx+1], data[idx+2], data[idx+3]); 
+    } else if (format == GL_BGRA) {
+      return ivec4(data[idx+2], data[idx+1], data[idx+0], data[idx+3]); 
+    }
+  } 
+  
+  return ivec4(0,0,0,0);
+}
+
+//assuming you are passing in an RGBA for now...
+void Texture::SetPixelAt(int x, int y, ivec4 rgba) { 
+  int idx = GetIndexAt(x,y);
+  
+  if (format == GL_RGBA) {
+    data[idx + 0] = rgba.x;
+    data[idx + 1] = rgba.y;
+    data[idx + 2] = rgba.z;
+    data[idx + 3] = rgba.w;
+  } else if (format == GL_BGRA) {
+    data[idx + 0] = rgba.z;
+    data[idx + 1] = rgba.y;
+    data[idx + 2] = rgba.x;
+    data[idx + 3] = rgba.w;
+  }
+  
+  glEnable(kind);
+  glBindTexture(kind, texID);
+  
+  glTexSubImage2D(kind, 0, x, y, 1, 1, format, GL_UNSIGNED_BYTE, &data[idx]); 
+  
+  glBindTexture(kind, 0);
+}
+
+
+void Texture::SetRectAt(int x, int y, int w, int h, ivec4 rgba) { 
+  
+  if (x + w < 0 || x >= width || y + h < 0 || y >= height || w <= 0 || h <= 0) {
+    return;
+  }
+    
+  if (x < 0) {
+    w = x + w;
+    x = 0;
+  }
+  if (x + w > width) {
+    w = width - x;
+  }
+  
+  if (y < 0) {
+    h = y + h;
+    y = 0;
+  }
+  if (y + h > height) {
+    h = height - y;
+  }
+  
+  
+  
+  
+  GLubyte* c = Noise::CreateColorSolid(rgba, w, h); //need to handles both RGBA and BGRA (just RGBA here)
+  
+  for (int ii = 0; ii < h; ii++) {
+    for (int i = 0; i < w; i++) {
+      
+      int t_idx = GetIndexAt(x + i, y + ii);
+      int c_idx = (ii * w * 4) + (i * 4);
+      //printf("t_idx = %d, c_idx = %d \n", t_idx, c_idx);
+      
+      data[t_idx + 0] = c[c_idx + 0]; 
+      data[t_idx + 1] = c[c_idx + 1]; 
+      data[t_idx + 2] = c[c_idx + 2]; 
+      data[t_idx + 3] = c[c_idx + 3]; 
+    }
+  }
+  
+  glEnable(kind);
+  glBindTexture(kind, texID);
+  
+  glTexSubImage2D(kind, 0, x, y, w, h, format, GL_UNSIGNED_BYTE, c); 
+  
+  glBindTexture(kind, 0);
+  
+  delete(c);
+}
+
+
+
 

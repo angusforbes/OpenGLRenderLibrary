@@ -13,8 +13,9 @@ public:
   //RendererVideoTexture(void* _view);
   
   virtual void Initialize();
-  virtual void Render();
+  virtual void Draw();
   
+  Texture* videoTexture;
   
 private:
  

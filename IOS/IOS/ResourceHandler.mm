@@ -2,6 +2,7 @@
 #import "ResourceHandler.h"
 #import "AudioManager.h"
 #import "VideoManager.h"
+#import "CameraManager.h"
 
 #ifdef IS_IOS
 #import <Foundation/Foundation.h>
@@ -27,13 +28,15 @@ using namespace std;
 
 AudioManager *audioManager;
 VideoManager *videoManager;
+CameraManager* cameraManager;
+
 /*
-AVAssetReader* assetReader;
-AVAssetReaderTrackOutput* videoTrackOutput = NULL;
-//AVAssetReaderTrackOutput* audioTrackOutput = NULL;
-AVAsset *currentAsset;
-CMSampleBufferRef pixelBuffer;
-*/
+ AVAssetReader* assetReader;
+ AVAssetReaderTrackOutput* videoTrackOutput = NULL;
+ //AVAssetReaderTrackOutput* audioTrackOutput = NULL;
+ AVAsset *currentAsset;
+ CMSampleBufferRef pixelBuffer;
+ */
 
 
 
@@ -57,16 +60,16 @@ ResourceHandler::ResourceHandler() {
 
 bool ResourceHandler::IsUsingGyro() {
   
- // IOSGLView* v = (IOSGLView*)(( AppDelegate* )[[ UIApplication sharedApplication ] delegate ]).viewController.view;
+  // IOSGLView* v = (IOSGLView*)(( AppDelegate* )[[ UIApplication sharedApplication ] delegate ]).viewController.view;
   IOSGLView* v = (IOSGLView*) GetView();
   //return false;
   return [v isUsingGyro]; 
 }
 
 void* ResourceHandler::GetView() {
-//UIView* ResourceHandler::GetView() {
- //return (( AppDelegate* )[[ UIApplication sharedApplication ] delegate ]).view;
-//return (IOSGLView*)(( AppDelegate* )[[ UIApplication sharedApplication ] delegate ]).viewController.view;
+  //UIView* ResourceHandler::GetView() {
+  //return (( AppDelegate* )[[ UIApplication sharedApplication ] delegate ]).view;
+  //return (IOSGLView*)(( AppDelegate* )[[ UIApplication sharedApplication ] delegate ]).viewController.view;
   return (( AppDelegate* )[[ UIApplication sharedApplication ] delegate ]).viewController.view;
 }
 
@@ -96,7 +99,7 @@ string ResourceHandler::GetPathForResourceOfType(const string& resource, const s
   NSBundle* mainBundle = [NSBundle mainBundle];
   NSString* fullPath = [mainBundle pathForResource:resourcePath ofType:typePath];
   
-  //cout << "in GetPathForResourceOfType(...), pathStr = " << [fullPath UTF8String] << "\n";
+  cout << "in GetPathForResourceOfType(...), pathStr = " << [fullPath UTF8String] << "\n";
   return [fullPath UTF8String];
 }
 
@@ -158,12 +161,12 @@ Texture* ResourceHandler::CreateCubeMapTextureFromImageFile(const string &fname)
     [texData release];
     
     cubeData[i] = data;
-//    cubeData[0] = data;
-//    cubeData[1] = data;
-//    cubeData[2] = data;
-//    cubeData[3] = data;
-//    cubeData[4] = data;
-//    cubeData[5] = data;
+    //    cubeData[0] = data;
+    //    cubeData[1] = data;
+    //    cubeData[2] = data;
+    //    cubeData[3] = data;
+    //    cubeData[4] = data;
+    //    cubeData[5] = data;
     
     
   }
@@ -172,14 +175,21 @@ Texture* ResourceHandler::CreateCubeMapTextureFromImageFile(const string &fname)
 }
 
 
+void ResourceHandler::NextVideoFrameLock() {
+  if (videoManager != NULL) {
+    [videoManager nextVideoFrameLock];
+  }
+}
+void ResourceHandler::NextVideoFrameUnlock() {
+  if (videoManager != NULL) {
+    [videoManager nextVideoFrameUnlock];
+  }
+}
+
 void ResourceHandler::NextVideoFrame() {
   if (videoManager != NULL) {
     [videoManager nextVideoFrame];
   }
-}
-
-Texture* ResourceHandler::CreateVideoTexture(const string &fname) {
-  return CreateVideoTexture(fname, false, true, true); 
 }
 
 void* ResourceHandler::RetrieveAsset(const string &fname) {
@@ -200,6 +210,28 @@ void* ResourceHandler::RetrieveAsset(const string &fname) {
   
   NSDictionary *options = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:NO] forKey:AVURLAssetPreferPreciseDurationAndTimingKey];
   return [[AVURLAsset alloc] initWithURL:[NSURL fileURLWithPath:path] options:options];
+}
+
+
+void ResourceHandler::ReleaseVideoCaptureLatch() {
+  cameraManager.captureLatch->ReleaseLatch();
+}
+
+bool ResourceHandler::CheckVideoCaptureLatch() {
+  return cameraManager.captureLatch->CheckLatch(1); 
+}
+
+Texture* ResourceHandler::CreateVideoCaptureTexture() {
+  
+  cameraManager = [[CameraManager alloc] init];
+  [cameraManager retain];
+  Texture* cameraTexture = [cameraManager setUpCaptureThread];
+
+  return cameraTexture;
+}
+
+Texture* ResourceHandler::CreateVideoTexture(const string &fname) {
+  return CreateVideoTexture(fname, false, true, true); 
 }
 
 Texture* ResourceHandler::CreateVideoTexture(const string &fname, bool useAudio, bool autoPlay, bool autoLoop ) {
@@ -279,7 +311,7 @@ void ResourceHandler::PlayAudioResource(const string &fname, double atTime) {
 
 
 Texture* ResourceHandler::CreateTextureFromBytes(int tw, int th, GLubyte* bytes) {
-
+  
   return new Texture(bytes, tw, th, GL_RGBA, GL_UNSIGNED_BYTE);
 }
 
@@ -342,7 +374,7 @@ Texture* ResourceHandler::CreateTextureFromImageFile(const string &fname) {
 
 Texture* ResourceHandler::MakeLookupTable() {
   GLubyte* lookup = (GLubyte*)malloc( (4 * 4) * 1 ); //luminance texture
- 
+  
   lookup[0] = 1;
   lookup[1] = 2;
   lookup[2] = 4;
@@ -385,8 +417,8 @@ GLubyte* ResourceHandler::CompressToBits(int tw, int th, GLubyte* data) {
           int colOffset = (bx * 16) + (n*4); 
           
           int idx = rowOffset  +  colOffset;
-        
-        //    printf("(%d/%d):(%d,%d): rowIdx/colOffset = %d/%d, idx = %d\n", by,bx,m,n, rowOffset, colOffset, idx);
+          
+          //    printf("(%d/%d):(%d,%d): rowIdx/colOffset = %d/%d, idx = %d\n", by,bx,m,n, rowOffset, colOffset, idx);
           
           //just need to check the red pixel to see if black or white
           if (data[idx] > 0) {
@@ -435,17 +467,17 @@ GLubyte* ResourceHandler::UncompressFromBits(int bw, int bh, GLubyte* data) {
       int red = data[cidx];
       int green = data[cidx + 1];
       
-     // printf("block (%d,%d), red=%d, green=%d\n", i, j, red, green);
+      // printf("block (%d,%d), red=%d, green=%d\n", i, j, red, green);
       
       for (int m = 0; m < 4; m++) {
         for (int n = 0; n < 4; n++) {
-   
+          
           int rowOffset = 4 * ((i * ubw * 4) + (m * ubw));
           int colOffset = (j * 16) + (n*4);                   
           
           uidx = rowOffset + colOffset; 
-        
-         // printf("\tpos(%d/%d) = %d/%d, %d : ", m,n,rowOffset, colOffset,uidx);
+          
+          // printf("\tpos(%d/%d) = %d/%d, %d : ", m,n,rowOffset, colOffset,uidx);
           
           bool isOn = false;
           int bit = (m * 4) + n; //0 -> 15
@@ -454,7 +486,7 @@ GLubyte* ResourceHandler::UncompressFromBits(int bw, int bh, GLubyte* data) {
             bit -= 8;
             
             int mask = (int)pow(2.0, bit);
-          //  printf(" bit = %d, green, %d ", bit, mask);
+            //  printf(" bit = %d, green, %d ", bit, mask);
             
             if ((green & mask) > 0 ) {
               isOn = true;
@@ -479,7 +511,7 @@ GLubyte* ResourceHandler::UncompressFromBits(int bw, int bh, GLubyte* data) {
             uncompressedData[uidx + 2] = 0;
             uncompressedData[uidx + 3] = 255;
           }
-                 
+          
         }
       }
       
@@ -517,7 +549,7 @@ Texture** ResourceHandler::LoadNaturalMaterialsTexture(const string &fname, int 
       duniteTex->SetFilterModes(GL_LINEAR, GL_LINEAR);
     } else if (useLuminance == true) {
       duniteTex = new Texture(dw, dh, GL_LUMINANCE, GL_UNSIGNED_BYTE);
-     // duniteTex->SetFilterModes(GL_NEAREST, GL_NEAREST);
+      // duniteTex->SetFilterModes(GL_NEAREST, GL_NEAREST);
       
     } else {
       duniteTex = new Texture(dw, dh, GL_RGBA, GL_UNSIGNED_BYTE);
@@ -541,7 +573,7 @@ Texture** ResourceHandler::LoadNaturalMaterialsTexture(const string &fname, int 
         CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
         //CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceGray();
         GLubyte* data = (GLubyte*)malloc( _w * _h * 4 );
-       
+        
         CGContextRef context = CGBitmapContextCreate( data, _w, _h, 8, 4 * _w, colorSpace, kCGImageAlphaPremultipliedLast |kCGBitmapByteOrder32Big );
         
         CGColorSpaceRelease( colorSpace );
@@ -556,14 +588,14 @@ Texture** ResourceHandler::LoadNaturalMaterialsTexture(const string &fname, int 
         duniteTex->Bind();
         
         if (compressToBits == true) {
-    
+          
           GLubyte* compressedData = CompressToBits(tw, th, data);
           
           glTexSubImage2D(GL_TEXTURE_2D, 0, x * (_w/4), y * (_h/4), (_w/4), (_h/4), GL_RGBA, GL_UNSIGNED_BYTE, compressedData);
           free(data);
           
         } else if (useLuminance == true) {
-        
+          
           GLubyte* luminanceData = (GLubyte*)malloc( _w * _h );
           for (int idx = 0, lidx = 0; idx < _w * _h * 4; idx += 4, lidx++) {
             luminanceData[lidx] = data[idx];
@@ -585,7 +617,7 @@ Texture** ResourceHandler::LoadNaturalMaterialsTexture(const string &fname, int 
         i++;
       }
     }
-  
+    
     textures[t] = duniteTex;
     
   }
@@ -750,30 +782,30 @@ Texture* ResourceHandler::LoadDunitesTexture(const string &fname) { //, int _w, 
   
   for (int y = 0; y < rows; y++) {
     
-  for (int x = 0; x < cols; x++) {
+    for (int x = 0; x < cols; x++) {
       
-    NSString* useFileStr = [NSString stringWithFormat:@"%@%02d", fileStr, i];
-    NSString* path = [[NSBundle mainBundle] pathForResource:useFileStr ofType:typeStr];
-    NSLog(@"Loading texture: %@.%@\n", useFileStr, typeStr);
-    
-    NSData *texData = [[NSData alloc] initWithContentsOfFile:path];
-    UIImage *image = [[UIImage alloc] initWithData:texData];
-    
-    int _w = CGImageGetWidth(image.CGImage);
-    int _h = CGImageGetHeight(image.CGImage);
-
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    GLubyte* data = (GLubyte*)malloc( _w * _h * 4 );
-    
-    CGContextRef context = CGBitmapContextCreate( data, _w, _h, 8, 4 * _w, colorSpace, kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big );
-    CGColorSpaceRelease( colorSpace );
-    CGContextClearRect( context, CGRectMake( 0, 0, _w, _h ) );
-    
-    CGContextDrawImage( context, CGRectMake( 0, 0, _w, _h ), image.CGImage );
-    //CGContextDrawImage( context, CGRectMake( marginW, marginH, useW, useH ), image.CGImage );    
-    CGContextRelease(context);
-    [texData release];
-    
+      NSString* useFileStr = [NSString stringWithFormat:@"%@%02d", fileStr, i];
+      NSString* path = [[NSBundle mainBundle] pathForResource:useFileStr ofType:typeStr];
+      NSLog(@"Loading texture: %@.%@\n", useFileStr, typeStr);
+      
+      NSData *texData = [[NSData alloc] initWithContentsOfFile:path];
+      UIImage *image = [[UIImage alloc] initWithData:texData];
+      
+      int _w = CGImageGetWidth(image.CGImage);
+      int _h = CGImageGetHeight(image.CGImage);
+      
+      CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+      GLubyte* data = (GLubyte*)malloc( _w * _h * 4 );
+      
+      CGContextRef context = CGBitmapContextCreate( data, _w, _h, 8, 4 * _w, colorSpace, kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big );
+      CGColorSpaceRelease( colorSpace );
+      CGContextClearRect( context, CGRectMake( 0, 0, _w, _h ) );
+      
+      CGContextDrawImage( context, CGRectMake( 0, 0, _w, _h ), image.CGImage );
+      //CGContextDrawImage( context, CGRectMake( marginW, marginH, useW, useH ), image.CGImage );    
+      CGContextRelease(context);
+      [texData release];
+      
       //write this data into the big texture
       duniteTex->Bind();
       glTexSubImage2D(GL_TEXTURE_2D, 0, x * _w, y * _h, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, data);
@@ -784,7 +816,7 @@ Texture* ResourceHandler::LoadDunitesTexture(const string &fname) { //, int _w, 
   }
   
   return duniteTex;
- // return new Texture(alldata, _w, _h, _d, GL_RGBA, GL_UNSIGNED_BYTE); 
+  // return new Texture(alldata, _w, _h, _d, GL_RGBA, GL_UNSIGNED_BYTE); 
   
 }
 

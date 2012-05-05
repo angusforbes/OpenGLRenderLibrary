@@ -1,10 +1,12 @@
 #include "Camera.hpp"
 #include "Utils.hpp"
 #include "TextureCamera.hpp"
+#include "Texture.hpp"
+#include "Renderer.hpp"
 
 //static convenience methods to create common cameras
 Camera* Camera::CreateOrthographicCamera(ivec4 _vp) { 
-  return new Camera(_vp);
+  return new Camera(_vp, 0, 1, 0, 1);
 }
 
 Camera* Camera::CreateOrthographicPixelCamera(ivec4 _vp) { 
@@ -55,13 +57,13 @@ Camera::Camera() {
 }
 
 //Orthographic Camera - 0.0->1.0 in both directions 
-Camera::Camera(ivec4 _viewport) {
+Camera::Camera(ivec4 _vp) {
   
   IsPerspective = false;
   
-  aspect = (float)_viewport.z/(float)_viewport.w;
+  aspect = (float)_vp.z/(float)_vp.w;
   //SetTranslate(vec3());
-  SetViewport(_viewport);
+  SetViewport(_vp);
   
   //projection = mat4::Identity(); 
   projection = mat4::Ortho(0, 1, 0, 1); 
@@ -559,5 +561,51 @@ void Camera::SetGyroscopeMatrix(mat4 gm) {
 mat4 Camera::GetGyroscopeMatrix() {
   return gyroscopeMatrix;
 }
+
+
+void Camera::DrawViewportTexture(Texture* t) {
+  
+  Renderer* r = Renderer::GetRenderer();
+  
+  r->BindDefaultFrameBuffer();
+  
+  glViewport(viewport.x, viewport.y, viewport.z, viewport.w);
+  //  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+  //  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  /*
+   vector<float>& vvv = fullScreenRect->GetTexCoords();
+   
+   vvv[0] = post.x + 0.5;
+   vvv[i+1] = post.y + 0.5;
+   vvv[i+2] = post.z;
+   
+   }
+   */
+  
+  //Program* program = GetPrograms()["BicubicInterpolation"];
+  Program* program = GetProgram("SingleTexture");
+  program->Bind(); {
+    
+   // glUniform1f(program->Uniform("fWidth"), 1);
+   // glUniform1f(program->Uniform("fHeight"), 1);
+    
+    
+    glUniformMatrix4fv(program->Uniform("Modelview"), 1, 0, r->fullScreenRect->GetModelView().Pointer());
+    glUniformMatrix4fv(program->Uniform("Projection"), 1, 0, mat4::Identity().Pointer());
+    
+    t->Bind(GL_TEXTURE0); {
+      
+      glUniform1i(program->Uniform("s_tex"), 0);
+      r->fullScreenRect->PassVertices(program, GL_TRIANGLES);
+      
+    } t->Unbind(GL_TEXTURE0);
+  } program->Unbind();
+}
+
+
+
+
+
 
 

@@ -103,7 +103,7 @@ GLubyte* Noise::CreateLookUpTableForBitReduction16() {
 */
 
 
-GLubyte* Noise::CreateColorSolid(vec4 _color, int _w, int _h) {
+GLubyte* Noise::CreateColorSolid(ivec4 _color, int _w, int _h) {
   
   GLubyte* data = (GLubyte*) malloc (_w*_h*4*sizeof(GLubyte));
   
@@ -122,9 +122,9 @@ GLubyte* Noise::CreateColorNoise(int _w, int _h) {
   GLubyte* data = (GLubyte*) malloc (_w*_h*4*sizeof(GLubyte));
  
   for (int i = 0; i < _w * _h * 4; i+=4) {
-    data[i] = Utils::randomIntBetween(0,255); 
-    data[i+1] = Utils::randomIntBetween(0,255); 
-    data[i+2] = Utils::randomIntBetween(0,255); 
+    data[i] = Utils::RandomIntBetween(0,255); 
+    data[i+1] = Utils::RandomIntBetween(0,255); 
+    data[i+2] = Utils::RandomIntBetween(0,255); 
     data[i+3] = 255; //alpha;
   }  
   return data;
@@ -141,7 +141,7 @@ GLubyte* Noise::CreateRgbNoise(int _w, int _h) {
     data[i+2] = 0; 
     data[i+3] = 255; //alpha;
     
-    num = Utils::randomIntBetween(0,2);
+    num = Utils::RandomIntBetween(0,2);
     
     if (num == 0) {
       data[i] = 255; 

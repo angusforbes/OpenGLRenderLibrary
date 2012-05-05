@@ -21,6 +21,8 @@ public:
   virtual mat4 GetModelView();
   void SetModelView(mat4 mv);
   
+  void CenterAt(float _x, float _y);
+  
   vec3 GetTranslate();
   void SetTranslate(float _x, float _y, float _z);
   void SetTranslate(float _x, float _y);

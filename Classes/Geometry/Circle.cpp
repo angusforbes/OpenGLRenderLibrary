@@ -113,20 +113,29 @@ void Circle::GenerateTriangleIndices() {
   *index++ = 0;
 }
 
+
+
 void Circle::Transform() {
   //if (IsTransformed()) {
-  mat4 mv = Renderer::GetRenderer()->GetCamera()->GetModelView();
   
-  //printf("isTransformed!\n");
-  mv.Print();
+  mat4 mv;
+  
+  if (parent != NULL) {
+    mv = parent->GetModelView();
+  } else {
+    mv = mat4::Identity();
+  }
+  
   
   //translate
   mv = mat4::Translate(mv, GetTranslate());
   
   //scale
-  mv = mat4::Translate(mv, scaleAnchor);
+  mv = mat4::Translate(mv, scaleAnchor); 
   mv = mat4::Scale(mv, GetScale());
   mv = mat4::Translate(mv, -scaleAnchor);
+  
+  
   
   //rotate
   mv = mat4::Translate(mv, rotateAnchor);
@@ -140,6 +149,7 @@ void Circle::Transform() {
   SetIsTransformed(false);
   //}
 }
+
 
 
 

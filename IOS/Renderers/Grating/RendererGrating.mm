@@ -37,7 +37,7 @@ void RendererGrating::Initialize() {
   botVal = 0.0;
 
   //SetCamera(new Camera(vec3(0,0,-3), 60.0, (float)width/(float)height, 0.1, 100, ivec4(0,0,width,height)));
-  SetCamera(new Camera(ivec4(0, 0, width, height)));
+  //SetCamera(new Camera(ivec4(0, 0, width, height)));
   
   //rects = (Rectangle**) malloc (numRects*sizeof(Rectangle*));
   
@@ -79,7 +79,7 @@ void RendererGrating::BlendTextures(FBO* fbo, Texture* t1, Texture* t2){
     
     program->Bind(); {
       int i;
-      set<Geom*>::iterator it;
+      vector<Geom*>::iterator it;
       for (it=GetGeoms().begin(), i = 0; it!=GetGeoms().end(); it++, i++) {
         Geom* g = (Geom*) *it;
         
@@ -118,7 +118,7 @@ void RendererGrating::DrawGrating(FBO* fbo, float freq, float phase, float theta
     
     program->Bind(); {
       int i;
-      set<Geom*>::iterator it;
+      vector<Geom*>::iterator it;
       for (it=GetGeoms().begin(), i = 0; it!=GetGeoms().end(); it++, i++) {
         Geom* g = (Geom*) *it;
         

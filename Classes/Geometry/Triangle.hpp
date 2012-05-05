@@ -4,29 +4,25 @@
 #include "Geom.hpp"
 #include <vector>
 
-#ifndef RECTANGLE_H
-#define RECTANGLE_H
+#ifndef OGRL_TRIANGLE_H
+#define OGRL_TRIANGLE_H
 
 
-class Rectangle : public Geom { 
+class Triangle : public Geom { 
   
 public:
-  Rectangle();
-  Rectangle(vec3 translate, float width, float height);
-
-  float GetWidth();
-  float GetHeight();
-  void SetWidth(float _w);
-  void SetHeight(float _h);
-  void SetSize(float _w, float _h);
-  //string String();
+  Triangle(vec3 _p0, vec3 _p1, vec3 _p2);
+ 
+  vec3 p0;
+  vec3 p1;
+  vec3 p2;
+  
   
   //from Geom
   virtual bool ContainsWindowPoint(ivec2 windowPt);
- // virtual void Draw();
   
   //from ModelView
-  virtual void Transform();
+  //virtual void Transform();
   
   //from Mesh
   virtual void GenerateLineIndices();
@@ -36,8 +32,8 @@ public:
   virtual int GetTriangleIndexCount() ;
   
 protected:
-  float width;
-  float height;
+ // float width;
+ // float height;
 
   
 private:

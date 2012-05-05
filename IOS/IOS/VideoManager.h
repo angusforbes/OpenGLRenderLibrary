@@ -11,17 +11,21 @@
   AVAssetReader* videoAssetReader;
   AVAssetTrack* videoTrack;
   AVAssetReaderTrackOutput* videoTrackOutput;
-  Texture* videoTexture;
   CMSampleBufferRef pixelBuffer;
+  CVImageBufferRef imageBuffer;
   double prevTime;
   double currTime;
   bool isLooping;
-
+  bool isLocked;
+  Texture* videoTexture;
+  
 }
 
 - (Texture*) setUpVideoThread:(AVAsset*)_inAsset isLooping:(bool)_isLooping;
 - (void) startVideoThread:(double)fireDate;
 - (void) nextVideoFrame;
+- (void) nextVideoFrameLock; //manually lock + unlock buffer (so you can image process, etc safely
+- (void) nextVideoFrameUnlock;
 
 //private
 //- (void) playVideo;

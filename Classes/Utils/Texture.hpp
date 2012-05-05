@@ -25,7 +25,9 @@ public:
   static Texture* CreateTextureFromImageFile(string filename);
   static Texture* CreateEmptyTexture(int _w, int _h);
   static Texture* CreateEmptyTexture(int _w, int _h, GLenum _format, GLenum _type);
-  static Texture* CreateSolidTexture(vec4 _color, int _w, int _h);
+  static Texture* CreateSolidTexture(ivec4 _color, int _w, int _h);
+  static Texture* CreateSolidTexture(ivec4 _color, int _w, int _h, GLenum _format, GLenum _type);
+
   
   static Texture* CreateCubeMapFromImageFile(string filename);
     
@@ -47,8 +49,14 @@ public:
   void Unbind();
   void Bind();
   void SetWrapMode(GLuint wrapMode);
-  void SetFilterModes(GLuint minFilter, GLuint maxFilter);
+  void SetFilterModes(GLuint minFilter, GLuint maxFilter); //GL_NEAREST, GL_LINEAR, etc
   
+  int GetIndexAt(int x, int y);
+  ivec4 GetPixelAt(int x, int y);
+  void SetPixelAt(int x, int y, ivec4 rgba);
+  void SetRectAt(int x, int y, int w, int h, ivec4 rgba);
+
+
   GLubyte** cubeData;
   GLubyte* data;
   GLenum kind; //GL_TEXTURE_2D, GL_TEXTURE_3D, or GL_TEXTURE_CUBE_MAP 

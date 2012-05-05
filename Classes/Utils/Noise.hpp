@@ -10,7 +10,7 @@ public:
   static GLubyte* CreateRgbNoise(int _w, int _h);
   static GLubyte* CreateColorNoise(int _w, int _h);
   
-  static GLubyte* CreateColorSolid(vec4 _color, int _w, int _h);
+  static GLubyte* CreateColorSolid(ivec4 _color, int _w, int _h);
   
 };
 #endif

@@ -19,7 +19,7 @@ public:
   RendererPanoramic();
   
   virtual void Initialize();
-  virtual void Render();
+  virtual void Draw();
   
   void CheckScale();
   void HandleTouchMoved(ivec2 prevMouse, ivec2 mouse);

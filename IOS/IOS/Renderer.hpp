@@ -100,6 +100,7 @@ public:
   Program* GetProgram(string programName);
   
   void BindDefaultFrameBuffer();
+  Rectangle* fullScreenRect;
   
   //ivec2 Project(vec3 p);
   
@@ -131,7 +132,6 @@ protected:
   
   mat4 gyroscopeMatrix;
   
-  Rectangle* fullScreenRect;
   GLuint defaultFBO;
   void DrawFullScreenTexture(Texture* t);
   void CreateFullScreenRect();

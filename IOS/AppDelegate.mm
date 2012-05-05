@@ -1,6 +1,7 @@
 
 #import "AppDelegate.h"
 #include "RendererDunites.hpp"
+#include "RendererVideoTexture.hpp"
 
 @implementation AppDelegate
 
@@ -8,7 +9,8 @@
 @synthesize viewController;
 
 - (void*) GetRenderer {
-  return new RendererDunites(); 
+  return new RendererVideoTexture();
+  //return new RendererDunites(); 
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {

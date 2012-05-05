@@ -45,7 +45,7 @@ void RendererPanoramic::Initialize() {
   
   
   //SetCamera(new Camera(vec3(0,0,-3), 60.0, (float)width/(float)height, 0.1, 100, ivec4(0,0,width,height)));
-  SetCamera(new Camera(ivec4(0, 0, width, height)));
+  //SetCamera(new Camera(ivec4(0, 0, width, height)));
   
   //rects = (Rectangle**) malloc (numRects*sizeof(Rectangle*));
   
@@ -102,7 +102,7 @@ GetTextures().insert(pair<string, Texture*>("VideoTexture", videoTexture));
 }
 
 
-void RendererPanoramic::Render() { 
+void RendererPanoramic::Draw() { 
   
   //if (1 == 1) {return;}
   
@@ -168,7 +168,8 @@ void RendererPanoramic::Render() {
     
     program->Bind(); {
       int i;
-      set<Geom*>::iterator it;
+      vector<Geom*>::iterator it;
+      
       for (it=GetGeoms().begin(), i = 0; it!=GetGeoms().end(); it++, i++) {
         Geom* g = (Geom*) *it;
         

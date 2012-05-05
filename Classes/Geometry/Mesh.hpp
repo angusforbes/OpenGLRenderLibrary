@@ -45,6 +45,9 @@ public:
   vector<unsigned short> lineIndices;
   vector<unsigned short> triangleIndices;
   
+  void PrintVertices();
+  
+  
 protected:
   
   

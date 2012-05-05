@@ -27,7 +27,7 @@ void RendererDunites::Initialize() {
   
   
   printf("in RendererDunites::Initialize() : w/h = %d/%d\n", width, height); 
-  SetCamera(new Camera(ivec4(0, 0, width, height)));
+  //SetCamera(new Camera(ivec4(0, 0, width, height)));
   
   // this is still not working... fix it!
   textureCamera = new TextureCamera();
@@ -152,7 +152,7 @@ void RendererDunites::Render() {
       program->Bind();
       
       
-      set<Geom*>::iterator it;
+      vector<Geom*>::iterator it;
       for (it=GetGeoms().begin(); it!=GetGeoms().end(); it++) {
         Geom* g = (Geom*) *it;
         glUniformMatrix4fv(program->Uniform("Modelview"), 1, 0, g->GetModelView().Pointer());
@@ -228,7 +228,7 @@ void RendererDunites::Render() {
   
   program->Bind();
   
-  set<Geom*>::iterator it;
+  vector<Geom*>::iterator it;
   for (it=GetGeoms().begin(); it!=GetGeoms().end(); it++) {
     Geom* g = (Geom*) *it;
     glUniformMatrix4fv(program->Uniform("Modelview"), 1, 0, g->GetModelView().Pointer());

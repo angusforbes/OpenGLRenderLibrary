@@ -15,7 +15,7 @@
 
 bool IS_ANIMATED = true;
 bool USING_GYRO = NO; //YES;
-bool USE_RETINA = YES;
+bool USE_RETINA = NO;
 //float prevRoll = 0.0;
 //float prevPitch = 0.0;
 //float prevYaw = 0.0;
@@ -70,6 +70,7 @@ bool USE_RETINA = YES;
   if([[UIScreen mainScreen] respondsToSelector: NSSelectorFromString(@"scale")]) {
     if([self respondsToSelector: NSSelectorFromString(@"contentScaleFactor")]) {
       self.contentScaleFactor = [[UIScreen mainScreen] scale];
+      NSLog(@"\nscale factor = %f\n", self.contentScaleFactor);
     }
   }
 }

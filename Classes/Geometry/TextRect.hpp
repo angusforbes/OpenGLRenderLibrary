@@ -30,7 +30,7 @@ public:
   //from Geom
   virtual void Draw();
   virtual bool ContainsWindowPoint(ivec2 windowPt);
-  void SetColor(float r, float g, float b, float a);
+  void SetColor(Color* _c);
   
   //from ModelView
   //virtual void Transform();

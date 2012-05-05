@@ -37,7 +37,7 @@ void RendererCubeMap::AddUI() {
 
 void RendererCubeMap::Initialize() {
   
-  SetCamera(new Camera(vec3(0,0,0), 60.0, (float)width/(float)height, 0.1, 100, ivec4(0,0,width, height)));
+  InstallCamera("default", new Camera(vec3(0,0,0), 60.0, (float)width/(float)height, 0.1, 100, ivec4(0,0,width, height)));
   //camera->rotateCamY(45.0);
   printf("in RendererCubeMap::Initialize()\n"); 
   

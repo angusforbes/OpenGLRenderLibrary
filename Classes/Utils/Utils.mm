@@ -13,24 +13,32 @@ bool Utils::Epsilon(float val, float target, float range) {
   
 }
 
-void Utils::sleep(double seconds) {
+void Utils::Sleep(double seconds) {
   [NSThread sleepForTimeInterval:seconds];
 }
 
-float Utils::randomFloatBetween(float a, float b) {
-  return ((b-a) * randomFloat()) + a;
+float Utils::RandomFloatBetween(float a, float b) {
+  return ((b-a) * RandomFloat()) + a;
 }
 
 
-float Utils::randomFloat() {
+float Utils::RandomFloat() {
   return ((float)arc4random()/0x100000000);
 }
 
+//non-inclusive, i.e., if a=0 and b=10, it will return in the range of 0->9
+int Utils::RandomIntBetween(int a, int b) {
+  //return (int)a + (arc4random() % (b-a+1));
+  return (int)a + (arc4random() % (b-a));
+  //return (int) (((b-a) * [Utils randomDouble]) + a);
+}
 
-int Utils::randomIntBetween(int a, int b) {
+//non-inclusive, i.e., if a=0 and b=10, it will return in the range of 0->10
+int Utils::RandomIntRange(int a, int b) {
   return (int)a + (arc4random() % (b-a+1));
   //return (int) (((b-a) * [Utils randomDouble]) + a);
 }
+
 
 ray3 Utils::GetPickingRay(int mx, int my) {
   Camera* camera = Renderer::GetRenderer()->GetCamera();

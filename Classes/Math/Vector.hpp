@@ -306,7 +306,6 @@ struct Vector4 {
     cout << String() << "\n";
   }
 
-  
   T x;
   T y;
   T z;

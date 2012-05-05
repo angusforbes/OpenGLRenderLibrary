@@ -170,6 +170,14 @@ struct Matrix4 {
     return m;
   }
   
+  void Print(string s) {
+    cout << s << " \n";
+    printf("\t%f %f %f %f\n", x.x, y.x, z.x, w.x);
+    printf("\t%f %f %f %f\n", x.y, y.y, z.y, w.y);
+    printf("\t%f %f %f %f\n", x.z, y.z, z.z, w.z);
+    printf("\t%f %f %f %f\n\n", x.w, y.w, z.w, w.w);
+  }
+  
   void Print() {
     printf("%f %f %f %f\n", x.x, y.x, z.x, w.x);
     printf("%f %f %f %f\n", x.y, y.y, z.y, w.y);
@@ -535,9 +543,10 @@ struct Matrix4 {
     return Ortho(0,w,0,h);
   }
    
+  //0->1 0->1
   static Matrix4<T> Ortho(float left, float right, float bottom, float top) {
     float nearval = -1.0;
-    float farval = -1.0;
+    float farval = 1.0;
     
     float m[16];
     
@@ -563,7 +572,10 @@ struct Matrix4 {
     M(3,3) = 1.0F;
     #undef M
 
-    return Matrix4(m);
+    Matrix4 ortho = Matrix4(m);
+    //ortho = ortho.Transposed();
+    ortho.Print("ortho matrix: ");
+    return ortho;
   }
   
   static Matrix4<T> Perspective(T fovyInDegrees, T aspectRatio, T znear, T zfar) {

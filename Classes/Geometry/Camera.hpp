@@ -6,6 +6,7 @@
 
 class Vector;
 class TextureCamera;
+class Texture;
 
 class Camera : public Geom {
   
@@ -76,6 +77,7 @@ public:
   
   ivec2 Project(vec3 p);
 
+  void DrawViewportTexture(Texture* t);
 private:
   
   bool IsPerspective;

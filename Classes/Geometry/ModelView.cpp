@@ -32,6 +32,12 @@ void ModelView::Translate(vec3 _t) {
 }
 
 
+void ModelView::CenterAt(float _x, float _y) {
+  SetTranslate(vec3(_x, _y, 0.0)); 
+  SetScaleAnchor(0.5,0.5);
+}
+
+
 void ModelView::SetTranslate(float _x, float _y) {
   SetTranslate(vec3(_x, _y, 0.0));  
 }

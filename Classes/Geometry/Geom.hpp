@@ -3,6 +3,7 @@
 
 #include "ModelView.hpp"
 #include "Mesh.hpp"
+#include "Color.hpp"
 #include <vector>
 
 
@@ -31,16 +32,16 @@ public:
   bool AddGeom(Geom* _g);
   bool RemoveGeom(Geom* _g);
   
-  void SetColor(vec4 _Color);
-  void SetColor(float r, float g, float b, float a);
-  void SetColor(float r, float g, float b);
-  vec4 GetColor();
+  void SetColor(Color* _Color);
+//  void SetColor(float r, float g, float b, float a);
+//  void SetColor(float r, float g, float b);
+  Color* GetColor();
   
   
   bool IsSelectable;
   
   
-  Program* GetProgram(string _p); //convenienve method to get items from Renderer
+  Program* GetProgram(string _p); //convenience method to get items from Renderer
   
   virtual void Draw();
   virtual bool ContainsWindowPoint(ivec2 windowPt);
@@ -75,7 +76,7 @@ public:
   
   
 protected:
-  vec4 Color;
+  Color* color;
 };
 
 #endif

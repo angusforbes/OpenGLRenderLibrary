@@ -15,6 +15,8 @@
 
 //using namespace std;
 
+
+
 class ResourceHandler {
 public:
     
@@ -56,9 +58,18 @@ public:
   
   void* RetrieveAsset(const string &fname);
   
+  
+ 
+  bool CheckVideoCaptureLatch();
+  void ReleaseVideoCaptureLatch();
+  
+  Texture* CreateVideoCaptureTexture();
+  
   Texture* CreateVideoTexture(const string &fname);
   Texture* CreateVideoTexture(const string &fname, bool useAudio, bool autoPlay, bool autoLoop );
   void NextVideoFrame();
+  void NextVideoFrameLock();
+  void NextVideoFrameUnlock();
   
   void PlayAudioResource(const string &fname);
   //void PlayAudioResource(const string &fname, NSDate* d);

@@ -3,9 +3,10 @@
 #include "Renderer.hpp"
 
 Geom::Geom() {
-  printf("in Geom::Geom()\n");
-  SetColor(1.0,1.0,1.0,1.0); //default color is white (for now, should be able to change this programmatically)
+  //printf("in Geom::Geom()\n");
+  SetColor(Color::Float(1.0f,1.0f,1.0f,1.0f)); //default color is white (for now, should be able to change this programmatically)
   IsSelectable = false; //default selectability is false
+  parent = NULL; 
 }
 
 
@@ -21,7 +22,7 @@ vector<Geom*>& Geom::GetGeoms() {
 
 bool Geom::AddGeom(Geom* _g) {
   _g->parent = this;
-  _g->root = this->root;
+  _g->root = this->root; //i.e. the camera
   geoms.push_back(_g);
   //geoms.insert(0,_g);
   return 1; //later make a real test- ie if it's already in there...
@@ -36,9 +37,21 @@ bool Geom::RemoveGeom(Geom* _g) {
 }
 
 void Geom::Draw() {
-  //printf("Draw() not handled for this Geom\n");
+  
+  //default draw method - assumes using only vertices - flat shader
+  Program* program = GetProgram("FlatShader");
+  
+  program->Bind(); {
+    glUniformMatrix4fv(program->Uniform("Modelview"), 1, 0, GetModelView().Pointer());
+    glUniformMatrix4fv(program->Uniform("Projection"), 1, 0, root->projection.Pointer());
+    glUniform4fv(program->Uniform("Color"), 1, GetColor()->AsFloat().Pointer());
+    PassVertices(program, GL_TRIANGLES);
+  } program->Unbind();
+  
+ 
 }
 
+/*
 void Geom::SetColor(float r, float g, float b, float a) {
   SetColor(vec4(r,g,b,a));
 }
@@ -46,13 +59,13 @@ void Geom::SetColor(float r, float g, float b, float a) {
 void Geom::SetColor(float r, float g, float b) {
   SetColor(vec4(r,g,b,1.0));
 }
-
-void Geom::SetColor(vec4 _Color) {
-  Color = _Color;
+*/
+void Geom::SetColor(Color* _Color) {
+  color = _Color;
 }
 
-vec4 Geom::GetColor() {
-  return Color;
+Color* Geom::GetColor() {
+  return color;
 }
 
 void Geom::Text(float pen_x, float pen_y, string text, vec4 color ) {
@@ -100,6 +113,7 @@ void Geom::Transform() {
   //printf("isTransformed!\n");
   //mv.Print();
   
+  
   //translate
   mv = mat4::Translate(mv, GetTranslate());
   
@@ -107,6 +121,8 @@ void Geom::Transform() {
   mv = mat4::Translate(mv, scaleAnchor);
   mv = mat4::Scale(mv, GetScale());
   mv = mat4::Translate(mv, -scaleAnchor);
+  
+ 
   
   //rotate
   mv = mat4::Translate(mv, rotateAnchor);
