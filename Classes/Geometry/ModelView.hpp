@@ -1,13 +1,22 @@
-#include "Vector.hpp"
-#include "Matrix.hpp"
+//#include "Vector.hpp"
+//#include "Matrix.hpp"
 
 #ifndef MODELVIEW_H
 #define MODELVIEW_H
 //#include "GLView.h"
 
 
+#define GLM_SWIZZLE
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <iostream> 
+#include <sstream>
+#include <glm/gtx/string_cast.hpp>
+
 //#include "Interfaces.hpp"
 
+using glm::mat4;
+using glm::vec3;
 
 class ModelView {
   

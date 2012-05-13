@@ -12,8 +12,8 @@
 #include <set>
 
 #include "Camera.hpp"
-#include "Vector.hpp"
-#include "Matrix.hpp"
+//#include "Vector.hpp"
+//#include "Matrix.hpp"
 #include "FontAtlas.hpp"
 
 
@@ -91,9 +91,9 @@ public:
   FontAtlas* CurrentFont;
   
   //  void Text(float pen_x, float pen_y, string text, vec4 color );
-  void DrawText(float pen_x, float pen_y, string text, vec4 color, bool usePixel );
+  void DrawText(float pen_x, float pen_y, string text, Color* color, bool usePixel );
   //  void Text(FontAtlas* font, float pen_x, float pen_y, string text, vec4 color );
-  void DrawText(FontAtlas* font, float pen_x, float pen_y, string text, vec4 color, bool usePixel );
+  void DrawText(FontAtlas* font, float pen_x, float pen_y, string text, Color* color, bool usePixel );
   //  void Text(vec3 offsetPt, string text, vec4 color);
   
   FontAtlas* GetFont(string font);

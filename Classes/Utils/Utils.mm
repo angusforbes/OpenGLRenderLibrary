@@ -1,5 +1,6 @@
 #include "Utils.hpp"
 #include "Renderer.hpp"
+#include <glm/gtc/matrix_transform.hpp>
 
 using namespace std;
 
@@ -46,9 +47,15 @@ ivec4 vp = camera->viewport;
 mat4 proj = camera->projection;
 mat4 mv = camera->modelview;
 
-vec3 atNearPlane = mat4::Unproject(mx, my, 0.0, mv, proj, vp);
-vec3 atFarPlane = mat4::Unproject(mx, my, 1.0, mv, proj, vp);
-return ray3(atNearPlane, (atFarPlane - atNearPlane));
+   
+//vec3 atNearPlane = mat4::Unproject(mx, my, 0.0, mv, proj, vp);
+//vec3 atFarPlane = mat4::Unproject(mx, my, 1.0, mv, proj, vp);
+
+  vec3 atNearPlane = glm::unProject(vec3(mx, my, 0.0), mv, proj, vp);
+  vec3 atFarPlane = glm::unProject(vec3(mx, my, 1.0), mv, proj, vp);
+
+  
+  return ray3(atNearPlane, (atFarPlane - atNearPlane));
 }
 
 int Utils::IntersectsWithRay2(ray3 theRay, Sphere* s, vec3* intersection) {
@@ -63,9 +70,9 @@ int Utils::IntersectsWithRay2(ray3 theRay, Sphere* s, vec3* intersection) {
   vec3 eyeToPixelDir = rD;
   vec3 originMinusCenter = rO - pos;
   
-  float a = eyeToPixelDir % eyeToPixelDir;
-  float b = 2 * (originMinusCenter % eyeToPixelDir);
-  float c = originMinusCenter % originMinusCenter;
+  float a = glm::dot(eyeToPixelDir,eyeToPixelDir);
+  float b = 2 * (glm::dot(originMinusCenter,eyeToPixelDir));
+  float c = glm::dot(originMinusCenter,originMinusCenter);
   
   //  float a = vec3::Dot(eyeToPixelDir, eyeToPixelDir);
   //  float b = 2 * (vec3::Dot(originMinusCenter, eyeToPixelDir));
@@ -104,9 +111,13 @@ int Utils::IntersectsWithRay(ray3 theRay, Sphere* s, vec3* intersection) {
   vec3 eyeToPixelDir = rD;
   vec3 originMinusCenter = rO - pos;
   
-  float a = eyeToPixelDir % eyeToPixelDir;
-  float b = 2 * (originMinusCenter % eyeToPixelDir);
-  float c = originMinusCenter % originMinusCenter;
+  float a = glm::dot(eyeToPixelDir,eyeToPixelDir);
+  float b = 2 * (glm::dot(originMinusCenter , eyeToPixelDir));
+  float c = glm::dot(originMinusCenter , originMinusCenter);
+  
+//  float a = eyeToPixelDir % eyeToPixelDir;
+//  float b = 2 * (originMinusCenter % eyeToPixelDir);
+//  float c = originMinusCenter % originMinusCenter;
   
 //  float a = vec3::Dot(eyeToPixelDir, eyeToPixelDir);
 //  float b = 2 * (vec3::Dot(originMinusCenter, eyeToPixelDir));
@@ -137,10 +148,13 @@ vec3 Utils::ArbitraryRotate(vec3 p, float theta, vec3 r) {
   vec3 q = vec3(0.0,0.0,0.0);
   double costheta,sintheta;
   
-  p.Normalize();
-  r.Normalize();
+  p = glm::normalize(p);
+  r = glm::normalize(r);
   
-  float rad = radians(theta);
+//  p.Normalize();
+//  r.Normalize();
+  
+  float rad = glm::radians(theta);
   costheta = cos(rad);
   sintheta = sin(rad);
   
@@ -156,7 +170,8 @@ vec3 Utils::ArbitraryRotate(vec3 p, float theta, vec3 r) {
   q.z += ((1 - costheta) * r.y * r.z + r.x * sintheta) * p.y;
   q.z += (costheta + (1 - costheta) * r.z * r.z) * p.z;
   
-  q.Normalize();
+  q = glm::normalize(q);
+  //q.Normalize();
   
   return(q);
 }

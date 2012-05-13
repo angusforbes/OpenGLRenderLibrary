@@ -1,4 +1,4 @@
-
+#include "Defines.h"
 #include "Geom.hpp"
 
 #ifndef CAMERA_OGRL_H

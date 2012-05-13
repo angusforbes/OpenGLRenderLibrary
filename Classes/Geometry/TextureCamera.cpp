@@ -1,5 +1,7 @@
 #include "TextureCamera.hpp"
 #include "Utils.hpp"
+#include <glm/gtc/matrix_transform.hpp>
+
 
 //Rectangular Texture Camera
 //produces a modelview matrix that can be used to reposition vertexes around a camera view
@@ -28,9 +30,20 @@ TextureCamera::TextureCamera(vec3 _initPosVec, vec3 _initRotVec, vec3 _initScale
 void TextureCamera::Transform() {
   
   if (IsTransformed()) {
-    mat4 tm = mat4::Identity();
+    mat4 tm = mat4(); //::Identity();
     mat4 rotBasis = MakeCameraBasis();
     
+    
+    tm = glm::translate(tm, vec3(-posVec.x, -posVec.y, -posVec.z));
+    
+    tm = glm::translate(tm, scaleAnchor);
+    tm = glm::scale(tm, scale);
+    tm = glm::translate(tm, -scaleAnchor);
+    
+    tm = glm::translate(tm, rotateAnchor);
+    tm = rotBasis * tm;
+    tm = glm::translate(tm, -rotateAnchor);
+    /*
     tm = mat4::Translate(tm, vec3(-posVec.x, -posVec.y, -posVec.z));
     
     tm = mat4::Translate(tm, scaleAnchor);
@@ -40,7 +53,7 @@ void TextureCamera::Transform() {
     tm = mat4::Translate(tm, rotateAnchor);
     tm = mat4(rotBasis) * tm;
     tm = mat4::Translate(tm, -rotateAnchor);
-    
+    */
     SetModelView(tm);
     SetIsTransformed(false);
   } 
@@ -64,6 +77,16 @@ void TextureCamera::Reset() {
   //Camera::Reset();
   posVec = initPosVec;
   
+  mat4 rot = mat4(); //::Identity();
+  rot = glm::rotate(rot, initRotVec.x, vec3(1,0,0));
+  rot = glm::rotate(rot, initRotVec.y, vec3(0,1,0));
+  rot = glm::rotate(rot, initRotVec.z, vec3(0,0,1));
+  
+  rightVec = rot[0].xyz(); //vec3(rot.x.x, rot.x.y, rot.x.z);
+  upVec = rot[1].xyz(); //vec3(rot.y.x, rot.y.y, rot.y.z);
+  viewVec = rot[2].xyz(); //vec3(rot.z.x, rot.z.y, rot.z.z);
+  
+  /*
   mat4 rot = mat4::Identity();
   rot = mat4::RotateX(rot, initRotVec.x);
   rot = mat4::RotateY(rot, initRotVec.y);
@@ -72,6 +95,7 @@ void TextureCamera::Reset() {
   rightVec = vec3(rot.x.x, rot.x.y, rot.x.z);
   upVec = vec3(rot.y.x, rot.y.y, rot.y.z);
   viewVec = vec3(rot.z.x, rot.z.y, rot.z.z);
+  */
   
   scale = initScaleVec;
   

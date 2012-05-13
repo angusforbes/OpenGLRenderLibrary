@@ -1,5 +1,5 @@
 
-#include "Defines.h"
+
 
 #ifdef IS_IOS 
   #include <OpenGLES/ES2/gl.h>
@@ -11,13 +11,18 @@
   #include <OpenGL/glext.h>
 #endif
 
-#include "Vector.hpp"
+
+#define GLM_SWIZZLE
+#include <glm/glm.hpp>
+
+//#include "Vector.hpp"
 #include <string>
 
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
 using namespace std;
+using glm::ivec4;
 
 class Texture {
   
@@ -54,7 +59,8 @@ public:
   int GetIndexAt(int x, int y);
   ivec4 GetPixelAt(int x, int y);
   void SetPixelAt(int x, int y, ivec4 rgba);
-  void SetRectAt(int x, int y, int w, int h, ivec4 rgba);
+  void FillRectAt(int x, int y, int w, int h, ivec4 rgba);
+  void DrawRectAt(int x, int y, int w, int h, ivec4 rgba);
 
 
   GLubyte** cubeData;

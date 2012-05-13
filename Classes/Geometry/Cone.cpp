@@ -2,6 +2,14 @@
 #include "Cone.hpp"
 #include "Renderer.hpp"
 #include "Camera.hpp"
+#include <iostream> 
+#include <sstream>
+#include <glm/gtx/string_cast.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+
+const float Pi = 4 * std::atan(1.0f);
+const float TwoPi = 2 * Pi;
 
 Cone::Cone() {
   
@@ -73,8 +81,8 @@ int Cone::GetTriangleIndexCount()
 
 string Cone::String() {
   
-  ostringstream ss;
-  ss << "" << GetTranslate().String() << ", scale=" << GetScale().x;
+  std::ostringstream ss;
+  ss << "" << glm::to_string(GetTranslate()) << ", scale=" << GetScale().x;
   return ss.str();
   
 }
@@ -110,7 +118,8 @@ void Cone::GenerateVertices() {
       // Compute Position
       vec2 domain = ComputeDomain(i, j);
       vec3 range = Evaluate(domain);
-      attribute = range.Write(attribute);
+    
+      //attribute = range.Write(attribute);
       
       /*
       // Compute Normal
@@ -192,9 +201,24 @@ void Cone::Transform() {
   mat4 mv = Renderer::GetRenderer()->GetCamera()->GetModelView();
   
   printf("isTransofrmed!\n");
-  mv.Print();
+ // mv.Print();
   //exit(0);
   
+  mv = glm::translate(mv, GetTranslate());
+  
+  //scale
+  mv = glm::translate(mv, scaleAnchor); //rects are positioned at 0,0 already (i.e., not centered around it)
+  mv = glm::scale(mv, GetScale());
+  mv = glm::translate(mv, -scaleAnchor);
+  
+  //rotate
+  mv = glm::translate(mv, rotateAnchor);
+  mv = glm::rotate(mv, GetRotate().x, vec3(1,0,0));
+  mv = glm::rotate(mv, GetRotate().y, vec3(0,1,0));
+  mv = glm::rotate(mv, GetRotate().z, vec3(0,0,1));
+  mv = glm::translate(mv, (-rotateAnchor));
+  
+  /*
   //translate
   mv = mat4::Translate(mv, GetTranslate());
   
@@ -210,6 +234,7 @@ void Cone::Transform() {
   mv = mat4::RotateZ(mv, GetRotate().z);
   mv = mat4::Translate(mv, (-rotateAnchor));
   
+  */
   
   SetModelView(mv);
   SetIsTransformed(false);

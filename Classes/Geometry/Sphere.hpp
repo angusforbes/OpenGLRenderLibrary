@@ -1,6 +1,6 @@
 
-#include "Vector.hpp"
-#include "Matrix.hpp"
+//#include "Vector.hpp"
+//#include "Matrix.hpp"
 
 #include "Mesh.hpp"
 #include "ModelView.hpp"
@@ -15,6 +15,9 @@
 
 #ifndef SPHERE_H
 #define SPHERE_H
+
+using glm::ivec2;
+using glm::vec2;
 
 class Sphere : public ModelView, public Mesh {
   

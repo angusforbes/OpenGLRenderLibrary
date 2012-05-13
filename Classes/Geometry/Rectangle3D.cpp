@@ -2,6 +2,7 @@
 #include "Rectangle3D.hpp"
 #include "Renderer.hpp"
 #include "Camera.hpp"
+#include <glm/gtc/matrix_transform.hpp>
 
 Rectangle3D::Rectangle3D() {
   
@@ -124,6 +125,21 @@ void Rectangle3D::Transform() {
   
   mat4 mv = Renderer::GetRenderer()->GetCamera()->GetModelView();
   
+  mv = glm::translate(mv, GetTranslate());
+  
+  //scale
+  mv = glm::translate(mv, scaleAnchor); //rects are positioned at 0,0 already (i.e., not centered around it)
+  mv = glm::scale(mv, GetScale());
+  mv = glm::translate(mv, -scaleAnchor);
+  
+  //rotate
+  mv = glm::translate(mv, rotateAnchor);
+  mv = glm::rotate(mv, GetRotate().x, vec3(1,0,0));
+  mv = glm::rotate(mv, GetRotate().y, vec3(0,1,0));
+  mv = glm::rotate(mv, GetRotate().z, vec3(0,0,1));
+  mv = glm::translate(mv, (-rotateAnchor));
+  
+  /*
   //translate
   mv = mat4::Translate(mv, GetTranslate());
   
@@ -138,7 +154,8 @@ void Rectangle3D::Transform() {
   mv = mat4::RotateY(mv, GetRotate().y);
   mv = mat4::RotateZ(mv, GetRotate().z);
   mv = mat4::Translate(mv, (-rotateAnchor));
-   
+  */
+  
   SetModelView(mv);
   SetIsTransformed(false);
 }

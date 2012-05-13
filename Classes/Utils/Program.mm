@@ -48,6 +48,7 @@ bool Program::CompileShaders() {
   
   string fragShaderPathname = ResourceHandler::GetResourceHandler()->GetPathForResourceOfType(programName, "fsh");
   //const GLchar* fragSource = GetSource(fragShaderPathname);
+  cout << "fragment shader located at: " << fragShaderPathname << "\n";
   string fragSource = GetSource(fragShaderPathname);
   
   if (!CompileShader(&fragID, GL_FRAGMENT_SHADER, fragSource)) {
@@ -74,11 +75,11 @@ bool Program::CompileShaders(string _vertex, string _frag) {
 bool Program::InstallProgram() {
  
   // Attach vertex shader to program.
-  //NSLog(@"attaching '%@.vsh' to '%@'\n", name, programName);
+  NSLog(@"attaching '%d' to '%d'\n", vertID, programID);
   glAttachShader(programID, vertID);
   
   // Attach fragment shader to program.
-  //NSLog(@"attaching '%@.fsh' to '%@'\n", name, programName);
+  NSLog(@"attaching '%d' to '%d'\n", fragID, programID);
   glAttachShader(programID, fragID);
   
   if (!LinkProgram(programID)) {
@@ -151,7 +152,6 @@ const string Program::GetSource(string path) {
   return str;
 }
 bool Program::CompileShader(GLuint* shader, GLenum type, string const &source) {
-  //NSLog(@"compiling shader '%@'", file);
   
   GLint status;
   

@@ -1,5 +1,5 @@
 
-#include "Matrix.hpp"
+//#include "Matrix.hpp"
 #include "Geom.hpp"
 #include "FBO.hpp"
 #include "Rectangle.hpp"
@@ -25,7 +25,7 @@ public:
   
   void SetWidth(float _w); //sets bounds by width and aspectRatio
   void SetHeight(float _h); //sets bounds by height and aspectRatio
-  void SetBackgroundColor(float r, float g, float b, float a);
+  void SetBackgroundColor(Color* _c);
   
   //from Geom
   virtual void Draw();
@@ -52,7 +52,7 @@ private:
 
   bool needsToBeInitialized;
   
-  vec4 backgroundColor;
+  Color* backgroundColor;
   void DrawBackground();
   void DrawGlyph(FontAtlas* font, float* vs, float* ts);
   float TranslateYOffset;

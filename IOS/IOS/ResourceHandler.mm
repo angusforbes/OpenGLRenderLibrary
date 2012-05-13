@@ -30,15 +30,6 @@ AudioManager *audioManager;
 VideoManager *videoManager;
 CameraManager* cameraManager;
 
-/*
- AVAssetReader* assetReader;
- AVAssetReaderTrackOutput* videoTrackOutput = NULL;
- //AVAssetReaderTrackOutput* audioTrackOutput = NULL;
- AVAsset *currentAsset;
- CMSampleBufferRef pixelBuffer;
- */
-
-
 
 ResourceHandler* ResourceHandler::instance = NULL;
 
@@ -273,42 +264,6 @@ void ResourceHandler::PlayAudioResource(const string &fname, double atTime) {
     [audioManager startAudioThread:atTime]; 
   }
 }
-
-/*
- void ResourceHandler::LoadPngImage(const string& name)
- {
- NSString* basePath = [[NSString alloc] initWithUTF8String:name.c_str()];
- NSBundle* mainBundle = [NSBundle mainBundle];
- NSString* fullPath = [mainBundle pathForResource:basePath ofType:@"png"];
- UIImage* uiImage = [[UIImage alloc] initWithContentsOfFile:fullPath];
- CGImageRef cgImage = uiImage.CGImage;
- m_imageSize.x = CGImageGetWidth(cgImage);
- m_imageSize.y = CGImageGetHeight(cgImage);
- m_imageData = CGDataProviderCopyData(CGImageGetDataProvider(cgImage));
- [uiImage release];
- [basePath release];
- }
- 
- void* ResourceHandler::GetImageData()
- {
- return (void*) CFDataGetBytePtr(m_imageData);
- }
- 
- ivec2 ResourceHandler::GetImageSize()
- {
- return m_imageSize;
- }
- 
- void ResourceHandler::UnloadImage()
- {
- CFRelease(m_imageData);
- }
- 
- 
- //    CFDataRef m_imageData;
- //    ivec2 m_imageSize;
- */
-
 
 Texture* ResourceHandler::CreateTextureFromBytes(int tw, int th, GLubyte* bytes) {
   
@@ -560,7 +515,7 @@ Texture** ResourceHandler::LoadNaturalMaterialsTexture(const string &fname, int 
         
         NSString* useFileStr = [NSString stringWithFormat:@"%@%d", fileStr, i];
         NSString* path = [[NSBundle mainBundle] pathForResource:useFileStr ofType:typeStr];
-        //NSLog(@"Loading texture: %@.%@\n", useFileStr, typeStr);
+        NSLog(@"Loading texture: %@.%@\n", useFileStr, typeStr);
         
         NSData *texData = [[NSData alloc] initWithContentsOfFile:path];
         UIImage *image = [[UIImage alloc] initWithData:texData];
@@ -572,6 +527,7 @@ Texture** ResourceHandler::LoadNaturalMaterialsTexture(const string &fname, int 
         //CGColorSpaceRef colorSpace = kCGColorSpaceModelMonochrome;
         CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
         //CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceGray();
+       
         GLubyte* data = (GLubyte*)malloc( _w * _h * 4 );
         
         CGContextRef context = CGBitmapContextCreate( data, _w, _h, 8, 4 * _w, colorSpace, kCGImageAlphaPremultipliedLast |kCGBitmapByteOrder32Big );

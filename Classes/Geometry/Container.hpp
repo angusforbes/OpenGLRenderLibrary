@@ -18,7 +18,7 @@ public:
   Container();
   void Draw();
   virtual void InstallWidgets() = 0;
-  
+  virtual void UpdateWidgets() = 0;
   bool isUpdated;
   
 protected:

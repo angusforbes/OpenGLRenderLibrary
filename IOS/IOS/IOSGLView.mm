@@ -362,6 +362,23 @@ float accZ = 0.0;
   
   //[self testRotMatToEulerXYZ:rotMat];
   
+  
+  
+  mat4 mvm = mat4(); //::Identity();
+  
+  mvm[0].x = rotMat.m11;
+	mvm[0].y = rotMat.m21;
+	mvm[0].z = rotMat.m31;
+  
+  mvm[1].x = rotMat.m12;
+  mvm[1].y = rotMat.m22;
+  mvm[1].z = rotMat.m32;
+  
+  mvm[2].x = rotMat.m13;
+  mvm[2].y = rotMat.m23;
+  mvm[2].z = rotMat.m33;
+
+/*  
   mat4 mvm = mat4::Identity();
   
   mvm.x.x = rotMat.m11;
@@ -375,7 +392,8 @@ float accZ = 0.0;
   mvm.z.x = rotMat.m13;
   mvm.z.y = rotMat.m23;
   mvm.z.z = rotMat.m33;
-
+*/
+  
   /*
   CMAcceleration userAcceleration = motionManager.deviceMotion.userAcceleration;
   

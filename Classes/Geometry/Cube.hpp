@@ -1,6 +1,6 @@
 
-#include "Vector.hpp"
-#include "Matrix.hpp"
+//#include "Vector.hpp"
+//#include "Matrix.hpp"
 
 #include "Mesh.hpp"
 #include "ModelView.hpp"
@@ -13,6 +13,8 @@
 
 #ifndef CUBE_H
 #define CUBE_H
+
+using glm::vec2;
 
 class Cube : public Geom {
   

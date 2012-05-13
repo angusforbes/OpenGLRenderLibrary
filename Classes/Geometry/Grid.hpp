@@ -1,6 +1,6 @@
 
-#include "Vector.hpp"
-#include "Matrix.hpp"
+//#include "Vector.hpp"
+//#include "Matrix.hpp"
 
 #include "Mesh.hpp"
 #include "ModelView.hpp"

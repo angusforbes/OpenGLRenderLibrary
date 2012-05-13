@@ -2,6 +2,7 @@
 #include "Cube.hpp"
 #include "Renderer.hpp"
 #include "Camera.hpp"
+#include <glm/gtc/matrix_transform.hpp>
 
 
 Cube::Cube() {
@@ -200,7 +201,9 @@ bool Cube::Intersect(Ray &r, int &face, vec3 &I, vec2 &TC) {
   N = vec3(0,0,1);
   p3 = vec3(0,0,-1);
   
-  u = vec3::Dot(N, p3 - p1) / vec3::Dot(N, p2 - p1);
+  u = glm::dot(N, p3 - p1) / glm::dot(N, p2 - p1);
+  
+  //u = vec3::Dot(N, p3 - p1) / vec3::Dot(N, p2 - p1);
   //printf("u = %f\n", u);
   if (u >= 0.0 && u < 1.0) {
     I = p1 + (r.direction * u);
@@ -215,8 +218,9 @@ bool Cube::Intersect(Ray &r, int &face, vec3 &I, vec2 &TC) {
   N = vec3(0,0,-1);
   p3 = vec3(0,0,1);
   
-  u = vec3::Dot(N, p3 - p1) / vec3::Dot(N, p2 - p1);
-   if (u >= 0.0 && u < 1.0) {
+ // u = vec3::Dot(N, p3 - p1) / vec3::Dot(N, p2 - p1);
+  u = glm::dot(N, p3 - p1) / glm::dot(N, p2 - p1);
+  if (u >= 0.0 && u < 1.0) {
     I = p1 + (r.direction * u);
      if (IsPointOnFace(vec2(I.x, I.y))) {
       face = 4;
@@ -229,7 +233,8 @@ bool Cube::Intersect(Ray &r, int &face, vec3 &I, vec2 &TC) {
   N = vec3(1,0,0);
   p3 = vec3(-1,0,0);
   
-  u = vec3::Dot(N, p3 - p1) / vec3::Dot(N, p2 - p1);
+  u = glm::dot(N, p3 - p1) / glm::dot(N, p2 - p1);
+//  u = vec3::Dot(N, p3 - p1) / vec3::Dot(N, p2 - p1);
   if (u >= 0.0 && u < 1.0) {
     I = p1 + (r.direction * u);
     if (IsPointOnFace(vec2(I.y, I.z))) {
@@ -243,7 +248,8 @@ bool Cube::Intersect(Ray &r, int &face, vec3 &I, vec2 &TC) {
   N = vec3(-1,0,0);
   p3 = vec3(1,0,0);
   
-  u = vec3::Dot(N, p3 - p1) / vec3::Dot(N, p2 - p1);
+  u = glm::dot(N, p3 - p1) / glm::dot(N, p2 - p1);
+ // u = vec3::Dot(N, p3 - p1) / vec3::Dot(N, p2 - p1);
   if (u >= 0.0 && u < 1.0) {
     I = p1 + (r.direction * u);
     if (IsPointOnFace(vec2(I.y, I.z))) {
@@ -257,7 +263,8 @@ bool Cube::Intersect(Ray &r, int &face, vec3 &I, vec2 &TC) {
   N = vec3(0,-1,0);
   p3 = vec3(0,1,0);
   
-  u = vec3::Dot(N, p3 - p1) / vec3::Dot(N, p2 - p1);
+ // u = vec3::Dot(N, p3 - p1) / vec3::Dot(N, p2 - p1);
+  u = glm::dot(N, p3 - p1) / glm::dot(N, p2 - p1);
   if (u >= 0.0 && u < 1.0) {
     I = p1 + (r.direction * u);
     if (IsPointOnFace(vec2(I.x, I.z))) {
@@ -272,7 +279,8 @@ bool Cube::Intersect(Ray &r, int &face, vec3 &I, vec2 &TC) {
   N = vec3(0,1,0);
   p3 = vec3(0,-1,0);
   
-  u = vec3::Dot(N, p3 - p1) / vec3::Dot(N, p2 - p1);
+  u = glm::dot(N, p3 - p1) / glm::dot(N, p2 - p1);
+// u = vec3::Dot(N, p3 - p1) / vec3::Dot(N, p2 - p1);
 // printf("u = %f\n", u);
   if (u >= 0.0 && u < 1.0) {
     I = p1 + (r.direction * u);
@@ -385,13 +393,17 @@ void Cube::Transform() {
 //  printf("address of camera mv = %p\n", &modelview);
   mat4 mv = mat4(cam->GetModelView()); //mat4::Translate(cam.translate));
   //printf("address of mv = %p\n", &mv);
-  mv = mat4::Translate(mv, GetTranslate());
+  
+  mv = glm::translate(mv, GetTranslate());
+ // mv = mat4::Translate(mv, GetTranslate());
 
   //  printf("prescale...\n");
  // mv.Print();
 
-  mv = mat4::Scale(mv, GetScale());
-  mv.Print();
+ // mv = mat4::Scale(mv, GetScale());
+  mv = glm::scale(mv, GetScale());
+  
+//  mv.Print();
   SetModelView(mv);
   SetIsTransformed(false);
   

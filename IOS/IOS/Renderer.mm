@@ -3,6 +3,8 @@
 #include "IOSGLView.h"
 //#include "TextRect.hpp"
 
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 Renderer* Renderer::instance = NULL;
 
@@ -42,7 +44,7 @@ mat4 Renderer::GetModelView() {
   //return GetCamera()->GetModelView();
   //return modelview;
   printf("in Renderer::GetModelView(), this should never be called!\n");
-  return mat4::Identity();
+  return mat4(); //::Identity();
 }
 
 
@@ -142,8 +144,11 @@ void Renderer::PrintGLSLInfo() {
 
 void Renderer::CreateFullScreenRect() {
   fullScreenRect = new Rectangle(vec3(-1.0, -1.0, 0.0), 2.0, 2.0);
-  fullScreenRect->modelview = mat4::Translate(mat4::Identity(), fullScreenRect->GetTranslate());
-  fullScreenRect->modelview = mat4::Scale(fullScreenRect->modelview, fullScreenRect->GetScale());
+//  fullScreenRect->modelview = mat4::Translate(mat4::Identity(), fullScreenRect->GetTranslate());
+//  fullScreenRect->modelview = mat4::Scale(fullScreenRect->modelview, fullScreenRect->GetScale());
+  fullScreenRect->modelview = glm::translate(mat4(), fullScreenRect->GetTranslate());
+  fullScreenRect->modelview = glm::scale(fullScreenRect->modelview, fullScreenRect->GetScale());
+  
   fullScreenRect->SetIsTransformed(false);
   fullScreenRect->parent = this;
   
@@ -248,8 +253,8 @@ void Renderer::DrawFullScreenTexture(Texture* t) {
     glUniform1f(program->Uniform("fHeight"), height);
     
     
-    glUniformMatrix4fv(program->Uniform("Modelview"), 1, 0, fullScreenRect->GetModelView().Pointer());
-    glUniformMatrix4fv(program->Uniform("Projection"), 1, 0, mat4::Identity().Pointer());
+    glUniformMatrix4fv(program->Uniform("Modelview"), 1, 0, glm::value_ptr(fullScreenRect->GetModelView()));
+    glUniformMatrix4fv(program->Uniform("Projection"), 1, 0, glm::value_ptr(mat4()));
     
     t->Bind(GL_TEXTURE0); {
       
@@ -482,13 +487,13 @@ void Renderer::Cleanup() {
  }
  */
 
-void Renderer::DrawText(float pen_x, float pen_y, string text, vec4 color, bool usePixel ) {
+void Renderer::DrawText(float pen_x, float pen_y, string text, Color* color, bool usePixel ) {
   DrawText(CurrentFont, pen_x, pen_y, text, color, usePixel ) ;
 }
 
-void Renderer::DrawText(FontAtlas* font, float pen_x, float pen_y, string text, vec4 color, bool usePixel ) {
+void Renderer::DrawText(FontAtlas* font, float pen_x, float pen_y, string text, Color* color, bool usePixel ) {
   
-  //printf("trying to draw text!\n");
+ // printf("trying to draw text!!!!\n");
   
   glClearColor( 1, 1, 1, 1 );
   glEnable( GL_BLEND );
@@ -518,6 +523,7 @@ void Renderer::DrawText(FontAtlas* font, float pen_x, float pen_y, string text, 
     }
     
     //printf("glyph: %c %d %d %d %d\n", glyph->val, glyph->x, glyph->y, glyph->w, glyph->h);
+   
     //printf("screen height = %d, glyph height = %d, fontTexture w/h %d/%d\n", height, fontHeight, fontTexWidth, fontTexHeight);
     
     
@@ -543,13 +549,15 @@ void Renderer::DrawText(FontAtlas* font, float pen_x, float pen_y, string text, 
     
     p->Bind(); {
       
-      glUniformMatrix4fv(p->Uniform("Modelview"), 1, 0,fullScreenRect->GetModelView().Pointer());
-      glUniformMatrix4fv(p->Uniform("Projection"), 1, 0, mat4::Identity().Pointer());
+      glUniformMatrix4fv(p->Uniform("Modelview"), 1, 0, glm::value_ptr(fullScreenRect->GetModelView()));
+      glUniformMatrix4fv(p->Uniform("Projection"), 1, 0, glm::value_ptr(mat4()));
       
       font->fontTexture->Bind();
       glUniform1i(p->Uniform("s_tex"), 0);
       
-      glUniform4f(p->Uniform("letterColor"), color.x, color.y, color.z, color.w);
+      glUniform4fv(p->Uniform("letterColor"), 1, glm::value_ptr(color->AsFloat())); 
+      
+      //glUniform4f(p->Uniform("letterColor"), color.x, color.y, color.z, color.w);
       
       glVertexAttribPointer ( p->Attribute("position"), 3, GL_FLOAT, GL_FALSE, 0, vs); 
       glEnableVertexAttribArray ( p->Attribute("position") );

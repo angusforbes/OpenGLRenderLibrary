@@ -4,7 +4,7 @@
 //#include "Interfaces.hpp"
 #include "Sphere.hpp"
 #include "Ray.hpp"
-#include "Vector.hpp"
+//#include "Vector.hpp"
 
 #ifndef UTILS_H
 #define UTILS_H

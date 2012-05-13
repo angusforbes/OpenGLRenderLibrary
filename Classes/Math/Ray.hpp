@@ -1,11 +1,17 @@
-#include "Vector.hpp"
+//#include "Vector.hpp"
 
 #ifndef RAY_H
 #define RAY_H
 
 
+#define GLM_SWIZZLE
+#include <glm/glm.hpp>
+
+using glm::vec3;
+
 class Ray {
-  public:
+  
+public:
   Ray();
   Ray(vec3 _origin, vec3 _direction);
    

@@ -1,6 +1,6 @@
 
-#include "Vector.hpp"
-#include "Matrix.hpp"
+//#include "Vector.hpp"
+//#include "Matrix.hpp"
 
 #include "Geom.hpp"
 //#include "ModelView.hpp"
@@ -15,6 +15,8 @@
 
 #ifndef Cone_H
 #define Cone_H
+
+using glm::vec2;
 
 class Cone : public Geom {
   

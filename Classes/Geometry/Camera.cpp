@@ -4,6 +4,10 @@
 #include "Texture.hpp"
 #include "Renderer.hpp"
 
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/matrix_access.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 //static convenience methods to create common cameras
 Camera* Camera::CreateOrthographicCamera(ivec4 _vp) { 
   return new Camera(_vp, 0, 1, 0, 1);
@@ -19,7 +23,7 @@ Camera* Camera::CreatePerspectiveCamera(float _fovy, ivec4 _vp) {
   float uw = 1.0; 
   float uh = 1.0; 
   
-  float rads = radians(_fovy) / 2.0;
+  float rads = glm::radians(_fovy) / 2.0;
   float cameraZ = ((uh/2.0) / tanf(rads));
   float near = cameraZ/10.0;
   float far = cameraZ*10.0;
@@ -35,7 +39,7 @@ Camera* Camera::CreatePerspectivePixelCamera(float _fovy, ivec4 _vp) {
   float uw = _vp.z; //width
   float uh = _vp.w; //height
   
-  float rads = radians(_fovy) / 2.0;
+  float rads = glm::radians(_fovy) / 2.0;
   float cameraZ = ((uh/2.0) / tanf(rads));
   float near = cameraZ/10.0;
   float far = cameraZ*10.0;
@@ -66,7 +70,13 @@ Camera::Camera(ivec4 _vp) {
   SetViewport(_vp);
   
   //projection = mat4::Identity(); 
-  projection = mat4::Ortho(0, 1, 0, 1); 
+  
+  projection = glm::ortho(0,1,0,1,-1,1);
+                     
+  //projection = mat4::Ortho(0, 1, 0, 1); 
+  
+  
+  
   //projection = mat4::Ortho(_viewport.z, _viewport.w); 
   
   //projection = mat4::Ortho(0, _viewport.z, _viewport.w, 0); 
@@ -86,7 +96,9 @@ Camera::Camera(ivec4 _vp, int l, int r, int b, int t) {
   //aspect = (float)_viewport.z/(float)_viewport.w;
   SetViewport(_vp);
   
-  projection = mat4::Ortho(l,r,b,t); 
+  projection = glm::ortho(0,1,0,1,-1,1);
+  
+ // projection = mat4::Ortho(l,r,b,t); 
   
   //vector camera init
   posVec = vec3(0.0, 0.0, 0.0);
@@ -106,7 +118,8 @@ Camera::Camera(vec3 _translate, float _fovy, float _aspect, float _nearPlane, fl
   farPlane = _farPlane;
   SetViewport(_vp);
   
-  projection = mat4::Perspective(fovy, _aspect, nearPlane, farPlane);  
+  projection = glm::perspective(fovy, _aspect, nearPlane, farPlane);
+  //projection = mat4::Perspective(fovy, _aspect, nearPlane, farPlane);  
   
   aspect = ((float)(_vp.z - _vp.x)) / ((float)(_vp.w - _vp.y));
   
@@ -159,7 +172,10 @@ void Camera::RenderChildren(Geom* parent, bool cameraMoved) {
 
 
 ivec2 Camera::Project(vec3 p) {
-  vec3 wp = mat4::Project(p, modelview, projection, viewport);
+  vec3 wp = glm::project(p, modelview, projection, viewport);
+  
+  
+  //vec3 wp = mat4::Project(p, modelview, projection, viewport);
   return ivec2(wp.x, viewport.w - wp.y);
 }
 
@@ -168,7 +184,10 @@ void Camera::Reshape(int width, int height) {
   SetAspectRatio((float)width/(float)height);
   SetViewport(ivec4(0,0,width,height));
   if (IsPerspective) {
-    projection = mat4::Perspective(fovy, aspect, nearPlane, farPlane);  
+    
+    projection = glm::perspective(fovy, aspect, nearPlane, farPlane);  
+    
+    //projection = mat4::Perspective(fovy, aspect, nearPlane, farPlane);  
     printf("updating projection matrix\n");
   }
   printf("in Camera::Reshape %d %d\n", width, height);
@@ -185,7 +204,17 @@ void Camera::SetViewport(ivec4 _viewport) {
 }
 
 mat4 Camera::MakeCameraBasis() {
-  mat4 m = mat4::Identity();
+  
+  mat4 m = mat4(); //::Identity();
+ // mat4 m = mat4::Identity();
+  
+  
+  //we'll have to see if this is the right way to set cols
+  m[0] = vec4(rightVec, 1.0);
+  m[1] = vec4(upVec, 1.0);
+  m[2] = vec4(viewVec, 1.0);
+  
+  /*
   m.x.x = rightVec.x;
   m.x.y = rightVec.y;
   m.x.z = rightVec.z;
@@ -195,6 +224,7 @@ mat4 Camera::MakeCameraBasis() {
   m.z.x = viewVec.x;
   m.z.y = viewVec.y;
   m.z.z = viewVec.z;
+  */
   return m;
 }
 
@@ -204,7 +234,7 @@ void Camera::Transform() {
   if (IsTransformed()) {
     
     //real one for incremental rotates... 
-    cerr << "po = " << posVec.String() << "\n";  
+   // cerr << "po = " << posVec.String() << "\n";  
     
     vec3 viewpoint = vec3(posVec) + vec3(viewVec);
     
@@ -217,12 +247,15 @@ void Camera::Transform() {
    
     mat4 rotBasis = MakeCameraBasis();
     
-    mat4 tm = mat4::Translate(vec3(-posVec.x, -posVec.y, -posVec.z));
+    mat4 tm = mat4();
+    tm = glm::translate(tm, vec3(-posVec.x, -posVec.y, -posVec.z));
+    //mat4 tm = mat4::Translate(vec3(-posVec.x, -posVec.y, -posVec.z));
+    
     tm = mat4(rotBasis) * tm;
     
-    printf("here transformeMatrix = ...\n");
-    tm.Print();
-    printf("\n");
+ //   printf("here transformeMatrix = ...\n");
+ //   tm.Print();
+ //   printf("\n");
     
     SetModelView(tm);
     SetIsTransformed(false);
@@ -273,20 +306,23 @@ void Camera::Transform() {
 
 void Camera::rotateCamX (float angle) {
   viewVec = Utils::ArbitraryRotate(viewVec, angle, rightVec);
-  upVec = vec3::Cross(viewVec, rightVec);
+  //upVec = vec3::Cross(viewVec, rightVec);
+  upVec = glm::cross(viewVec, rightVec);
   upVec *= -1;
   SetIsTransformed(true);
 }
 
 void Camera::rotateCamY (float angle) {
   viewVec = Utils::ArbitraryRotate(viewVec, angle, upVec);
-  rightVec = vec3::Cross(viewVec, upVec);
+  rightVec = glm::cross(viewVec, upVec);
+//  rightVec = vec3::Cross(viewVec, upVec);
   SetIsTransformed(true);
 }
 
 void Camera::rotateCamZ (float angle) {
   rightVec = Utils::ArbitraryRotate(rightVec, angle, viewVec);
-  upVec = vec3::Cross(viewVec, rightVec);
+ // upVec = vec3::Cross(viewVec, rightVec);
+  upVec = glm::cross(viewVec, rightVec);
   upVec *= -1.0;
   SetIsTransformed(true);
 }
@@ -481,25 +517,39 @@ void Camera::Zoom(float dist) {
   tmpRotAmt = 45.0;
   tmpZoomAmt -= dist;
   
-  modelview = mat4::Identity();
-  //vec3 vV = vec3(modelview.z.x, modelview.z.y, modelview.z.z) * dist;
-  mat4 rotateM = mat4::Rotate(tmpRotAmt, vec3(0.0, 1.0, 0.0));  
-  rotateM.Print();
+  modelview = mat4(); //::Identity();
+  mat4 rotateM = mat4();
+  rotateM = glm::rotate(rotateM, tmpRotAmt, vec3(0.0, 1.0, 0.0));  
+ // mat4 rotateM = mat4::Rotate(tmpRotAmt, vec3(0.0, 1.0, 0.0));  
+  
+  
+  // rotateM.Print();
 
-  mat4 transM = mat4::Translate(0,0,tmpZoomAmt);  
-  transM.Print();
+  //mat4 transM = mat4::Translate(0,0,tmpZoomAmt);  
+  mat4 transM = mat4();
+  transM = glm::translate(transM, vec3(0,0,tmpZoomAmt));  
+  //transM.Print();
   
   modelview = modelview * rotateM;
+  
+  vec3 hhh = modelview[2].xyz();
+  vec3 vV = hhh * tmpZoomAmt;
+  modelview[2].x = vV.x;
+  modelview[2].y = vV.y;
+  modelview[2].z = vV.z;
+  
+  /*
   vec3 vV = vec3(modelview.z.x, modelview.z.y, modelview.z.z) * tmpZoomAmt;
   modelview.z.x = vV.x;
   modelview.z.y = vV.y;
   modelview.z.z = vV.z;
+  */
   
   // modelview = modelview * transM;
   
   //modelview =  rotateM * transM;
   //modelview =   transM * rotateM;
-  modelview.Print();
+  //modelview.Print();
   SetIsTransformed(true);  
 
   //2, 6, 10
@@ -514,7 +564,7 @@ void Camera::Reset() {
   upVec = vec3(0.0, 1.0, 0.0);  
   SetGyroscopeMatrix(mat4()); //reset rotation matrix to identity
 
-  modelview = mat4::Identity();
+  modelview = mat4(); //::Identity();
   SetIsTransformed(true); 
 }
 
@@ -587,12 +637,12 @@ void Camera::DrawViewportTexture(Texture* t) {
   Program* program = GetProgram("SingleTexture");
   program->Bind(); {
     
-   // glUniform1f(program->Uniform("fWidth"), 1);
-   // glUniform1f(program->Uniform("fHeight"), 1);
     
     
-    glUniformMatrix4fv(program->Uniform("Modelview"), 1, 0, r->fullScreenRect->GetModelView().Pointer());
-    glUniformMatrix4fv(program->Uniform("Projection"), 1, 0, mat4::Identity().Pointer());
+//    glUniformMatrix4fv(program->Uniform("Modelview"), 1, 0, r->fullScreenRect->GetModelView().Pointer());
+//    glUniformMatrix4fv(program->Uniform("Projection"), 1, 0, mat4::Identity().Pointer());
+    glUniformMatrix4fv(program->Uniform("Modelview"), 1, 0, glm::value_ptr(r->fullScreenRect->GetModelView()));
+    glUniformMatrix4fv(program->Uniform("Projection"), 1, 0, glm::value_ptr(mat4()));
     
     t->Bind(GL_TEXTURE0); {
       

@@ -14,8 +14,11 @@ Texture::Texture(int _w, int _h, GLenum _format, GLenum _type) {
   minFilter = GL_LINEAR;
   maxFilter = GL_LINEAR;
   
-  data = (GLubyte*) malloc (_w*_h*4*sizeof(GLubyte));
-  
+  if (format == GL_LUMINANCE) {
+     data = (GLubyte*) malloc (_w*_h*1*sizeof(GLubyte));
+  } else {
+    data = (GLubyte*) malloc (_w*_h*4*sizeof(GLubyte));
+  }
   Create();
 }
 
@@ -321,9 +324,16 @@ void Texture::Create() {
   glTexParameteri(kind, GL_TEXTURE_WRAP_S, wrapMode);
   glTexParameteri(kind, GL_TEXTURE_WRAP_T, wrapMode);
 
-  glTexImage2D(kind, 0, GL_RGBA, width, height, 0, format, type, data); //this works!
-  //glTexImage2D(kind, 0, format, width, height, 0, format, type, data);
-
+  if (format == GL_LUMINANCE) {
+    printf("glTexImage2D GL_LUMINANCE\n");
+    glTexImage2D(kind, 0, format, width, height, 0, format, type, data);
+    //glTexImage2D(kind, 0, GL_RGBA, width, height, 0, format, type, data); //this works!
+    
+  } else {
+  
+    glTexImage2D(kind, 0, GL_RGBA, width, height, 0, format, type, data); //this works!
+    //glTexImage2D(kind, 0, format, width, height, 0, format, type, data);
+  }
   printf("creating a texture at texID %d\n", texID);
   
   glBindTexture(kind, 0);
@@ -485,7 +495,17 @@ void Texture::SetPixelAt(int x, int y, ivec4 rgba) {
 }
 
 
-void Texture::SetRectAt(int x, int y, int w, int h, ivec4 rgba) { 
+void Texture::DrawRectAt(int x, int y, int w, int h, ivec4 rgba) { 
+  
+  FillRectAt(x,y,w,1,rgba);
+  FillRectAt(x,y,1,h,rgba);
+  FillRectAt(x,y+h,w,1,rgba);
+  FillRectAt(x+w,y,1,h,rgba);
+  
+  
+}
+
+void Texture::FillRectAt(int x, int y, int w, int h, ivec4 rgba) { 
   
   if (x + w < 0 || x >= width || y + h < 0 || y >= height || w <= 0 || h <= 0) {
     return;
@@ -508,6 +528,11 @@ void Texture::SetRectAt(int x, int y, int w, int h, ivec4 rgba) {
   }
   
   
+  
+  
+  
+  
+  //for filled rect
   
   
   GLubyte* c = Noise::CreateColorSolid(rgba, w, h); //need to handles both RGBA and BGRA (just RGBA here)

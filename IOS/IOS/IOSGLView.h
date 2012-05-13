@@ -1,4 +1,6 @@
 
+#include "Defines.h"
+
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
 #import <CoreMotion/CoreMotion.h>

@@ -2,7 +2,7 @@
 #include "Rectangle.hpp"
 #include "Renderer.hpp"
 #include "Camera.hpp"
-
+#include <glm/gtc/matrix_transform.hpp>
 
 
 Rectangle::Rectangle() {
@@ -137,12 +137,16 @@ bool Rectangle::ContainsWindowPoint(ivec2 pt) {
   Camera* camera = root; //Renderer::GetRenderer()->GetCamera();
   //Camera* camera = (Camera*) root; //Renderer::GetRenderer()->GetCamera();
   
-  camera->viewport.Print("root camera vp = ");
+//  camera->viewport.Print("root camera vp = ");
   
 //  vec3 wp0 = mat4::Project(vec3(0,0,0), parent->modelview, camera->projection, camera->viewport);
 //  vec3 wp2 = mat4::Project(vec3(width,height,0), parent->modelview, camera->projection, camera->viewport);
-    vec3 wp0 = mat4::Project(vec3(0,0,0), modelview, camera->projection, camera->viewport);
-    vec3 wp2 = mat4::Project(vec3(width,height,0), modelview, camera->projection, camera->viewport);
+  
+  
+//  vec3 wp0 = mat4::Project(vec3(0,0,0), modelview, camera->projection, camera->viewport);
+//  vec3 wp2 = mat4::Project(vec3(width,height,0), modelview, camera->projection, camera->viewport);
+  vec3 wp0 = glm::project(vec3(0,0,0), modelview, camera->projection, camera->viewport);
+  vec3 wp2 = glm::project(vec3(width,height,0), modelview, camera->projection, camera->viewport);
   
   //printf(" mouse=%d/%d wp0.xy = %f/%f   wp2.xy = %f/%f\n", pt.x, pt.y, wp0.x, wp0.y, wp2.x, wp2.y);
   
@@ -170,14 +174,30 @@ void Rectangle::Transform() {
   if (parent != NULL) {
     mv = parent->GetModelView();
   } else {
-    mv = mat4::Identity();
+    mv = mat4(); //::Identity();
   }
   //mat4 mv = Renderer::GetRenderer()->GetCamera()->GetModelView();
   
   //printf("isTransformed!\n");
   //mv.Print();
   
+  mv = glm::translate(mv, GetTranslate());
   
+  //scale
+  //  mv = mat4::Translate(mv, scaleAnchor); //rects are positioned at 0,0 already (i.e., not centered around it)
+  mv = glm::scale(mv, GetScale());
+  mv = glm::translate(mv, -scaleAnchor);
+  
+  
+  
+  //rotate
+  mv = glm::translate(mv, rotateAnchor);
+  mv = glm::rotate(mv, GetRotate().x, vec3(1,0,0));
+  mv = glm::rotate(mv, GetRotate().y, vec3(0,1,0));
+  mv = glm::rotate(mv, GetRotate().z, vec3(0,0,1));
+  mv = glm::translate(mv, (-rotateAnchor));
+  
+  /*
   //translate
   mv = mat4::Translate(mv, GetTranslate());
   
@@ -194,7 +214,7 @@ void Rectangle::Transform() {
   mv = mat4::RotateY(mv, GetRotate().y);
   mv = mat4::RotateZ(mv, GetRotate().z);
   mv = mat4::Translate(mv, (-rotateAnchor));
-  
+  */
   
   SetModelView(mv);
   SetIsTransformed(false);

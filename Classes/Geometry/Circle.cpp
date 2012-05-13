@@ -3,7 +3,7 @@
 #include "Renderer.hpp"
 #include "Camera.hpp"
 
-
+#include <glm/gtc/matrix_transform.hpp>
 
 Circle::Circle() {
   
@@ -123,10 +123,26 @@ void Circle::Transform() {
   if (parent != NULL) {
     mv = parent->GetModelView();
   } else {
-    mv = mat4::Identity();
+    //mv = mat4::Identity(); //XGLM
+    mv = mat4();
   }
   
+  //translate
+  mv = glm::translate(mv, GetTranslate()); 
+ 
+  //scale
+  mv = glm::translate(mv, scaleAnchor); 
+  mv = glm::scale(mv, GetScale());
+  mv = glm::translate(mv, -scaleAnchor);
   
+  //rotate
+  mv = glm::translate(mv, rotateAnchor);
+  mv = glm::rotate(mv, GetRotate().x, vec3(1.0,0.0,0.0));
+  mv = glm::rotate(mv, GetRotate().y, vec3(0.0,1.0,0.0));
+  mv = glm::rotate(mv, GetRotate().z, vec3(0.0,0.0,1.0));
+  mv = glm::translate(mv, (-rotateAnchor));
+  
+  /*
   //translate
   mv = mat4::Translate(mv, GetTranslate());
   
@@ -143,7 +159,7 @@ void Circle::Transform() {
   mv = mat4::RotateY(mv, GetRotate().y);
   mv = mat4::RotateZ(mv, GetRotate().z);
   mv = mat4::Translate(mv, (-rotateAnchor));
-  
+  */
   
   SetModelView(mv);
   SetIsTransformed(false);

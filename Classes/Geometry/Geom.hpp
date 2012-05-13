@@ -6,14 +6,17 @@
 #include "Color.hpp"
 #include <vector>
 
-
+#include "Defines.h"
 
 #ifndef OpenGLRenderLibraryNS_Geom_hpp
 #define OpenGLRenderLibraryNS_Geom_hpp
 
+
+
 class Camera;
 
 
+using glm::ivec2;
 
 class Geom : public ModelView, public Mesh {
   
@@ -47,12 +50,12 @@ public:
   virtual bool ContainsWindowPoint(ivec2 windowPt);
 
   //absolute text coords
-  virtual void Text(float pen_x, float pen_y, string text, vec4 color ); //default font, clip space
-  virtual void Text(float pen_x, float pen_y, string text, vec4 color, bool usePixel ); //default font, "usePixel = true" = pixel space, else clip space
-  virtual void Text(FontAtlas* font, float pen_x, float pen_y, string text, vec4 color ); //clip space
-  virtual void Text(FontAtlas* font, float pen_x, float pen_y, string text, vec4 color, bool usePixel ); //"usePixel = true" = pixel space, else clip space
+  virtual void Text(float pen_x, float pen_y, string text, Color* color ); //default font, clip space
+  virtual void Text(float pen_x, float pen_y, string text, Color* color, bool usePixel ); //default font, "usePixel = true" = pixel space, else clip space
+  virtual void Text(FontAtlas* font, float pen_x, float pen_y, string text, Color* color ); //clip space
+  virtual void Text(FontAtlas* font, float pen_x, float pen_y, string text, Color* color, bool usePixel ); //"usePixel = true" = pixel space, else clip space
   //relative text coords
-  virtual void Text(vec3 offsetPt, string text, vec4 color); //default font, point is relative to current object modelview
+  virtual void Text(vec3 offsetPt, string text, Color* color); //default font, point is relative to current object modelview
   
   virtual void HandleTouchBegan(ivec2 mouse);
   virtual void HandleTouchMoved(ivec2 prevMouse, ivec2 mouse);
@@ -77,6 +80,8 @@ public:
   
 protected:
   Color* color;
+  bool drawBorder; //temp, need to make some real border logic.
+  Color* borderColor;
 };
 
 #endif

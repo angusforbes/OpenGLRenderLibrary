@@ -2,6 +2,7 @@
 #include "Grid.hpp"
 #include "Renderer.hpp"
 #include "Camera.hpp"
+#include <glm/gtc/matrix_transform.hpp>
 
 Grid::Grid(vec3 _translate, float _w, float _h, int _cs, int _rs) {
   printf("in Rectangle(vec3, float) constructor\n");
@@ -128,9 +129,14 @@ void Grid::Transform() {
   Camera* cam = Renderer::GetRenderer()->GetCamera();
   //Camera* cam = ApplicationHandler::GetApplicationHandler()->GetCamera();
   mat4 mv = mat4(cam->GetModelView()); 
-  mv = mat4::Translate(mv, GetTranslate());
+ 
+  //mv = mat4::Translate(mv, GetTranslate());
+  mv = glm::translate(mv, GetTranslate());
+  
+  
+  
   //mv = mat4::Scale(mv, GetScale());
-  //mv = mat4::Scale(mv, -1);
+ //mv = mat4::Scale(mv, -1);
   SetModelView(mv);
   SetIsTransformed(false);
   

@@ -1,7 +1,7 @@
 //#include "GLView.h"
 
-#include "Vector.hpp"
-#include "Matrix.hpp"
+//#include "Vector.hpp"
+//#include "Matrix.hpp"
 #include "ModelView.hpp"
 #include "Camera.hpp"
 

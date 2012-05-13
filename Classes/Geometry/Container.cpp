@@ -31,6 +31,10 @@ void Container::Draw() {
     InstallWidgets();
   }
   
+  if (isUpdated) {
+    UpdateWidgets();
+  }
+  
   //I don't actually draw anything
 
 }

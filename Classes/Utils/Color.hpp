@@ -1,8 +1,17 @@
 
-#include "Vector.hpp"
+//#include "Vector.hpp"
 
 #ifndef OGRL_Color_hpp
 #define OGRL_Color_hpp
+
+
+#define GLM_SWIZZLE
+#include <glm/glm.hpp>
+
+using glm::ivec3;
+using glm::ivec4;
+using glm::vec3;
+using glm::vec4;
 
 class Color {
 

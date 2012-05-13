@@ -2,7 +2,7 @@
 #include <map>
 #include "FontData.h"
 #include "Texture.hpp"
-#include "Vector.hpp"
+//#include "Vector.hpp"
 //#include "Program.hpp"
 
 #ifndef OpenGLRenderLibraryNS_FontAtlas_hpp

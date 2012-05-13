@@ -12,7 +12,7 @@ Color::Color(ivec3 _color) {
 }
 
 Color::Color(vec4 _color) { 
-  color = ivec4(_color.x * 255, _color.y * 255, _color.z * 255, _color.w * 255);
+  color = ivec4(_color.x * 255.0, _color.y * 255.0, _color.z * 255.0, _color.w * 255.0);
 }
 
 Color::Color(vec3 _color) {

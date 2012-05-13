@@ -2,6 +2,14 @@
 #include "Sphere.hpp"
 #include "Renderer.hpp"
 #include "Camera.hpp"
+#include <iostream> 
+#include <sstream>
+#include <glm/gtx/string_cast.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+
+const float Pi = 4 * std::atan(1.0f);
+const float TwoPi = 2 * Pi;
 
 Sphere::Sphere(vec3 _translate, float _scale) {
   printf("in Sphere(vec3, float) constructor\n");
@@ -53,7 +61,7 @@ int Sphere::GetTriangleIndexCount()
 string Sphere::String() {
   
   ostringstream ss;
-  ss << "" << GetTranslate().String() << ", scale=" << GetScale().x;
+  ss << "" << glm::to_string(GetTranslate()) << ", scale=" << GetScale().x;
   return ss.str();
   
 }
@@ -86,7 +94,7 @@ void Sphere::GenerateVertices() {
       // Compute Position
       vec2 domain = ComputeDomain(i, j);
       vec3 range = Evaluate(domain);
-      attribute = range.Write(attribute);
+  //    attribute = range.Write(attribute);
       
       // Compute Normal
       float s = i, t = j;
@@ -101,10 +109,13 @@ void Sphere::GenerateVertices() {
       vec3 p = Evaluate(ComputeDomain(s, t));
       vec3 u = Evaluate(ComputeDomain(s + 0.01f, t)) - p;
       vec3 v = Evaluate(ComputeDomain(s, t + 0.01f)) - p;
-      vec3 normal = u.Cross(v).Normalized();
+     // vec3 normal = u.Cross(v).Normalized();
+      vec3 normal = glm::cross(u, v); //u.Cross(v).Normalized();
+      normal = glm::normalize(normal);
+      
       //        if (InvertNormal(domain))
       //          normal = -normal;
-      attribute = normal.Write(attribute);
+  //    attribute = normal.Write(attribute);
       
       // Compute Texture Coordinates
 //      float s2 = textureCount.x * i / slices.x;
@@ -153,8 +164,12 @@ void Sphere::Transform() {
   
   Camera* cam = Renderer::GetRenderer()->GetCamera();
   mat4 mv = mat4(cam->GetModelView()); //mat4::Translate(cam.translate));
-  mv = mat4::Translate(mv, GetTranslate());
-  mv = mat4::Scale(mv, GetScale());
+  mv = glm::translate(mv, GetTranslate());
+  mv = glm::scale(mv, GetScale());
+//  mv = mat4::Translate(mv, GetTranslate());
+//  mv = mat4::Scale(mv, GetScale());
+  
+  
   SetModelView(mv);
   SetIsTransformed(false);
    

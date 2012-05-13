@@ -2,21 +2,20 @@
 #include "TextRect.hpp"
 #include "Renderer.hpp"
 #include "Camera.hpp"
-
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 TextRect::TextRect(string _text) {
   font = Renderer::GetRenderer()->CurrentFont;
   text = _text;
   TextHeight = 1.0;
-  backgroundColor = vec4(0,0,0,0);
+  backgroundColor = Color::RGB(0); 
   
   useTexCoords = true;
   useColors = false;
   useNormals = false;
   
   needsToBeInitialized = true;
-  
-  
 }
 
 TextRect::TextRect(FontAtlas* _font, string _text) {
@@ -24,8 +23,7 @@ TextRect::TextRect(FontAtlas* _font, string _text) {
   font = _font;
   text = _text;
   TextHeight = 1.0;
-  backgroundColor = vec4(0,0,0,0);
-  
+  backgroundColor = Color::RGB(0);   
   useTexCoords = true;
   useColors = false;
   useNormals = false;
@@ -157,11 +155,32 @@ void TextRect::Transform() {
 */
 
 bool TextRect::ContainsWindowPoint(ivec2 pt) {
+  
+  vec4 p0 = modelview * vec4(0,TranslateYOffset,0,1); 
+  vec4 p2 = modelview * vec4(1,1.0+TranslateYOffset,0,1); 
+  
+  vec3 p0_3 = p0.xyz();
+  vec3 p2_3 = p2.xyz();
+  
+  /*
+  glm::vec3 project(
+                    glm::vec3 const & obj,
+                    glm::mat4 const & model,
+                    glm::mat4 const & proj,
+                    glm::{i, ' ', d}vec4 const & viewport);
+   */
+  
+  vec3 wp0 = glm::project(p0_3, parent->modelview, root->projection, root->viewport);
+  vec3 wp2 = glm::project(p2_3, parent->modelview, root->projection, root->viewport);
+  
+  
+  /*
   vec3 p0 = mat4::multiplyMatrixByVector(modelview, vec3(0,TranslateYOffset,0)); 
   vec3 p2 = mat4::multiplyMatrixByVector(modelview, vec3(1,1.0+TranslateYOffset,0)); 
   
   vec3 wp0 = mat4::Project(p0, parent->modelview, root->projection, root->viewport);
   vec3 wp2 = mat4::Project(p2, parent->modelview, root->projection, root->viewport);
+  */
   
   //printf(" p0.xy = %f/%f   p2.xy = %f/%f\n", wp0.x, wp0.y, wp2.x, wp2.y);
   if (pt.x > wp0.x && pt.x < wp2.x && pt.y > wp0.y && pt.y < wp2.y) {
@@ -184,8 +203,11 @@ void TextRect::SetWidth(float _w) {
 
 void TextRect::SetHeight(float _h) {
   TextHeight = _h;
+  printf("in SetHeight, FIRST: sx/sy = %f/%f\n", scale.x, scale.y);
   SetScale(TextHeight*AspectRatio,TextHeight,1.0);
   
+  printf("in SetHeight, TextHeight = %f, AR = %f\n", TextHeight, AspectRatio);
+  printf("in SetHeight, sx/sy = %f/%f\n", scale.x, scale.y);
   //Init();
   
 }
@@ -238,7 +260,7 @@ void TextRect::Init() {
     tw += glyph->xadvance;
   }
   
-  printf("A1");
+  printf("A1\n");
   
 //  float xScale = 1.0/(tw*0.5);
 //  float yScale = 1.0/(th*0.5);
@@ -248,16 +270,39 @@ void TextRect::Init() {
  // TranslateYOffset = 0;
   TranslateYOffset = -(fontHeight - base) * (yScale*0.5);
  // TranslateYOffset = -(fontHeight - base) * (yScale*1.0);
-  AspectRatio = (float)tw/(float)th;
   
+  
+AspectRatio = (float)tw/(float)th;
+//  AspectRatio = 1.0; //(float)tw/(float)th;
+  
+  /*
   //float rAR = (float)r->width/(float)r->height;
 //  Camera* useC = root;
 //  int vpW = root->viewport.z;
+  */
   
   float rAR = (float)(root->viewport.z)/(float)(root->viewport.w);
+//  float rAR = (float)(parent->scale.x)/(float)(parent->scale.y);
+  
   AspectRatio /= rAR;
   
-  SetScale(TextHeight*AspectRatio,TextHeight,1.0);
+  
+//need to add a flag to choose to dip down or not!
+  
+  //okay this actually works for all levels, even if scale is not 1.0/1.0
+  float csx = parent->scale.x;
+  float csy = parent->scale.y;
+  float sx = (1.0/csx) * TextHeight * AspectRatio * csy;
+  float sy = (1.0/csy) * TextHeight * csy;
+  //float sx = sy * AspectRatio;
+  
+//  printf("csx/csy = %f/%f\n", parent->scale.x, parent->scale.y);
+//  printf("TextHeight = %f, AR = %f\n", TextHeight, AspectRatio);
+  SetScale(sx,sy,1.0);
+  
+  
+  
+///  SetScale(TextHeight*AspectRatio,TextHeight,1.0);
   
   //now generate the rectangle vertices  
   GenerateVertices();
@@ -287,13 +332,16 @@ void TextRect::Init() {
   
   fontFBO->Bind(); {
     
-    DrawBackground();
     
     glClearColor( 1, 1, 1, 1 );
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable( GL_BLEND );
     glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
     glEnable( GL_TEXTURE_2D );
 
+    DrawBackground();
+    
+    
     for( int i=0; i < text.length(); ++i) {
       
       glyph = useFont->values[text[i]];
@@ -343,16 +391,20 @@ void TextRect::DrawGlyph(FontAtlas* font, float* vs, float* ts) {
   
   p->Bind(); {
     
-    glUniformMatrix4fv(p->Uniform("Modelview"), 1, 0, mat4::Identity().Pointer());
-    //glUniformMatrix4fv(p->Uniform("Projection"), 1, 0, r->GetCamera()->projection.Pointer());
-    glUniformMatrix4fv(p->Uniform("Projection"), 1, 0, mat4::Identity().Pointer());
+    glUniformMatrix4fv(p->Uniform("Modelview"), 1, 0, glm::value_ptr(mat4()));
+    glUniformMatrix4fv(p->Uniform("Projection"), 1, 0, glm::value_ptr(mat4()));
+    
+//    glUniformMatrix4fv(p->Uniform("Modelview"), 1, 0, mat4::Identity().Pointer());
+//    //glUniformMatrix4fv(p->Uniform("Projection"), 1, 0, r->GetCamera()->projection.Pointer());
+//    glUniformMatrix4fv(p->Uniform("Projection"), 1, 0, mat4::Identity().Pointer());
     
     font->fontTexture->Bind();
     glUniform1i(p->Uniform("s_tex"), 0);
     
     
-    //THIS WAS a glUniform4f
-    glUniform4i(p->Uniform("letterColor"), color->Red(), color->Green(), color->Blue(), color->Alpha());
+    //glUniform4fv(p->Uniform("letterColor"), 1, color->AsFloat().Pointer());
+    glUniform4fv(p->Uniform("letterColor"), 1, glm::value_ptr(color->AsFloat()));
+    
     //glUniform4f(p->Uniform("backgroundColor"), 0.0, 1.0, 0.0, 1.0);
     
     glVertexAttribPointer ( p->Attribute("position"), 3, GL_FLOAT, GL_FALSE, 0, vs); 
@@ -373,8 +425,8 @@ void TextRect::DrawGlyph(FontAtlas* font, float* vs, float* ts) {
  
 }
 
-void TextRect::SetBackgroundColor(float r, float g, float b, float a) {
-  backgroundColor = vec4(r,g,b,a);
+void TextRect::SetBackgroundColor(Color* _c) {
+  backgroundColor = _c;
   needsToBeInitialized = true;
   //Init();
 }
@@ -395,9 +447,15 @@ void TextRect::DrawBackground() {
   float backgroundVs[] = { x0,y0, 0.0,   x0,y1, 0.0, x1,y1, 0.0,  x0,y0, 0.0, x1,y1,0.0, x1,y0, 0.0 };
   
   p2->Bind(); {
-    glUniformMatrix4fv(p2->Uniform("Modelview"), 1, 0, mat4::Identity().Pointer());
-    glUniformMatrix4fv(p2->Uniform("Projection"), 1, 0, mat4::Identity().Pointer());
-    glUniform4fv(p2->Uniform("Color"), 1, backgroundColor.Pointer());
+    
+    glUniformMatrix4fv(p2->Uniform("Modelview"), 1, 0, glm::value_ptr(mat4()));
+    glUniformMatrix4fv(p2->Uniform("Projection"), 1, 0, glm::value_ptr(mat4()));
+    glUniform4fv(p2->Uniform("letterColor"), 1, glm::value_ptr(backgroundColor->AsFloat()));
+    
+    
+//    glUniformMatrix4fv(p2->Uniform("Modelview"), 1, 0, mat4::Identity().Pointer());
+//    glUniformMatrix4fv(p2->Uniform("Projection"), 1, 0, mat4::Identity().Pointer());
+//    glUniform4fv(p2->Uniform("Color"), 1, backgroundColor->AsFloat().Pointer());
     
     glVertexAttribPointer ( p2->Attribute("position"), 3, GL_FLOAT, GL_FALSE, 0, backgroundVs); 
     glEnableVertexAttribArray ( p2->Attribute("position") );
@@ -424,9 +482,14 @@ void TextRect::Draw() {
   Program* program = r->GetProgram("SingleTexture");
   program->Bind(); {
     
-    glUniformMatrix4fv(program->Uniform("Modelview"), 1, 0, modelview.Pointer());
-   // glUniformMatrix4fv(program->Uniform("Projection"), 1, 0, mat4::Identity().Pointer());
-    glUniformMatrix4fv(program->Uniform("Projection"), 1, 0, root->projection.Pointer());
+//    glUniformMatrix4fv(program->Uniform("Modelview"), 1, 0, modelview.Pointer());
+//   // glUniformMatrix4fv(program->Uniform("Projection"), 1, 0, mat4::Identity().Pointer());
+//    glUniformMatrix4fv(program->Uniform("Projection"), 1, 0, root->projection.Pointer());
+//  
+    glUniformMatrix4fv(program->Uniform("Modelview"), 1, 0, glm::value_ptr(modelview));
+    // glUniformMatrix4fv(program->Uniform("Projection"), 1, 0, mat4::Identity().Pointer());
+    glUniformMatrix4fv(program->Uniform("Projection"), 1, 0, glm::value_ptr(root->projection));
+    
     
     fontTexture->Bind(GL_TEXTURE0); {
       

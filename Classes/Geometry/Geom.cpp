@@ -1,12 +1,21 @@
 
 #include "Geom.hpp"
 #include "Renderer.hpp"
+#define GLM_SWIZZLE
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 Geom::Geom() {
   //printf("in Geom::Geom()\n");
   SetColor(Color::Float(1.0f,1.0f,1.0f,1.0f)); //default color is white (for now, should be able to change this programmatically)
   IsSelectable = false; //default selectability is false
   parent = NULL; 
+  
+  //temp border testing
+  drawBorder = false;
+  borderColor = Color::RGB(255);
+
 }
 
 
@@ -42,13 +51,35 @@ void Geom::Draw() {
   Program* program = GetProgram("FlatShader");
   
   program->Bind(); {
-    glUniformMatrix4fv(program->Uniform("Modelview"), 1, 0, GetModelView().Pointer());
-    glUniformMatrix4fv(program->Uniform("Projection"), 1, 0, root->projection.Pointer());
-    glUniform4fv(program->Uniform("Color"), 1, GetColor()->AsFloat().Pointer());
+  
+    glUniformMatrix4fv(program->Uniform("Modelview"), 1, 0, glm::value_ptr(GetModelView()));
+    glUniformMatrix4fv(program->Uniform("Projection"), 1, 0, glm::value_ptr(root->projection)); 
+    glUniform4fv(program->Uniform("Color"), 1, glm::value_ptr(GetColor()->AsFloat())); //.Pointer());
+    
+//    glUniformMatrix4fv(program->Uniform("Modelview"), 1, 0, GetModelView().Pointer());
+//    glUniformMatrix4fv(program->Uniform("Projection"), 1, 0, root->projection.Pointer());
+//    glUniform4fv(program->Uniform("Color"), 1, GetColor()->AsFloat().Pointer());
     PassVertices(program, GL_TRIANGLES);
   } program->Unbind();
   
+  
+  //  glLineWidth(2);
+  //testing... really need another shader for this to do better borders
+  if (drawBorder == true) {
+    program->Bind(); {
+      glUniformMatrix4fv(program->Uniform("Modelview"), 1, 0, glm::value_ptr(GetModelView())); 
+      glUniformMatrix4fv(program->Uniform("Projection"), 1, 0, glm::value_ptr(root->projection)); 
+      glUniform4fv(program->Uniform("Color"), 1, glm::value_ptr(borderColor->AsFloat()));
+   
+//      glUniformMatrix4fv(program->Uniform("Modelview"), 1, 0, GetModelView().Pointer());
+//      glUniformMatrix4fv(program->Uniform("Projection"), 1, 0, root->projection.Pointer());
+//      glUniform4fv(program->Uniform("Color"), 1, borderColor->AsFloat().Pointer());
+      
+      PassVertices(program, GL_LINES);
+    } program->Unbind();
+  }
  
+    
 }
 
 /*
@@ -68,30 +99,33 @@ Color* Geom::GetColor() {
   return color;
 }
 
-void Geom::Text(float pen_x, float pen_y, string text, vec4 color ) {
+void Geom::Text(float pen_x, float pen_y, string text, Color* color ) {
   Renderer* r = Renderer::GetRenderer();
   r->DrawText(r->CurrentFont, pen_x, pen_y, text, color, false ) ;
 }
 
-void Geom::Text(float pen_x, float pen_y, string text, vec4 color, bool usePixel ) {
+void Geom::Text(float pen_x, float pen_y, string text, Color* color, bool usePixel ) {
   Renderer* r = Renderer::GetRenderer();
   r->DrawText(r->CurrentFont, pen_x, pen_y, text, color, usePixel ) ;
 }
 
-void Geom::Text(FontAtlas* font, float pen_x, float pen_y, string text, vec4 color ) {
+void Geom::Text(FontAtlas* font, float pen_x, float pen_y, string text, Color* color ) {
   Renderer* r = Renderer::GetRenderer();
   r->DrawText(font, pen_x, pen_y, text, color, false ) ;
 }
 
-void Geom::Text(FontAtlas* font, float pen_x, float pen_y, string text, vec4 color, bool usePixel ) {
+void Geom::Text(FontAtlas* font, float pen_x, float pen_y, string text, Color* color, bool usePixel ) {
   Renderer* r = Renderer::GetRenderer();
   r->DrawText(font, pen_x, pen_y, text, color, usePixel ) ;
 }
 
-void Geom::Text(vec3 offsetPt, string text, vec4 color) {
+void Geom::Text(vec3 offsetPt, string text, Color* color) {
   Renderer* r = Renderer::GetRenderer();
-  vec3 p0 = mat4::multiplyMatrixByVector(modelview, offsetPt); 
-  ivec2 wp0 = root->Project(p0);
+  vec4 p0 = (modelview * vec4(offsetPt, 1.0));
+  vec3 p0_3 = p0.xyz();
+  
+  //vec3 p0 = mat4::multiplyMatrixByVector(modelview, offsetPt); 
+  ivec2 wp0 = root->Project(p0_3);
   r->DrawText(wp0.x, wp0.y, text, color, true); 
 }
 
@@ -113,7 +147,22 @@ void Geom::Transform() {
   //printf("isTransformed!\n");
   //mv.Print();
   
+  //translate
+  mv = glm::translate(mv, GetTranslate());
   
+  //scale
+  mv = glm::translate(mv, scaleAnchor); //rects are positioned at 0,0 already (i.e., not centered around it)
+  mv = glm::scale(mv, GetScale());
+  mv = glm::translate(mv, -scaleAnchor);
+  
+  //rotate
+  mv = glm::translate(mv, rotateAnchor);
+  mv = glm::rotate(mv, GetRotate().x, vec3(1,0,0));
+  mv = glm::rotate(mv, GetRotate().y, vec3(0,1,0));
+  mv = glm::rotate(mv, GetRotate().z, vec3(0,0,1));
+  mv = glm::translate(mv, (-rotateAnchor));
+  
+  /*
   //translate
   mv = mat4::Translate(mv, GetTranslate());
   
@@ -130,7 +179,7 @@ void Geom::Transform() {
   mv = mat4::RotateY(mv, GetRotate().y);
   mv = mat4::RotateZ(mv, GetRotate().z);
   mv = mat4::Translate(mv, (-rotateAnchor));
-  
+  */
   
   SetModelView(mv);
   SetIsTransformed(false);

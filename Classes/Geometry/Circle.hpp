@@ -1,7 +1,10 @@
-#include "Vector.hpp"
-#include "Matrix.hpp"
+//#include "Vector.hpp"
+//#include "Matrix.hpp"
 #include "Geom.hpp"
 #include <vector>
+
+//#define GLM_SWIZZLE
+//#include <glm/glm.hpp>
 
 
 #ifndef OpenGLRenderLibraryNS_Circle_hpp

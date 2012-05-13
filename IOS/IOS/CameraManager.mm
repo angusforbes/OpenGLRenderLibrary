@@ -14,11 +14,11 @@
   //[self setCaptureSession:[[AVCaptureSession alloc] init]];
   captureSession = [[AVCaptureSession alloc] init];
 
-  captureSession.sessionPreset = AVCaptureSessionPreset640x480; 
-  captureTexture = Texture::CreateEmptyTexture(640,480, GL_BGRA, GL_UNSIGNED_BYTE);
+//  captureSession.sessionPreset = AVCaptureSessionPreset640x480; 
+//  captureTexture = Texture::CreateEmptyTexture(640,480, GL_BGRA, GL_UNSIGNED_BYTE);
   
-// captureSession.sessionPreset = AVCaptureSessionPresetLow; //Front&Back:192x144
-//  captureTexture = Texture::CreateEmptyTexture(192,144, GL_BGRA, GL_UNSIGNED_BYTE);
+ captureSession.sessionPreset = AVCaptureSessionPresetLow; //Front&Back:192x144
+  captureTexture = Texture::CreateEmptyTexture(192,144, GL_BGRA, GL_UNSIGNED_BYTE);
   
   
   captureLatch = new Latch();  
